@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="sq"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Çkat’dush — Paneli i shitësit</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f7f7f5;color:#202124}
+:root{--p:#d98b93;--d:#202124}
+.wrap{max-width:760px;margin:0 auto;padding:24px 18px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+header img{width:110px;object-fit:contain}
+h1{font-size:22px;margin:0}
+.card{background:white;border:1px solid #e6e6e2;border-radius:15px;padding:20px;margin-bottom:20px}
+.field{margin-bottom:14px}.field label{display:block;font-size:13px;color:#555;margin-bottom:5px}
+.field input,.field select{width:100%;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;font-family:inherit}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cta{background:#202124;color:#fff;border:0;border-radius:22px;padding:12px 20px;font-weight:bold;cursor:pointer}
+.cta.secondary{background:white;color:#202124;border:1px solid #ddd}
+.cta.danger{background:#c0392b}
+.err{color:#c0392b;font-size:13px;margin:6px 0 0}
+.ok{color:#2e7d32;font-size:13px;margin:6px 0 0}
+.item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eee}
+.item:last-child{border-bottom:0}
+.item .ic{font-size:28px;width:38px;text-align:center}
+.item .info{flex:1}
+.item .info b{display:block}
+.item .info small{color:#777}
+.item .price{font-weight:800}
+.item .old{text-decoration:line-through;color:#999;font-size:12px;margin-left:6px;font-weight:400}
+.item button{border:0;background:none;cursor:pointer;font-size:13px;padding:6px 8px}
+.item .edit{color:#202124}
+.item .del{color:#c0392b}
+.hide{display:none}
+.muted{color:#777;font-size:13px}
+.order{border:1px solid #eee;border-radius:12px;padding:14px;margin-bottom:12px}
+.order .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.order .oid{font-family:monospace;font-weight:bold}
+.order .date{color:#777;font-size:12px}
+.order .cust{margin:8px 0;font-size:14px;line-height:1.6}
+.order .items{font-size:13px;color:#444;margin:6px 0}
+.order .total{font-weight:800;margin-top:6px}
+.status{padding:5px 10px;border-radius:12px;font-size:12px;font-weight:bold;border:0}
+.status.Në-pritje{background:#fff3cd;color:#856404}
+.status.Pritje-pagese{background:#ffe8cc;color:#8a4b00}
+.status.Paguar{background:#d1f2eb;color:#0b5345}
+.status.Konfirmuar{background:#d4edda;color:#155724}
+.status.Dërguar{background:#cce5ff;color:#004085}
+.status.Anuluar{background:#f8d7da;color:#721c24}
+select.statusSel{margin-top:8px;padding:8px;border-radius:8px;border:1px solid #ddd}
+.cta.tabActive{opacity:1}
+.cta.secondary{opacity:.7}
+</style></head><body>
+<div class="wrap">
+<header><img src="logo.png" alt="Çkat’dush"><h1>Paneli i shitësit</h1></header>
+
+<div class="card" id="loginCard">
+<h3 style="margin-top:0">Hyr</h3>
+<div class="field"><label>Email</label><input id="loginEmail" type="email"></div>
+<div class="field"><label>Fjalëkalimi</label><input id="loginPass" type="password"></div>
+<button class="cta" onclick="doLogin()">Hyr</button>
+<p class="err" id="loginErr"></p>
+<p class="muted">Llogaria krijohet një herë në Firebase Console → Authentication → Email/Password. Kjo faqe nuk lejon regjistrim të lirë.</p>
+</div>
+
+<div id="adminArea" class="hide">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<div style="display:flex;gap:8px">
+<button class="cta" id="tabProductsBtn" onclick="showTab('products')">📦 Produktet</button>
+<button class="cta secondary" id="tabOrdersBtn" onclick="showTab('orders')">🧾 Porositë <span id="orderCount"></span></button>
+</div>
+<button class="cta secondary" onclick="doLogout()">Dil</button>
+</div>
+
+<div id="productsTab">
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<h3 style="margin:0" id="formTitle">Shto produkt të ri</h3>
+</div>
+<form onsubmit="return saveProduct(event)" style="margin-top:14px">
+<input type="hidden" id="pId">
+<div class="field"><label>Emri i produktit</label><input id="pName" required></div>
+<div class="row2">
+<div class="field"><label>Kategoria</label>
+<select id="pCat" required>
+<option>Teknologji</option><option>Moda</option><option>Shtëpi</option><option>Bukuri</option><option>Fëmijë</option><option>Sport</option><option>Aksesorë</option>
+</select></div>
+<div class="field"><label>Emoji / ikona</label><input id="pIcon" placeholder="🛍️"></div>
+</div>
+<div class="row2">
+<div class="field"><label>Çmimi (€)</label><input id="pPrice" type="number" step="0.01" min="0" required></div>
+<div class="field"><label>Çmimi i vjetër (opsionale, për zbritje)</label><input id="pOld" type="number" step="0.01" min="0"></div>
+</div>
+<button class="cta" type="submit" id="saveBtn">Shto produktin</button>
+<button class="cta secondary hide" type="button" id="cancelBtn" onclick="resetForm()">Anulo</button>
+<p class="err" id="formErr"></p>
+<p class="ok" id="formOk"></p>
+</form>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Produktet e tua</h3>
+<div id="list" class="muted">Duke ngarkuar…</div>
+</div>
+</div>
+
+<div id="ordersTab" class="hide">
+<div class="card">
+<h3 style="margin-top:0">Porositë e reja</h3>
+<div id="orderList" class="muted">Duke ngarkuar…</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+auth.onAuthStateChanged(user=>{
+  if(user){
+    loginCard.classList.add('hide');
+    adminArea.classList.remove('hide');
+    loadList();
+    loadOrders();
+    showTab('products');
+  }else{
+    loginCard.classList.remove('hide');
+    adminArea.classList.add('hide');
+  }
+});
+
+function showTab(name){
+  productsTab.classList.toggle('hide', name!=='products');
+  ordersTab.classList.toggle('hide', name!=='orders');
+  tabProductsBtn.classList.toggle('secondary', name!=='products');
+  tabOrdersBtn.classList.toggle('secondary', name!=='orders');
+  if(name==='orders') loadOrders();
+}
+
+async function loadOrders(){
+  orderList.textContent = 'Duke ngarkuar…';
+  try{
+    const snap = await db.collection('orders').orderBy('createdAt','desc').get();
+    if(snap.empty){
+      orderList.innerHTML = '<p class="muted">S\'ka porosi ende.</p>';
+      orderCount.textContent = '';
+      return;
+    }
+    let pending = 0;
+    orderList.innerHTML = snap.docs.map(doc=>{
+      const o = doc.data();
+      const status = o.status || 'Në pritje';
+      if(status==='Në pritje') pending++;
+      const date = o.createdAt && o.createdAt.toDate ? o.createdAt.toDate().toLocaleString('sq-AL') : '';
+      const itemsTxt = (o.items||[]).map(it=>`${it.qty}× ${it.name}`).join(', ');
+      const statusClass = status.replace(/\s/g,'-');
+      return `<div class="order">
+        <div class="top">
+          <div><span class="oid">${o.id || doc.id}</span><div class="date">${date}</div></div>
+          <span class="status ${statusClass}">${status}</span>
+        </div>
+        <div class="cust">
+          👤 ${o.customer?.name || ''} · 📞 ${o.customer?.phone || ''}<br>
+          📍 ${o.customer?.addr || ''}, ${o.customer?.city || ''}<br>
+          💳 ${o.payment || ''}
+        </div>
+        <div class="items">${itemsTxt}</div>
+        <div class="total">${Number(o.total||0).toFixed(2)} €</div>
+        <select class="statusSel" onchange="setStatus('${doc.id}', this.value)">
+          <option ${status==='Pritje pagese'?'selected':''}>Pritje pagese</option>
+          <option ${status==='Në pritje'?'selected':''}>Në pritje</option>
+          <option ${status==='Paguar'?'selected':''}>Paguar</option>
+          <option ${status==='Konfirmuar'?'selected':''}>Konfirmuar</option>
+          <option ${status==='Dërguar'?'selected':''}>Dërguar</option>
+          <option ${status==='Anuluar'?'selected':''}>Anuluar</option>
+        </select>
+      </div>`;
+    }).join('');
+    orderCount.textContent = pending ? `(${pending} të reja)` : '';
+  }catch(err){
+    orderList.innerHTML = '<p class="err">S\'u ngarkuan porositë: ' + err.message + '</p>';
+  }
+}
+
+async function setStatus(id, status){
+  try{ await db.collection('orders').doc(id).update({status}); loadOrders(); }
+  catch(e){ alert('Gabim: ' + e.message); }
+}
+
+function doLogin(){
+  loginErr.textContent = '';
+  auth.signInWithEmailAndPassword(loginEmail.value.trim(), loginPass.value)
+    .catch(e=>{ loginErr.textContent = 'Email ose fjalëkalim i gabuar.'; });
+}
+function doLogout(){ auth.signOut(); }
+
+function resetForm(){
+  pId.value=''; pName.value=''; pIcon.value=''; pPrice.value=''; pOld.value=''; pCat.selectedIndex=0;
+  formTitle.textContent='Shto produkt të ri'; saveBtn.textContent='Shto produktin';
+  cancelBtn.classList.add('hide'); formErr.textContent=''; formOk.textContent='';
+}
+
+async function saveProduct(e){
+  e.preventDefault();
+  formErr.textContent=''; formOk.textContent='';
+  const data = {
+    name: pName.value.trim(),
+    cat: pCat.value,
+    icon: pIcon.value.trim() || '🛍️',
+    price: parseFloat(pPrice.value),
+    oldPrice: pOld.value ? parseFloat(pOld.value) : parseFloat(pPrice.value)
+  };
+  if(!data.name || isNaN(data.price)){ formErr.textContent = 'Plotëso emrin dhe çmimin.'; return false; }
+  try{
+    if(pId.value){
+      await db.collection('products').doc(pId.value).update(data);
+      formOk.textContent = 'Produkti u përditësua.';
+    }else{
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection('products').add(data);
+      formOk.textContent = 'Produkti u shtua.';
+    }
+    resetForm();
+    loadList();
+  }catch(err){
+    formErr.textContent = 'Diçka shkoi keq: ' + err.message;
+  }
+  return false;
+}
+
+function editProduct(id, d){
+  pId.value = id; pName.value = d.name; pCat.value = d.cat; pIcon.value = d.icon || '';
+  pPrice.value = d.price; pOld.value = d.oldPrice && d.oldPrice!==d.price ? d.oldPrice : '';
+  formTitle.textContent = 'Redakto produktin'; saveBtn.textContent = 'Ruaj ndryshimet';
+  cancelBtn.classList.remove('hide');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function deleteProduct(id){
+  if(!confirm('Ta fshish këtë produkt?')) return;
+  await db.collection('products').doc(id).delete();
+  loadList();
+}
+
+async function loadList(){
+  list.textContent = 'Duke ngarkuar…';
+  try{
+    const snap = await db.collection('products').orderBy('createdAt','desc').get();
+    if(snap.empty){ list.innerHTML = '<p class="muted">S\'ke shtuar ende asnjë produkt.</p>'; return; }
+    list.innerHTML = snap.docs.map(doc=>{
+      const d = doc.data();
+      return `<div class="item">
+        <div class="ic">${d.icon||'🛍️'}</div>
+        <div class="info"><b>${d.name}</b><small>${d.cat}</small></div>
+        <div class="price">${Number(d.price).toFixed(2)} €${d.oldPrice && d.oldPrice!==d.price ? `<span class="old">${Number(d.oldPrice).toFixed(2)} €</span>` : ''}</div>
+        <button class="edit" onclick='editProduct("${doc.id}", ${JSON.stringify(d).replace(/'/g,"&apos;")})'>Redakto</button>
+        <button class="del" onclick="deleteProduct('${doc.id}')">Fshi</button>
+      </div>`;
+    }).join('');
+  }catch(err){
+    list.innerHTML = '<p class="err">S\'u ngarkuan produktet: ' + err.message + '</p>';
+  }
+}
+</script>
+</body></html>
