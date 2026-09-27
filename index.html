@@ -21,7 +21,11 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 .err{color:#c0392b;font-size:13px;margin:4px 0 0}
 .total{display:flex;justify-content:space-between;font-weight:800;font-size:17px;padding:12px 0}
 .ok{text-align:center;padding:10px}.ok .tick{font-size:52px}.ordno{font-family:monospace;background:#f7f7f5;padding:8px 12px;border-radius:8px;display:inline-block;margin:10px 0}
-@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:repeat(2,1fr)}.nav{flex-wrap:wrap}.search{order:3;flex-basis:100%}.foot{grid-template-columns:1fr 1fr}}@media(max-width:520px){.hero{padding:25px}.hero h1{font-size:32px}.bags{display:none}.grid{gap:9px}.pic{height:150px;font-size:50px}.features{grid-template-columns:1fr}.pay{flex-direction:column}}
+.filters{display:flex;gap:10px;flex-wrap:wrap;padding:0 18px 14px;max-width:1250px;margin:auto}
+.filters input,.filters select{padding:9px 12px;border:1px solid #ddd;border-radius:20px;font-size:14px;font-family:inherit;background:white}
+.filters input{width:150px}
+.postBtn{text-decoration:none;color:inherit;display:inline-flex;align-items:center;white-space:nowrap}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:repeat(2,1fr)}.nav{flex-wrap:wrap}.search{order:3;flex-basis:100%}.foot{grid-template-columns:1fr 1fr}}@media(max-width:520px){.hero{padding:25px}.hero h1{font-size:32px}.bags{display:none}.grid{gap:9px}.pic{height:150px;font-size:50px}.features{grid-template-columns:1fr}.pay{flex-direction:column}.filters{flex-direction:column}.filters input,.filters select{width:100%}}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -31,16 +35,26 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <header><div class="nav">
 <img src="logo.png" class="logo" alt="Çkat’dush">
 <div class="search"><input id="q" placeholder="Çka po kërkon?" onkeydown="if(event.key==='Enter')search()"><button onclick="search()">Kërko</button></div>
+<a href="postoj.html" class="btn postBtn">+ Posto shpallje</a>
 <button class="btn" onclick="alert('Lista e dëshirave do të jetë pjesë e llogarisë.')">♡</button><button class="btn" onclick="cartOpen()">🛒 <b id="num">0</b></button>
 </div><div class="cats" id="cats">
 <button data-c="Të gjitha" class="active" onclick="filter('Të gjitha')">Të gjitha</button><button data-c="Teknologji" onclick="filter('Teknologji')">Teknologji</button><button data-c="Moda" onclick="filter('Moda')">Moda</button><button data-c="Shtëpi" onclick="filter('Shtëpi')">Shtëpi</button><button data-c="Bukuri" onclick="filter('Bukuri')">Bukuri</button><button data-c="Fëmijë" onclick="filter('Fëmijë')">Fëmijë</button><button data-c="Sport" onclick="filter('Sport')">Sport</button><button data-c="Aksesorë" onclick="filter('Aksesorë')">Aksesorë</button>
-</div></header>
+</div>
+<div class="filters">
+<input id="fMin" type="number" placeholder="Çmimi min €" min="0" oninput="applyFilters()">
+<input id="fMax" type="number" placeholder="Çmimi max €" min="0" oninput="applyFilters()">
+<input id="fCity" list="cityList" placeholder="Qyteti" oninput="applyFilters()">
+<datalist id="cityList"><option>Prishtinë</option><option>Prizren</option><option>Pejë</option><option>Gjakovë</option><option>Ferizaj</option><option>Gjilan</option><option>Mitrovicë</option><option>Vushtrri</option><option>Podujevë</option></datalist>
+<select id="fCond" onchange="applyFilters()"><option value="">Gjendja (të gjitha)</option><option value="I ri">I ri</option><option value="I përdorur">I përdorur</option></select>
+<button class="btn" onclick="clearFilters()">Pastro filtrat</button>
+</div>
+</header>
 <main>
 <section class="hero"><div><h1>Çkat’dush 🛍️</h1><p>Gjej çkado që dush — produkte, oferta dhe shitës lokalë në një marketplace të vetëm.</p><button class="cta" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shiko produktet</button></div><div class="bags">🛍️ 🛍️</div></section>
 <div class="features"><div class="feature">🚚<b>Dërgesa</b><span>Në gjithë Kosovën</span></div><div class="feature">🔒<b>Blerje të sigurta</b><span>Porosi të thjeshta</span></div><div class="feature">🏪<b>Shitës lokalë</b><span>Hap dyqanin tënd</span></div><div class="feature">💳<b>Pagesa</b><span>Online ose COD</span></div></div>
 <section id="products"><div class="head"><h2>Produktet e zgjedhura</h2><span id="res"></span></div><div class="grid" id="grid"></div></section>
 </main>
-<footer><div class="foot"><div><img src="logo.png" style="width:145px;background:#fff;border-radius:9px"><p>Çkat’dush — marketplace për Kosovë.</p></div><div><h3>Klientët</h3><ul><li>Shporta</li><li>Porositë</li><li>Lista e dëshirave</li></ul></div><div><h3>Shitësit</h3><ul><li>Hap dyqanin</li><li>Produktet</li><li>Porositë</li></ul></div><div><h3>Ndihmë</h3><ul><li>Kontakti</li><li>Transporti</li><li>Kushtet</li></ul></div></div></footer>
+<footer><div class="foot"><div><img src="logo.png" style="width:145px;background:#fff;border-radius:9px"><p>Çkat’dush — marketplace për Kosovë.</p></div><div><h3>Klientët</h3><ul><li>Shporta</li><li>Porositë</li><li>Lista e dëshirave</li></ul></div><div><h3>Shitësit</h3><ul><li><a href="postoj.html" style="color:#bbb">Posto shpallje</a></li><li>Produktet</li><li>Porositë</li></ul></div><div><h3>Ndihmë</h3><ul><li>Kontakti</li><li>Transporti</li><li>Kushtet</li></ul></div></div></footer>
 
 <div class="modal" id="modal"><div class="box"><div style="display:flex;justify-content:space-between"><h2>Shporta</h2><button class="btn" onclick="closeModal('modal')">×</button></div><div id="cart"></div><div id="cartTotal"></div><button class="cta" id="toCheckout" style="width:100%;margin-top:8px" onclick="openCheckout()">Vazhdo te porosia</button></div></div>
 
@@ -71,9 +85,17 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 
 <script>
 // Produktet fillestare (përdoren vetëm nëse Firebase s'është konfiguruar ende
-// ose baza e të dhënave është ende bosh — shiko admin.html për t'i shtuar këto vetë)
+// ose baza e të dhënave është ende bosh — shiko admin.html / postoj.html për t'i shtuar këto vetë)
 const FALLBACK_P=[
-['Smartwatch Pro','Teknologji',39.99,49.99,'⌚'],['Kufje Wireless','Teknologji',24.99,34.99,'🎧'],['Çantë elegante','Moda',24.90,32.90,'👜'],['Atlete sportive','Sport',44.99,59.99,'👟'],['Set kozmetik','Bukuri',16.50,22,'💄'],['Llambë dekorative','Shtëpi',18.90,25,'💡'],['Lodër edukative','Fëmijë',13.90,17.90,'🧸'],['Syze dielli','Aksesorë',21.90,29.90,'🕶️']];
+  {id:'demo-1',name:'Smartwatch Pro',cat:'Teknologji',price:39.99,oldPrice:49.99,icon:'⌚',photoUrl:null,city:'Prishtinë',condition:'I ri'},
+  {id:'demo-2',name:'Kufje Wireless',cat:'Teknologji',price:24.99,oldPrice:34.99,icon:'🎧',photoUrl:null,city:'Prizren',condition:'I ri'},
+  {id:'demo-3',name:'Çantë elegante',cat:'Moda',price:24.90,oldPrice:32.90,icon:'👜',photoUrl:null,city:'Pejë',condition:'I përdorur'},
+  {id:'demo-4',name:'Atlete sportive',cat:'Sport',price:44.99,oldPrice:59.99,icon:'👟',photoUrl:null,city:'Ferizaj',condition:'I ri'},
+  {id:'demo-5',name:'Set kozmetik',cat:'Bukuri',price:16.50,oldPrice:22,icon:'💄',photoUrl:null,city:'Gjilan',condition:'I ri'},
+  {id:'demo-6',name:'Llambë dekorative',cat:'Shtëpi',price:18.90,oldPrice:25,icon:'💡',photoUrl:null,city:'Mitrovicë',condition:'I përdorur'},
+  {id:'demo-7',name:'Lodër edukative',cat:'Fëmijë',price:13.90,oldPrice:17.90,icon:'🧸',photoUrl:null,city:'Prishtinë',condition:'I ri'},
+  {id:'demo-8',name:'Syze dielli',cat:'Aksesorë',price:21.90,oldPrice:29.90,icon:'🕶️',photoUrl:null,city:'Vushtrri',condition:'I ri'}
+];
 
 let P = FALLBACK_P;
 
@@ -81,23 +103,36 @@ async function loadProducts(){
   try{
     const snap = await db.collection('products').orderBy('createdAt','desc').get();
     if(!snap.empty){
+      const now = new Date();
       P = snap.docs.map(d=>{
         const x = d.data();
-        return [x.name, x.cat, Number(x.price), Number(x.oldPrice||x.price), x.icon || '🛍️'];
-      });
+        return {
+          id: d.id, name: x.name, cat: x.cat, price: Number(x.price), oldPrice: Number(x.oldPrice||x.price),
+          icon: x.icon || '🛍️', photoUrl: x.photoUrl || null,
+          city: x.city || '', condition: x.condition || '',
+          sellerId: x.sellerId || null, sellerName: x.sellerName || '', sellerPhone: x.sellerPhone || '',
+          expiresAt: x.expiresAt || null
+        };
+      }).filter(x => !x.expiresAt || (x.expiresAt.toDate && x.expiresAt.toDate() > now));
     }
   }catch(e){
     console.warn('Firebase s\'është konfiguruar ende ose s\'ka lidhje — po përdoren produktet e parazgjedhura.', e);
   }
-  render();
+  applyFilters();
 }
 
-// C = cart items: {name, cat, price, old, icon, qty}
+// C = cart items: {id, name, cat, price, old, icon, photoUrl, qty}
 let C = loadCart();
 let currentList = P;
+let currentCat = 'Të gjitha';
+let currentQuery = '';
 
 function loadCart(){
-  try{ const raw = localStorage.getItem('ckatdush_cart'); return raw ? JSON.parse(raw) : []; }
+  try{
+    const raw = localStorage.getItem('ckatdush_cart');
+    const c = raw ? JSON.parse(raw) : [];
+    return c.filter(x=>x && x.id);
+  }
   catch(e){ return []; }
 }
 function saveCart(){
@@ -109,32 +144,36 @@ function updateBadge(){
 
 function render(a=P){
   currentList = a;
-  grid.innerHTML = a.length ? a.map((x,i)=>`<div class="card"><span class="badge">OFERTË</span><div class="pic">${x[4]}</div><div class="info"><div class="name">${x[0]}</div><small>${x[1]}</small><div>★ 4.${6+(i%4)}</div><div class="price">${x[2].toFixed(2)} € <span class="old">${x[3].toFixed(2)} €</span></div><button class="add" onclick="add('${x[0].replace(/'/g,"\\'")}')">Shto në shportë</button></div></div>`).join('')
+  grid.innerHTML = a.length ? a.map((x,i)=>{
+    const meta = [x.cat, x.city, x.condition].filter(Boolean).join(' • ');
+    const contact = x.sellerName ? `<div style="font-size:12px;color:#777;margin-top:4px">👤 ${x.sellerName}${x.sellerPhone ? ' • 📞 '+x.sellerPhone : ''}</div>` : '';
+    return `<div class="card"><span class="badge">OFERTË</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" style="width:100%;height:100%;object-fit:cover">` : x.icon}</div><div class="info"><div class="name">${x.name}</div><small>${meta}</small>${contact}<div>★ 4.${6+(i%4)}</div><div class="price">${x.price.toFixed(2)} € <span class="old">${x.oldPrice.toFixed(2)} €</span></div><button class="add" onclick="add('${x.id}')">Shto në shportë</button></div></div>`;
+  }).join('')
     : `<div class="empty">Nuk u gjet asnjë produkt.</div>`;
   res.textContent = a.length + ' produkte';
 }
 
-function add(name){
-  const x = P.find(p=>p[0]===name);
+function add(id){
+  const x = P.find(p=>p.id===id);
   if(!x) return;
-  let c = C.find(y=>y.name===x[0]);
+  let c = C.find(y=>y.id===id);
   if(c) c.qty++;
-  else C.push({name:x[0], cat:x[1], price:x[2], old:x[3], icon:x[4], qty:1});
+  else C.push({id:x.id, name:x.name, cat:x.cat, price:x.price, old:x.oldPrice, icon:x.icon, photoUrl:x.photoUrl||null, qty:1});
   saveCart();
   updateBadge();
 }
 
-function changeQty(name, delta){
-  const c = C.find(y=>y.name===name);
+function changeQty(id, delta){
+  const c = C.find(y=>y.id===id);
   if(!c) return;
   c.qty += delta;
-  if(c.qty<=0) C = C.filter(y=>y.name!==name);
+  if(c.qty<=0) C = C.filter(y=>y.id!==id);
   saveCart();
   updateBadge();
   renderCart();
 }
-function removeItem(name){
-  C = C.filter(y=>y.name!==name);
+function removeItem(id){
+  C = C.filter(y=>y.id!==id);
   saveCart();
   updateBadge();
   renderCart();
@@ -145,7 +184,7 @@ function cartTotal(){
 }
 
 function renderCart(){
-  cart.innerHTML = C.length ? C.map(x=>`<div class="row"><span>${x.icon} ${x.name}</span><div class="qty"><button onclick="changeQty('${x.name.replace(/'/g,"\\'")}',-1)">−</button><b>${x.qty}</b><button onclick="changeQty('${x.name.replace(/'/g,"\\'")}',1)">+</button></div><b>${(x.price*x.qty).toFixed(2)} €</b><button class="rm" onclick="removeItem('${x.name.replace(/'/g,"\\'")}')">Hiq</button></div>`).join('')
+  cart.innerHTML = C.length ? C.map(x=>`<div class="row"><span>${x.icon} ${x.name}</span><div class="qty"><button onclick="changeQty('${x.id}',-1)">−</button><b>${x.qty}</b><button onclick="changeQty('${x.id}',1)">+</button></div><b>${(x.price*x.qty).toFixed(2)} €</b><button class="rm" onclick="removeItem('${x.id}')">Hiq</button></div>`).join('')
     : '<p style="text-align:center;padding:25px;color:#777">Shporta është bosh.</p>';
   document.getElementById('cartTotal').innerHTML = C.length ? `<div class="total"><span>Totali</span><span>${cartTotal().toFixed(2)} €</span></div>` : '';
   document.getElementById('toCheckout').style.display = C.length ? 'block' : 'none';
@@ -263,14 +302,34 @@ async function checkPaymentReturn(){
 }
 
 function filter(c){
+  currentCat = c;
   document.querySelectorAll('#cats button').forEach(b=>b.classList.toggle('active', b.dataset.c===c));
-  render(c==='Të gjitha' ? P : P.filter(x=>x[1]===c));
+  applyFilters();
 }
 function search(){
-  let qv = document.getElementById('q').value.toLowerCase();
+  currentQuery = document.getElementById('q').value.toLowerCase();
+  currentCat = 'Të gjitha';
   document.querySelectorAll('#cats button').forEach(b=>b.classList.toggle('active', b.dataset.c==='Të gjitha'));
-  render(P.filter(x=>(x[0]+' '+x[1]).toLowerCase().includes(qv)));
+  applyFilters();
   products.scrollIntoView({behavior:'smooth'});
+}
+function applyFilters(){
+  let list = P.slice();
+  if(currentCat && currentCat!=='Të gjitha') list = list.filter(x=>x.cat===currentCat);
+  if(currentQuery) list = list.filter(x=>(x.name+' '+x.cat).toLowerCase().includes(currentQuery));
+  const min = parseFloat(document.getElementById('fMin').value);
+  const max = parseFloat(document.getElementById('fMax').value);
+  if(!isNaN(min)) list = list.filter(x=>x.price>=min);
+  if(!isNaN(max)) list = list.filter(x=>x.price<=max);
+  const city = document.getElementById('fCity').value.trim().toLowerCase();
+  if(city) list = list.filter(x=>(x.city||'').toLowerCase().includes(city));
+  const cond = document.getElementById('fCond').value;
+  if(cond) list = list.filter(x=>x.condition===cond);
+  render(list);
+}
+function clearFilters(){
+  fMin.value=''; fMax.value=''; fCity.value=''; fCond.value='';
+  applyFilters();
 }
 
 [modal,checkoutModal,okModal].forEach(m=>m.addEventListener('click', e=>{ if(e.target===m) m.style.display='none'; }));

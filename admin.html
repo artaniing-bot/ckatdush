@@ -30,6 +30,8 @@ h1{font-size:22px;margin:0}
 .item .del{color:#c0392b}
 .hide{display:none}
 .muted{color:#777;font-size:13px}
+.thumb{width:60px;height:60px;object-fit:cover;border-radius:8px;border:1px solid #ddd}
+.item .thumb{width:38px;height:38px;flex-shrink:0}
 .order{border:1px solid #eee;border-radius:12px;padding:14px;margin-bottom:12px}
 .order .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .order .oid{font-family:monospace;font-weight:bold}
@@ -83,6 +85,15 @@ select.statusSel{margin-top:8px;padding:8px;border-radius:8px;border:1px solid #
 <option>Teknologji</option><option>Moda</option><option>Shtëpi</option><option>Bukuri</option><option>Fëmijë</option><option>Sport</option><option>Aksesorë</option>
 </select></div>
 <div class="field"><label>Emoji / ikona</label><input id="pIcon" placeholder="🛍️"></div>
+</div>
+<div class="row2">
+<div class="field"><label>Qyteti (opsionale)</label><input id="pCity" placeholder="p.sh. Prishtinë"></div>
+<div class="field"><label>Gjendja (opsionale)</label>
+<select id="pCondition"><option value="">—</option><option value="I ri">I ri</option><option value="I përdorur">I përdorur</option></select></div>
+</div>
+<div class="field"><label>Link i fotos (opsionale)</label><input id="pPhotoUrl" type="url" placeholder="https://..." oninput="updatePhotoPreview()">
+<div id="photoPreview" style="margin-top:8px"></div>
+<p class="muted" style="margin:6px 0 0">Si ta marrësh: ngarko foton te <a href="https://imgbb.com" target="_blank">imgbb.com</a> (falas, pa llogari), pastaj kopjo linkun "Direct link" dhe ngjite këtu.</p>
 </div>
 <div class="row2">
 <div class="field"><label>Çmimi (€)</label><input id="pPrice" type="number" step="0.01" min="0" required></div>
@@ -196,8 +207,14 @@ function doLogout(){ auth.signOut(); }
 
 function resetForm(){
   pId.value=''; pName.value=''; pIcon.value=''; pPrice.value=''; pOld.value=''; pCat.selectedIndex=0;
+  pCity.value=''; pCondition.value=''; pPhotoUrl.value=''; photoPreview.innerHTML='';
   formTitle.textContent='Shto produkt të ri'; saveBtn.textContent='Shto produktin';
   cancelBtn.classList.add('hide'); formErr.textContent=''; formOk.textContent='';
+}
+
+function updatePhotoPreview(){
+  const url = pPhotoUrl.value.trim();
+  photoPreview.innerHTML = url ? `<img class="thumb" src="${url}" onerror="this.outerHTML='<p class=err>Linku i fotos nuk duket i vlefshëm.</p>'">` : '';
 }
 
 async function saveProduct(e){
@@ -207,10 +224,18 @@ async function saveProduct(e){
     name: pName.value.trim(),
     cat: pCat.value,
     icon: pIcon.value.trim() || '🛍️',
+    city: pCity.value.trim() || '',
+    condition: pCondition.value || '',
     price: parseFloat(pPrice.value),
-    oldPrice: pOld.value ? parseFloat(pOld.value) : parseFloat(pPrice.value)
+    oldPrice: pOld.value ? parseFloat(pOld.value) : parseFloat(pPrice.value),
+    photoUrl: pPhotoUrl.value.trim() || null
   };
   if(!data.name || isNaN(data.price)){ formErr.textContent = 'Plotëso emrin dhe çmimin.'; return false; }
+
+  saveBtn.disabled = true;
+  const originalBtnText = saveBtn.textContent;
+  saveBtn.textContent = 'Duke ruajtur…';
+
   try{
     if(pId.value){
       await db.collection('products').doc(pId.value).update(data);
@@ -225,12 +250,17 @@ async function saveProduct(e){
   }catch(err){
     formErr.textContent = 'Diçka shkoi keq: ' + err.message;
   }
+  saveBtn.disabled = false;
+  saveBtn.textContent = originalBtnText;
   return false;
 }
 
 function editProduct(id, d){
   pId.value = id; pName.value = d.name; pCat.value = d.cat; pIcon.value = d.icon || '';
+  pCity.value = d.city || ''; pCondition.value = d.condition || '';
   pPrice.value = d.price; pOld.value = d.oldPrice && d.oldPrice!==d.price ? d.oldPrice : '';
+  pPhotoUrl.value = d.photoUrl || '';
+  updatePhotoPreview();
   formTitle.textContent = 'Redakto produktin'; saveBtn.textContent = 'Ruaj ndryshimet';
   cancelBtn.classList.remove('hide');
   window.scrollTo({top:0,behavior:'smooth'});
@@ -250,8 +280,8 @@ async function loadList(){
     list.innerHTML = snap.docs.map(doc=>{
       const d = doc.data();
       return `<div class="item">
-        <div class="ic">${d.icon||'🛍️'}</div>
-        <div class="info"><b>${d.name}</b><small>${d.cat}</small></div>
+        <div class="ic">${d.photoUrl ? `<img class="thumb" src="${d.photoUrl}">` : (d.icon||'🛍️')}</div>
+        <div class="info"><b>${d.name}</b><small>${[d.cat,d.city,d.condition].filter(Boolean).join(' • ')}${d.sellerId ? ' • shpallje e një përdoruesi' : ''}</small></div>
         <div class="price">${Number(d.price).toFixed(2)} €${d.oldPrice && d.oldPrice!==d.price ? `<span class="old">${Number(d.oldPrice).toFixed(2)} €</span>` : ''}</div>
         <button class="edit" onclick='editProduct("${doc.id}", ${JSON.stringify(d).replace(/'/g,"&apos;")})'>Redakto</button>
         <button class="del" onclick="deleteProduct('${doc.id}')">Fshi</button>

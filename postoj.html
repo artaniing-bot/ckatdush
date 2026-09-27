@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="sq"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Çkat’dush — Posto shpallje</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f7f7f5;color:#202124}
+:root{--p:#d98b93;--d:#202124}
+.wrap{max-width:760px;margin:0 auto;padding:24px 18px}
+header{display:flex;align-items:center;gap:12px;margin-bottom:22px;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:12px}
+header img{width:110px;object-fit:contain}
+h1{font-size:22px;margin:0}
+a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;border-radius:20px;padding:8px 14px}
+.card{background:white;border:1px solid #e6e6e2;border-radius:15px;padding:20px;margin-bottom:20px}
+.field{margin-bottom:14px}.field label{display:block;font-size:13px;color:#555;margin-bottom:5px}
+.field input,.field select{width:100%;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;font-family:inherit}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cta{background:#202124;color:#fff;border:0;border-radius:22px;padding:12px 20px;font-weight:bold;cursor:pointer}
+.cta.secondary{background:white;color:#202124;border:1px solid #ddd}
+.cta.danger{background:#c0392b}
+.cta.small{padding:8px 14px;font-size:13px;border-radius:16px}
+.err{color:#c0392b;font-size:13px;margin:6px 0 0}
+.ok{color:#2e7d32;font-size:13px;margin:6px 0 0}
+.item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eee;flex-wrap:wrap}
+.item:last-child{border-bottom:0}
+.item .ic{font-size:28px;width:38px;text-align:center}
+.item .info{flex:1;min-width:140px}
+.item .info b{display:block}
+.item .info small{color:#777}
+.item .price{font-weight:800}
+.item .old{text-decoration:line-through;color:#999;font-size:12px;margin-left:6px;font-weight:400}
+.item .actions{display:flex;gap:6px;flex-wrap:wrap}
+.item button{border:0;background:none;cursor:pointer;font-size:13px;padding:6px 8px}
+.item .edit{color:#202124}
+.item .del{color:#c0392b}
+.item .exp{color:#8a4b00;font-size:12px}
+.hide{display:none}
+.muted{color:#777;font-size:13px}
+.thumb{width:60px;height:60px;object-fit:cover;border-radius:8px;border:1px solid #ddd}
+.item .thumb{width:38px;height:38px;flex-shrink:0}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.uploadBox{border:1.5px dashed #ddd;border-radius:12px;padding:16px;text-align:center}
+.uploadBox input[type=file]{width:100%}
+</style></head><body>
+<div class="wrap">
+<header>
+<div class="brand"><img src="logo.png" alt="Çkat’dush"><h1>Posto shpallje</h1></div>
+<a class="back" href="index.html">← Kthehu te dyqani</a>
+</header>
+
+<div class="card" id="authCard">
+<div class="tabs">
+<button class="cta" id="tabLoginBtn" onclick="showAuthTab('login')">Hyr</button>
+<button class="cta secondary" id="tabSignupBtn" onclick="showAuthTab('signup')">Regjistrohu</button>
+</div>
+
+<div id="loginBox">
+<h3 style="margin-top:0">Hyr në llogarinë tënde</h3>
+<div class="field"><label>Email</label><input id="loginEmail" type="email"></div>
+<div class="field"><label>Fjalëkalimi</label><input id="loginPass" type="password"></div>
+<button class="cta" onclick="doLogin()">Hyr</button>
+<p class="err" id="loginErr"></p>
+</div>
+
+<div id="signupBox" class="hide">
+<h3 style="margin-top:0">Krijo llogari të re</h3>
+<p class="muted">Duhet email dhe fjalëkalim që të mund të postosh dhe menaxhosh shpalljet e tua.</p>
+<div class="field"><label>Email</label><input id="suEmail" type="email"></div>
+<div class="field"><label>Fjalëkalimi (min. 6 shkronja/numra)</label><input id="suPass" type="password"></div>
+<button class="cta" onclick="doSignup()">Regjistrohu</button>
+<p class="err" id="suErr"></p>
+</div>
+</div>
+
+<div id="sellerArea" class="hide">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+<p class="muted" style="margin:0">I kyçur si <b id="whoAmI"></b></p>
+<button class="cta secondary" onclick="doLogout()">Dil</button>
+</div>
+
+<div class="card">
+<h3 style="margin:0" id="formTitle">Posto një shpallje të re</h3>
+<p class="muted">Shpallja jote do të jetë e dukshme te dyqani për 30 ditë. Mund ta rifreskosh kur të duash që të mos skadojë.</p>
+<form onsubmit="return saveListing(event)" style="margin-top:14px">
+<input type="hidden" id="pId">
+<input type="hidden" id="pPhotoUrl">
+<div class="field"><label>Emri i produktit</label><input id="pName" required></div>
+<div class="row2">
+<div class="field"><label>Kategoria</label>
+<select id="pCat" required>
+<option>Teknologji</option><option>Moda</option><option>Shtëpi</option><option>Bukuri</option><option>Fëmijë</option><option>Sport</option><option>Aksesorë</option>
+</select></div>
+<div class="field"><label>Emoji / ikona (nëse s'ke foto)</label><input id="pIcon" placeholder="🛍️"></div>
+</div>
+<div class="row2">
+<div class="field"><label>Qyteti</label><input id="pCity" placeholder="p.sh. Prishtinë" required></div>
+<div class="field"><label>Gjendja</label>
+<select id="pCondition" required><option value="I ri">I ri</option><option value="I përdorur">I përdorur</option></select></div>
+</div>
+<div class="field">
+<label>Foto e produktit</label>
+<div class="uploadBox">
+<input id="pPhotoFile" type="file" accept="image/*" onchange="handlePhotoSelect(event)">
+<p class="muted" id="uploadStatus" style="margin:8px 0 0">Zgjidh një foto nga telefoni/kompjuteri jot (opsionale).</p>
+<div id="photoPreview" style="margin-top:8px"></div>
+</div>
+</div>
+<div class="row2">
+<div class="field"><label>Çmimi (€)</label><input id="pPrice" type="number" step="0.01" min="0" required></div>
+<div class="field"><label>Çmimi i vjetër (opsionale, për zbritje)</label><input id="pOld" type="number" step="0.01" min="0"></div>
+</div>
+<h3 style="margin:18px 0 4px;font-size:15px">Kontakti yt (do t'i shfaqet blerësit)</h3>
+<div class="row2">
+<div class="field"><label>Emri (p.sh. emri yt ose i dyqanit)</label><input id="pSellerName" required></div>
+<div class="field"><label>Telefoni</label><input id="pSellerPhone" required placeholder="04X XXX XXX"></div>
+</div>
+<button class="cta" type="submit" id="saveBtn">Posto shpalljen</button>
+<button class="cta secondary hide" type="button" id="cancelBtn" onclick="resetForm()">Anulo</button>
+<p class="err" id="formErr"></p>
+<p class="ok" id="formOk"></p>
+</form>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Shpalljet e mia</h3>
+<div id="list" class="muted">Duke ngarkuar…</div>
+</div>
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="imgbb-config.js"></script>
+<script>
+const DAY_MS = 24*60*60*1000;
+const LISTING_DAYS = 30;
+
+auth.onAuthStateChanged(user=>{
+  if(user){
+    authCard.classList.add('hide');
+    sellerArea.classList.remove('hide');
+    whoAmI.textContent = user.email;
+    loadList();
+  }else{
+    authCard.classList.remove('hide');
+    sellerArea.classList.add('hide');
+  }
+});
+
+function showAuthTab(name){
+  loginBox.classList.toggle('hide', name!=='login');
+  signupBox.classList.toggle('hide', name!=='signup');
+  tabLoginBtn.classList.toggle('secondary', name!=='login');
+  tabSignupBtn.classList.toggle('secondary', name!=='signup');
+}
+
+function doLogin(){
+  loginErr.textContent = '';
+  auth.signInWithEmailAndPassword(loginEmail.value.trim(), loginPass.value)
+    .catch(e=>{ loginErr.textContent = 'Email ose fjalëkalim i gabuar.'; });
+}
+
+function doSignup(){
+  suErr.textContent = '';
+  const email = suEmail.value.trim(), pass = suPass.value;
+  if(!email || pass.length < 6){ suErr.textContent = 'Vendos një email dhe fjalëkalim me të paktën 6 shkronja/numra.'; return; }
+  auth.createUserWithEmailAndPassword(email, pass)
+    .catch(e=>{
+      if(e.code === 'auth/email-already-in-use') suErr.textContent = 'Ky email ka tashmë llogari — provo "Hyr".';
+      else suErr.textContent = 'Gabim: ' + e.message;
+    });
+}
+
+function doLogout(){ auth.signOut(); }
+
+function resetForm(){
+  pId.value=''; pName.value=''; pIcon.value=''; pPrice.value=''; pOld.value=''; pCat.selectedIndex=0;
+  pCity.value=''; pCondition.selectedIndex=0; pPhotoUrl.value=''; pPhotoFile.value='';
+  pSellerName.value=''; pSellerPhone.value='';
+  photoPreview.innerHTML=''; uploadStatus.textContent = 'Zgjidh një foto nga telefoni/kompjuteri jot (opsionale).';
+  formTitle.textContent='Posto një shpallje të re'; saveBtn.textContent='Posto shpalljen';
+  cancelBtn.classList.add('hide'); formErr.textContent=''; formOk.textContent='';
+}
+
+function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handlePhotoSelect(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  if(!IMGBB_API_KEY || IMGBB_API_KEY === 'VENDOS_CELESIN_TEND_KETU'){
+    uploadStatus.innerHTML = '<span class="err">Ngarkimi i fotove s\'është konfiguruar ende nga administratori i faqes.</span>';
+    return;
+  }
+  uploadStatus.textContent = 'Duke ngarkuar foton…';
+  photoPreview.innerHTML = '';
+  try{
+    const base64 = await fileToBase64(file);
+    const form = new FormData();
+    form.append('image', base64);
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method:'POST', body: form });
+    const data = await res.json();
+    if(data && data.success){
+      pPhotoUrl.value = data.data.url;
+      photoPreview.innerHTML = `<img class="thumb" src="${data.data.url}">`;
+      uploadStatus.textContent = 'Foto u ngarkua ✓';
+    }else{
+      uploadStatus.innerHTML = '<span class="err">Gabim gjatë ngarkimit të fotos. Provo përsëri.</span>';
+    }
+  }catch(err){
+    uploadStatus.innerHTML = '<span class="err">Gabim: ' + err.message + '</span>';
+  }
+}
+
+async function saveListing(e){
+  e.preventDefault();
+  formErr.textContent=''; formOk.textContent='';
+  const user = auth.currentUser;
+  if(!user){ formErr.textContent = 'Duhet të jesh i kyçur.'; return false; }
+
+  const data = {
+    name: pName.value.trim(),
+    cat: pCat.value,
+    icon: pIcon.value.trim() || '🛍️',
+    city: pCity.value.trim(),
+    condition: pCondition.value,
+    price: parseFloat(pPrice.value),
+    oldPrice: pOld.value ? parseFloat(pOld.value) : parseFloat(pPrice.value),
+    photoUrl: pPhotoUrl.value.trim() || null,
+    sellerId: user.uid,
+    sellerName: pSellerName.value.trim(),
+    sellerPhone: pSellerPhone.value.trim()
+  };
+  if(!data.name || isNaN(data.price) || !data.city){ formErr.textContent = 'Plotëso emrin, qytetin dhe çmimin.'; return false; }
+  if(!data.sellerName || !data.sellerPhone){ formErr.textContent = 'Plotëso emrin dhe telefonin e kontaktit.'; return false; }
+
+  saveBtn.disabled = true;
+  const originalBtnText = saveBtn.textContent;
+  saveBtn.textContent = 'Duke ruajtur…';
+
+  const expiresAt = firebase.firestore.Timestamp.fromMillis(Date.now() + LISTING_DAYS*DAY_MS);
+
+  try{
+    if(pId.value){
+      await db.collection('products').doc(pId.value).update(data);
+      formOk.textContent = 'Shpallja u përditësua.';
+    }else{
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      data.expiresAt = expiresAt;
+      await db.collection('products').add(data);
+      formOk.textContent = 'Shpallja u postua! Do të jetë e dukshme te dyqani për ' + LISTING_DAYS + ' ditë.';
+    }
+    resetForm();
+    loadList();
+  }catch(err){
+    formErr.textContent = 'Diçka shkoi keq: ' + err.message;
+  }
+  saveBtn.disabled = false;
+  saveBtn.textContent = originalBtnText;
+  return false;
+}
+
+function editListing(id, d){
+  pId.value = id; pName.value = d.name; pCat.value = d.cat; pIcon.value = d.icon || '';
+  pCity.value = d.city || ''; pCondition.value = d.condition || 'I ri';
+  pPrice.value = d.price; pOld.value = d.oldPrice && d.oldPrice!==d.price ? d.oldPrice : '';
+  pPhotoUrl.value = d.photoUrl || '';
+  pSellerName.value = d.sellerName || ''; pSellerPhone.value = d.sellerPhone || '';
+  photoPreview.innerHTML = d.photoUrl ? `<img class="thumb" src="${d.photoUrl}">` : '';
+  uploadStatus.textContent = 'Zgjidh një foto të re nëse do ta ndryshosh (opsionale).';
+  formTitle.textContent = 'Redakto shpalljen'; saveBtn.textContent = 'Ruaj ndryshimet';
+  cancelBtn.classList.remove('hide');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function deleteListing(id){
+  if(!confirm('Ta fshish këtë shpallje?')) return;
+  try{ await db.collection('products').doc(id).delete(); loadList(); }
+  catch(e){ alert('Gabim: ' + e.message); }
+}
+
+async function refreshListing(id){
+  try{
+    await db.collection('products').doc(id).update({
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      expiresAt: firebase.firestore.Timestamp.fromMillis(Date.now() + LISTING_DAYS*DAY_MS)
+    });
+    loadList();
+  }catch(e){ alert('Gabim: ' + e.message); }
+}
+
+async function loadList(){
+  const user = auth.currentUser;
+  if(!user) return;
+  list.textContent = 'Duke ngarkuar…';
+  try{
+    const snap = await db.collection('products').where('sellerId','==',user.uid).get();
+    if(snap.empty){ list.innerHTML = '<p class="muted">S\'ke postuar ende asnjë shpallje.</p>'; return; }
+    const docs = snap.docs.slice().sort((a,b)=>{
+      const ta = a.data().createdAt && a.data().createdAt.toMillis ? a.data().createdAt.toMillis() : 0;
+      const tb = b.data().createdAt && b.data().createdAt.toMillis ? b.data().createdAt.toMillis() : 0;
+      return tb - ta;
+    });
+    const now = Date.now();
+    list.innerHTML = docs.map(doc=>{
+      const d = doc.data();
+      const expMs = d.expiresAt && d.expiresAt.toMillis ? d.expiresAt.toMillis() : null;
+      const expired = expMs !== null && expMs < now;
+      const daysLeft = expMs !== null ? Math.max(0, Math.ceil((expMs-now)/DAY_MS)) : null;
+      return `<div class="item">
+        <div class="ic">${d.photoUrl ? `<img class="thumb" src="${d.photoUrl}">` : (d.icon||'🛍️')}</div>
+        <div class="info"><b>${d.name}</b><small>${d.cat} • ${d.city||''} • ${d.condition||''}</small>
+        ${expired ? `<div class="exp">⚠️ Ka skaduar — s'shfaqet më te dyqani</div>` : (daysLeft!==null ? `<div class="exp">Skadon për ${daysLeft} ditë</div>` : '')}</div>
+        <div class="price">${Number(d.price).toFixed(2)} €${d.oldPrice && d.oldPrice!==d.price ? `<span class="old">${Number(d.oldPrice).toFixed(2)} €</span>` : ''}</div>
+        <div class="actions">
+        <button class="cta small secondary" onclick="refreshListing('${doc.id}')">🔄 Rifresko</button>
+        <button class="edit" onclick='editListing("${doc.id}", ${JSON.stringify(d).replace(/'/g,"&apos;")})'>Redakto</button>
+        <button class="del" onclick="deleteListing('${doc.id}')">Fshi</button>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(err){
+    list.innerHTML = '<p class="err">S\'u ngarkuan shpalljet: ' + err.message + '</p>';
+  }
+}
+
+showAuthTab('login');
+</script>
+</body></html>
