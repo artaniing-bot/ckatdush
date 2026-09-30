@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="sq"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Çkat’dush — Marketplace</title>
+<title>Çkat’dush — Shpallje</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f7f7f5;color:#202124}
 :root{--p:#d98b93;--g:#879780;--d:#202124}header{background:white;position:sticky;top:0;z-index:5;box-shadow:0 1px 8px #0001}
@@ -11,32 +11,28 @@
 .cats button.active{background:var(--d);color:#fff}
 main{padding:22px 18px}.hero{background:linear-gradient(110deg,#f6dedf,#e9eee8);border-radius:24px;padding:42px;display:flex;justify-content:space-between;align-items:center}.hero h1{font-size:44px;margin:0 0 8px}.hero p{font-size:18px;color:#555;max-width:650px}.cta{background:#202124;color:#fff;border:0;border-radius:24px;padding:13px 22px;font-weight:bold;cursor:pointer}.bags{font-size:85px}
 .features{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}.feature,.card{background:white;border:1px solid #e6e6e2;border-radius:15px}.feature{padding:17px}.feature b{display:block;margin:5px 0}.feature span{font-size:13px;color:#777}
-.head{display:flex;justify-content:space-between;align-items:center;margin:30px 0 15px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{overflow:hidden;position:relative}.pic{height:210px;background:#f0f0ed;display:flex;align-items:center;justify-content:center;font-size:70px}.info{padding:14px}.name{font-weight:bold;margin-bottom:6px}.price{font-size:19px;font-weight:800;margin-top:7px}.old{text-decoration:line-through;color:#999;font-size:13px}.add{width:100%;margin-top:10px;border:0;background:#202124;color:white;border-radius:9px;padding:10px;cursor:pointer}.badge{position:absolute;top:10px;left:10px;background:var(--p);color:white;padding:5px 8px;border-radius:12px;font-size:11px}
+.head{display:flex;justify-content:space-between;align-items:center;margin:30px 0 15px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{overflow:hidden;position:relative;cursor:pointer}.pic{height:210px;background:#f0f0ed;display:flex;align-items:center;justify-content:center;font-size:70px}.info{padding:14px}.name{font-weight:bold;margin-bottom:6px}.price{font-size:19px;font-weight:800;margin-top:7px}.old{text-decoration:line-through;color:#999;font-size:13px}.add{width:100%;margin-top:10px;border:0;background:#202124;color:white;border-radius:9px;padding:10px;cursor:pointer;text-decoration:none;display:block;text-align:center;box-sizing:border-box;position:relative;z-index:2}.add.disabled{background:#ccc;cursor:default}.badge{position:absolute;top:10px;left:10px;background:var(--p);color:white;padding:5px 8px;border-radius:12px;font-size:11px}
 .empty{grid-column:1/-1;text-align:center;padding:50px 10px;color:#777}
 footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:25px}.foot p,.foot li{color:#bbb;font-size:14px;line-height:1.8}.foot ul{padding:0;list-style:none}
-.modal{display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:16px}.box{background:white;width:min(600px,92%);max-height:88vh;overflow:auto;border-radius:18px;padding:22px}.row{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid #eee;padding:12px 0}
-.qty{display:flex;align-items:center;gap:8px}.qty button{width:26px;height:26px;border:1px solid #ddd;background:#f7f7f5;border-radius:6px;cursor:pointer}.rm{border:0;background:none;color:#c0392b;cursor:pointer;font-size:13px}
-.field{margin-bottom:12px}.field label{display:block;font-size:13px;color:#555;margin-bottom:5px}.field input,.field select{width:100%;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;font-family:inherit}
-.pay{display:flex;gap:10px;margin-bottom:14px}.pay label{flex:1;border:1px solid #ddd;border-radius:10px;padding:11px;text-align:center;cursor:pointer;font-size:14px}.pay input{margin-right:6px}
-.err{color:#c0392b;font-size:13px;margin:4px 0 0}
-.total{display:flex;justify-content:space-between;font-weight:800;font-size:17px;padding:12px 0}
-.ok{text-align:center;padding:10px}.ok .tick{font-size:52px}.ordno{font-family:monospace;background:#f7f7f5;padding:8px 12px;border-radius:8px;display:inline-block;margin:10px 0}
+.modal{display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:16px}.box{background:white;width:min(600px,92%);max-height:88vh;overflow:auto;border-radius:18px;padding:22px}
 .filters{display:flex;gap:10px;flex-wrap:wrap;padding:0 18px 14px;max-width:1250px;margin:auto}
 .filters input,.filters select{padding:9px 12px;border:1px solid #ddd;border-radius:20px;font-size:14px;font-family:inherit;background:white}
 .filters input{width:150px}
 .postBtn{text-decoration:none;color:inherit;display:inline-flex;align-items:center;white-space:nowrap}
-@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:repeat(2,1fr)}.nav{flex-wrap:wrap}.search{order:3;flex-basis:100%}.foot{grid-template-columns:1fr 1fr}}@media(max-width:520px){.hero{padding:25px}.hero h1{font-size:32px}.bags{display:none}.grid{gap:9px}.pic{height:150px;font-size:50px}.features{grid-template-columns:1fr}.pay{flex-direction:column}.filters{flex-direction:column}.filters input,.filters select{width:100%}}
+.pdPic{height:320px;background:#f0f0ed;display:flex;align-items:center;justify-content:center;font-size:110px;border-radius:14px;overflow:hidden;margin-bottom:16px}.pdPic img{width:100%;height:100%;object-fit:cover}
+.pdMeta{color:#777;font-size:14px;margin:6px 0}
+.pdContact{background:#f7f7f5;border-radius:12px;padding:14px;margin:14px 0;font-size:14px;line-height:1.7}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:repeat(2,1fr)}.nav{flex-wrap:wrap}.search{order:3;flex-basis:100%}.foot{grid-template-columns:1fr 1fr}}@media(max-width:520px){.hero{padding:25px}.hero h1{font-size:32px}.bags{display:none}.grid{gap:9px}.pic{height:150px;font-size:50px}.features{grid-template-columns:1fr}.filters{flex-direction:column}.filters input,.filters select{width:100%}.pdPic{height:220px;font-size:70px}}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="firebase-config.js"></script>
 </head><body>
-<div class="top">🚚 Dërgesë në gjithë Kosovën • 🛍️ Marketplace për blerës dhe shitës</div>
+<div class="top">🚚 Në gjithë Kosovën • 📋 Posto e gjej shpallje — kontakto shitësin direkt</div>
 <header><div class="nav">
 <img src="logo.png" class="logo" alt="Çkat’dush">
 <div class="search"><input id="q" placeholder="Çka po kërkon?" onkeydown="if(event.key==='Enter')search()"><button onclick="search()">Kërko</button></div>
 <a href="postoj.html" class="btn postBtn">+ Posto shpallje</a>
-<button class="btn" onclick="alert('Lista e dëshirave do të jetë pjesë e llogarisë.')">♡</button><button class="btn" onclick="cartOpen()">🛒 <b id="num">0</b></button>
 </div><div class="cats" id="cats">
 <button data-c="Të gjitha" class="active" onclick="filter('Të gjitha')">Të gjitha</button><button data-c="Teknologji" onclick="filter('Teknologji')">Teknologji</button><button data-c="Moda" onclick="filter('Moda')">Moda</button><button data-c="Shtëpi" onclick="filter('Shtëpi')">Shtëpi</button><button data-c="Bukuri" onclick="filter('Bukuri')">Bukuri</button><button data-c="Fëmijë" onclick="filter('Fëmijë')">Fëmijë</button><button data-c="Sport" onclick="filter('Sport')">Sport</button><button data-c="Aksesorë" onclick="filter('Aksesorë')">Aksesorë</button>
 </div>
@@ -50,54 +46,38 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 </div>
 </header>
 <main>
-<section class="hero"><div><h1>Çkat’dush 🛍️</h1><p>Gjej çkado që dush — produkte, oferta dhe shitës lokalë në një marketplace të vetëm.</p><button class="cta" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shiko produktet</button></div><div class="bags">🛍️ 🛍️</div></section>
-<div class="features"><div class="feature">🚚<b>Dërgesa</b><span>Në gjithë Kosovën</span></div><div class="feature">🔒<b>Blerje të sigurta</b><span>Porosi të thjeshta</span></div><div class="feature">🏪<b>Shitës lokalë</b><span>Hap dyqanin tënd</span></div><div class="feature">💳<b>Pagesa</b><span>Online ose COD</span></div></div>
-<section id="products"><div class="head"><h2>Produktet e zgjedhura</h2><span id="res"></span></div><div class="grid" id="grid"></div></section>
+<section class="hero"><div><h1>Çkat’dush 📋</h1><p>Posto shpalljen tënde falas, ose gjej atë që dush nga shitës të tjerë — kontakto direkt, pa ndërmjetës.</p><button class="cta" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shiko shpalljet</button></div><div class="bags">📋 🔍</div></section>
+<div class="features"><div class="feature">📋<b>Posto falas</b><span>Shpallja jote në pak minuta</span></div><div class="feature">📞<b>Kontakt direkt</b><span>Bisedo me shitësin</span></div><div class="feature">🏙️<b>Sipas qytetit</b><span>Filtro afër teje</span></div><div class="feature">🔄<b>Rifresko</b><span>Mbaje shpalljen aktive</span></div></div>
+<section id="products"><div class="head"><h2>Shpalljet</h2><span id="res"></span></div><div class="grid" id="grid"></div></section>
 </main>
-<footer><div class="foot"><div><img src="logo.png" style="width:145px;background:#fff;border-radius:9px"><p>Çkat’dush — marketplace për Kosovë.</p></div><div><h3>Klientët</h3><ul><li>Shporta</li><li>Porositë</li><li>Lista e dëshirave</li></ul></div><div><h3>Shitësit</h3><ul><li><a href="postoj.html" style="color:#bbb">Posto shpallje</a></li><li>Produktet</li><li>Porositë</li></ul></div><div><h3>Ndihmë</h3><ul><li>Kontakti</li><li>Transporti</li><li>Kushtet</li></ul></div></div></footer>
+<footer><div class="foot"><div><img src="logo.png" style="width:145px;background:#fff;border-radius:9px"><p>Çkat’dush — treg shpalljesh për Kosovë.</p></div><div><h3>Shitësit</h3><ul><li><a href="postoj.html" style="color:#bbb">Posto shpallje</a></li><li>Shpalljet e mia</li></ul></div><div><h3>Blerësit</h3><ul><li>Kërko</li><li>Filtro sipas qytetit</li></ul></div><div><h3>Ndihmë</h3><ul><li>Kontakti</li><li>Kushtet</li></ul></div></div></footer>
 
-<div class="modal" id="modal"><div class="box"><div style="display:flex;justify-content:space-between"><h2>Shporta</h2><button class="btn" onclick="closeModal('modal')">×</button></div><div id="cart"></div><div id="cartTotal"></div><button class="cta" id="toCheckout" style="width:100%;margin-top:8px" onclick="openCheckout()">Vazhdo te porosia</button></div></div>
-
-<div class="modal" id="checkoutModal"><div class="box">
-<div style="display:flex;justify-content:space-between"><h2>Të dhënat e porosisë</h2><button class="btn" onclick="closeModal('checkoutModal')">×</button></div>
-<form id="checkoutForm" onsubmit="return submitOrder(event)">
-<div class="field"><label>Emri e Mbiemri</label><input id="cName" required></div>
-<div class="field"><label>Telefoni</label><input id="cPhone" required placeholder="04X XXX XXX"></div>
-<div class="field"><label>Adresa</label><input id="cAddr" required></div>
-<div class="field"><label>Qyteti</label><input id="cCity" required></div>
-<div class="field"><label>Mënyra e pagesës</label>
-<div class="pay">
-<label><input type="radio" name="pay" value="COD" checked> Pagesë në dorëzim (COD)</label>
-<label><input type="radio" name="pay" value="Online"> Pagesë online</label>
-</div></div>
-<div id="checkoutTotal" class="total"></div>
-<p id="formErr" class="err"></p>
-<button class="cta" style="width:100%" type="submit">Konfirmo porosinë</button>
-</form>
-</div></div>
-
-<div class="modal" id="okModal"><div class="box ok">
-<div class="tick">✅</div><h2>Porosia u pranua!</h2>
-<p>Numri i porosisë:</p><div class="ordno" id="ordNo"></div>
-<p style="color:#777;font-size:14px">Do të kontaktohesh në numrin e telefonit për konfirmim të dërgesës.</p>
-<button class="cta" style="width:100%" onclick="closeModal('okModal')">Mbyll</button>
+<div class="modal" id="productModal"><div class="box">
+<div style="display:flex;justify-content:space-between"><h2 id="pdName" style="margin:0"></h2><button class="btn" onclick="closeModal('productModal')">×</button></div>
+<div id="pdPic" class="pdPic"></div>
+<div class="pdMeta" id="pdMeta"></div>
+<div class="price" id="pdPrice" style="font-size:24px"></div>
+<div id="pdContact"></div>
+<a id="pdAddBtn" class="add" href="#">Kontakto shitësin</a>
 </div></div>
 
 <script>
-// Produktet fillestare (përdoren vetëm nëse Firebase s'është konfiguruar ende
-// ose baza e të dhënave është ende bosh — shiko admin.html / postoj.html për t'i shtuar këto vetë)
+// Shpalljet fillestare (përdoren vetëm nëse Firebase s'është konfiguruar ende
+// ose baza e të dhënave është ende bosh — shiko postoj.html / admin.html për t'i shtuar këto vetë)
 const FALLBACK_P=[
-  {id:'demo-1',name:'Smartwatch Pro',cat:'Teknologji',price:39.99,oldPrice:49.99,icon:'⌚',photoUrl:null,city:'Prishtinë',condition:'I ri'},
-  {id:'demo-2',name:'Kufje Wireless',cat:'Teknologji',price:24.99,oldPrice:34.99,icon:'🎧',photoUrl:null,city:'Prizren',condition:'I ri'},
-  {id:'demo-3',name:'Çantë elegante',cat:'Moda',price:24.90,oldPrice:32.90,icon:'👜',photoUrl:null,city:'Pejë',condition:'I përdorur'},
-  {id:'demo-4',name:'Atlete sportive',cat:'Sport',price:44.99,oldPrice:59.99,icon:'👟',photoUrl:null,city:'Ferizaj',condition:'I ri'},
-  {id:'demo-5',name:'Set kozmetik',cat:'Bukuri',price:16.50,oldPrice:22,icon:'💄',photoUrl:null,city:'Gjilan',condition:'I ri'},
-  {id:'demo-6',name:'Llambë dekorative',cat:'Shtëpi',price:18.90,oldPrice:25,icon:'💡',photoUrl:null,city:'Mitrovicë',condition:'I përdorur'},
-  {id:'demo-7',name:'Lodër edukative',cat:'Fëmijë',price:13.90,oldPrice:17.90,icon:'🧸',photoUrl:null,city:'Prishtinë',condition:'I ri'},
-  {id:'demo-8',name:'Syze dielli',cat:'Aksesorë',price:21.90,oldPrice:29.90,icon:'🕶️',photoUrl:null,city:'Vushtrri',condition:'I ri'}
+  {id:'demo-1',name:'Smartwatch Pro',cat:'Teknologji',price:39.99,oldPrice:49.99,icon:'⌚',photoUrl:null,city:'Prishtinë',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-2',name:'Kufje Wireless',cat:'Teknologji',price:24.99,oldPrice:34.99,icon:'🎧',photoUrl:null,city:'Prizren',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-3',name:'Çantë elegante',cat:'Moda',price:24.90,oldPrice:32.90,icon:'👜',photoUrl:null,city:'Pejë',condition:'I përdorur',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-4',name:'Atlete sportive',cat:'Sport',price:44.99,oldPrice:59.99,icon:'👟',photoUrl:null,city:'Ferizaj',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-5',name:'Set kozmetik',cat:'Bukuri',price:16.50,oldPrice:22,icon:'💄',photoUrl:null,city:'Gjilan',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-6',name:'Llambë dekorative',cat:'Shtëpi',price:18.90,oldPrice:25,icon:'💡',photoUrl:null,city:'Mitrovicë',condition:'I përdorur',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-7',name:'Lodër edukative',cat:'Fëmijë',price:13.90,oldPrice:17.90,icon:'🧸',photoUrl:null,city:'Prishtinë',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-8',name:'Syze dielli',cat:'Aksesorë',price:21.90,oldPrice:29.90,icon:'🕶️',photoUrl:null,city:'Vushtrri',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''}
 ];
 
 let P = FALLBACK_P;
+let currentCat = 'Të gjitha';
+let currentQuery = '';
 
 async function loadProducts(){
   try{
@@ -110,196 +90,54 @@ async function loadProducts(){
           id: d.id, name: x.name, cat: x.cat, price: Number(x.price), oldPrice: Number(x.oldPrice||x.price),
           icon: x.icon || '🛍️', photoUrl: x.photoUrl || null,
           city: x.city || '', condition: x.condition || '',
-          sellerId: x.sellerId || null, sellerName: x.sellerName || '', sellerPhone: x.sellerPhone || '',
+          sellerName: x.sellerName || '', sellerPhone: x.sellerPhone || '',
           expiresAt: x.expiresAt || null
         };
       }).filter(x => !x.expiresAt || (x.expiresAt.toDate && x.expiresAt.toDate() > now));
     }
   }catch(e){
-    console.warn('Firebase s\'është konfiguruar ende ose s\'ka lidhje — po përdoren produktet e parazgjedhura.', e);
+    console.warn('Firebase s\'është konfiguruar ende ose s\'ka lidhje — po përdoren shpalljet e parazgjedhura.', e);
   }
   applyFilters();
 }
 
-// C = cart items: {id, name, cat, price, old, icon, photoUrl, qty}
-let C = loadCart();
-let currentList = P;
-let currentCat = 'Të gjitha';
-let currentQuery = '';
-
-function loadCart(){
-  try{
-    const raw = localStorage.getItem('ckatdush_cart');
-    const c = raw ? JSON.parse(raw) : [];
-    return c.filter(x=>x && x.id);
-  }
-  catch(e){ return []; }
-}
-function saveCart(){
-  try{ localStorage.setItem('ckatdush_cart', JSON.stringify(C)); }catch(e){}
-}
-function updateBadge(){
-  num.textContent = C.reduce((s,x)=>s+x.qty,0);
-}
-
 function render(a=P){
-  currentList = a;
-  grid.innerHTML = a.length ? a.map((x,i)=>{
+  grid.innerHTML = a.length ? a.map((x)=>{
     const meta = [x.cat, x.city, x.condition].filter(Boolean).join(' • ');
     const contact = x.sellerName ? `<div style="font-size:12px;color:#777;margin-top:4px">👤 ${x.sellerName}${x.sellerPhone ? ' • 📞 '+x.sellerPhone : ''}</div>` : '';
-    return `<div class="card"><span class="badge">OFERTË</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" style="width:100%;height:100%;object-fit:cover">` : x.icon}</div><div class="info"><div class="name">${x.name}</div><small>${meta}</small>${contact}<div>★ 4.${6+(i%4)}</div><div class="price">${x.price.toFixed(2)} € <span class="old">${x.oldPrice.toFixed(2)} €</span></div><button class="add" onclick="add('${x.id}')">Shto në shportë</button></div></div>`;
+    const phone = (x.sellerPhone||'').replace(/\s+/g,'');
+    const actionBtn = phone
+      ? `<a href="tel:${phone}" class="add" onclick="event.stopPropagation()">📞 Kontakto shitësin</a>`
+      : `<span class="add disabled">Kontakt i padisponueshëm</span>`;
+    return `<div class="card" onclick="openProduct('${x.id}')"><span class="badge">SHPALLJE</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" style="width:100%;height:100%;object-fit:cover">` : x.icon}</div><div class="info"><div class="name">${x.name}</div><small>${meta}</small>${contact}<div class="price">${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}</div>${actionBtn}</div></div>`;
   }).join('')
-    : `<div class="empty">Nuk u gjet asnjë produkt.</div>`;
-  res.textContent = a.length + ' produkte';
+    : `<div class="empty">Nuk u gjet asnjë shpallje.</div>`;
+  res.textContent = a.length + ' shpallje';
 }
 
-function add(id){
+function openProduct(id){
   const x = P.find(p=>p.id===id);
   if(!x) return;
-  let c = C.find(y=>y.id===id);
-  if(c) c.qty++;
-  else C.push({id:x.id, name:x.name, cat:x.cat, price:x.price, old:x.oldPrice, icon:x.icon, photoUrl:x.photoUrl||null, qty:1});
-  saveCart();
-  updateBadge();
+  pdName.textContent = x.name;
+  pdPic.innerHTML = x.photoUrl ? `<img src="${x.photoUrl}">` : x.icon;
+  pdMeta.textContent = [x.cat, x.city, x.condition].filter(Boolean).join(' • ');
+  pdPrice.innerHTML = `${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}`;
+  pdContact.innerHTML = x.sellerName ? `<div class="pdContact">👤 <b>${x.sellerName}</b>${x.sellerPhone ? `<br>📞 ${x.sellerPhone}` : ''}</div>` : '';
+  const phone = (x.sellerPhone||'').replace(/\s+/g,'');
+  if(phone){
+    pdAddBtn.classList.remove('disabled');
+    pdAddBtn.textContent = '📞 Telefono: ' + x.sellerPhone;
+    pdAddBtn.href = 'tel:' + phone;
+  }else{
+    pdAddBtn.classList.add('disabled');
+    pdAddBtn.textContent = 'Kontakt i padisponueshëm';
+    pdAddBtn.removeAttribute('href');
+  }
+  openModal('productModal');
 }
 
-function changeQty(id, delta){
-  const c = C.find(y=>y.id===id);
-  if(!c) return;
-  c.qty += delta;
-  if(c.qty<=0) C = C.filter(y=>y.id!==id);
-  saveCart();
-  updateBadge();
-  renderCart();
-}
-function removeItem(id){
-  C = C.filter(y=>y.id!==id);
-  saveCart();
-  updateBadge();
-  renderCart();
-}
-
-function cartTotal(){
-  return C.reduce((s,x)=>s+x.price*x.qty,0);
-}
-
-function renderCart(){
-  cart.innerHTML = C.length ? C.map(x=>`<div class="row"><span>${x.icon} ${x.name}</span><div class="qty"><button onclick="changeQty('${x.id}',-1)">−</button><b>${x.qty}</b><button onclick="changeQty('${x.id}',1)">+</button></div><b>${(x.price*x.qty).toFixed(2)} €</b><button class="rm" onclick="removeItem('${x.id}')">Hiq</button></div>`).join('')
-    : '<p style="text-align:center;padding:25px;color:#777">Shporta është bosh.</p>';
-  document.getElementById('cartTotal').innerHTML = C.length ? `<div class="total"><span>Totali</span><span>${cartTotal().toFixed(2)} €</span></div>` : '';
-  document.getElementById('toCheckout').style.display = C.length ? 'block' : 'none';
-}
-
-function cartOpen(){ renderCart(); openModal('modal'); }
 function openModal(id){ document.getElementById(id).style.display='flex'; }
 function closeModal(id){ document.getElementById(id).style.display='none'; }
-
-function openCheckout(){
-  if(!C.length) return;
-  closeModal('modal');
-  document.getElementById('checkoutTotal').innerHTML = `<span>Totali për pagesë</span><span>${cartTotal().toFixed(2)} €</span>`;
-  document.getElementById('formErr').textContent = '';
-  openModal('checkoutModal');
-}
-
-async function submitOrder(e){
-  e.preventDefault();
-  const name = cName.value.trim(), phone = cPhone.value.trim(), addr = cAddr.value.trim(), city = cCity.value.trim();
-  const phoneOk = /^0\d{8,9}$/.test(phone.replace(/\s+/g,''));
-  if(!name || !phone || !addr || !city){
-    formErr.textContent = 'Ju lutem plotësoni të gjitha fushat.'; return false;
-  }
-  if(!phoneOk){
-    formErr.textContent = 'Numri i telefonit nuk duket i saktë (p.sh. 044123456).'; return false;
-  }
-  const pay = document.querySelector('input[name="pay"]:checked').value;
-  const order = {
-    id: 'CKD-' + Date.now().toString().slice(-8),
-    date: new Date().toISOString(),
-    customer: {name, phone, addr, city},
-    payment: pay,
-    items: C,
-    total: cartTotal()
-  };
-
-  if(pay === 'Online'){
-    return payOnline(order);
-  }
-
-  // COD — porosia konfirmohet menjëherë
-  finalizeLocal(order);
-  try{
-    await db.collection('orders').add({...order, status:'Në pritje', createdAt: firebase.firestore.FieldValue.serverTimestamp()});
-  }catch(e){
-    console.warn('Porosia u ruajt vetëm lokalisht — kontrollo firebase-config.js', e);
-  }
-  C = [];
-  saveCart();
-  updateBadge();
-  checkoutForm.reset();
-  closeModal('checkoutModal');
-  ordNo.textContent = order.id;
-  openModal('okModal');
-  return false;
-}
-
-function finalizeLocal(order){
-  let orders = [];
-  try{ orders = JSON.parse(localStorage.getItem('ckatdush_orders')||'[]'); }catch(e){}
-  orders.push(order);
-  try{ localStorage.setItem('ckatdush_orders', JSON.stringify(orders)); }catch(e){}
-}
-
-async function payOnline(order){
-  const btn = checkoutForm.querySelector('button[type=submit]');
-  btn.disabled = true; btn.textContent = 'Duke ju çuar te pagesa…';
-  formErr.textContent = '';
-  try{
-    // Ruaje porosinë si "në pritje të pagesës" te Firebase para se të shkosh te Stripe
-    const ref = await db.collection('orders').add({...order, status:'Pritje pagese', createdAt: firebase.firestore.FieldValue.serverTimestamp()});
-    finalizeLocal(order);
-
-    const res = await fetch('/api/create-checkout-session', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ orderId: ref.id, items: C, customer: order.customer })
-    });
-    if(!res.ok) throw new Error('Serveri i pagesave nuk u përgjigj (a i ke vendosur çelësat e Stripe në Vercel?).');
-    const data = await res.json();
-    if(!data.url) throw new Error(data.error || 'S\'u krijua sesioni i pagesës.');
-    window.location.href = data.url; // e çon te faqja e pagesës e Stripe
-  }catch(err){
-    formErr.textContent = err.message;
-    btn.disabled = false; btn.textContent = 'Konfirmo porosinë';
-  }
-  return false;
-}
-
-async function checkPaymentReturn(){
-  const params = new URLSearchParams(window.location.search);
-  if(params.get('canceled')){
-    alert('Pagesa u anulua. Shporta jote është ende e paprekur — mund të provosh përsëri.');
-    history.replaceState({}, '', window.location.pathname);
-    return;
-  }
-  if(params.get('paid') && params.get('order') && params.get('session_id')){
-    try{
-      const res = await fetch('/api/confirm-order', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ orderId: params.get('order'), sessionId: params.get('session_id') })
-      });
-      const data = await res.json();
-      if(data.confirmed){
-        C = []; saveCart(); updateBadge();
-        ordNo.textContent = params.get('order').slice(0,10);
-        openModal('okModal');
-      }else{
-        alert('Pagesa s\'u konfirmua ende. Nëse ke paguar, na kontakto me numrin e porosisë.');
-      }
-    }catch(e){ console.warn(e); }
-    history.replaceState({}, '', window.location.pathname);
-  }
-}
 
 function filter(c){
   currentCat = c;
@@ -332,10 +170,8 @@ function clearFilters(){
   applyFilters();
 }
 
-[modal,checkoutModal,okModal].forEach(m=>m.addEventListener('click', e=>{ if(e.target===m) m.style.display='none'; }));
+productModal.addEventListener('click', e=>{ if(e.target===productModal) productModal.style.display='none'; });
 
 render();
-updateBadge();
 loadProducts();
-checkPaymentReturn();
 </script></body></html>

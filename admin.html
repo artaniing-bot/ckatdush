@@ -99,7 +99,12 @@ select.statusSel{margin-top:8px;padding:8px;border-radius:8px;border:1px solid #
 <div class="field"><label>Çmimi (€)</label><input id="pPrice" type="number" step="0.01" min="0" required></div>
 <div class="field"><label>Çmimi i vjetër (opsionale, për zbritje)</label><input id="pOld" type="number" step="0.01" min="0"></div>
 </div>
-<button class="cta" type="submit" id="saveBtn">Shto produktin</button>
+<h3 style="margin:18px 0 4px;font-size:15px">Kontakti (do t'i shfaqet blerësit)</h3>
+<div class="row2">
+<div class="field"><label>Emri</label><input id="pSellerName" required placeholder="p.sh. Çkat'dush"></div>
+<div class="field"><label>Telefoni</label><input id="pSellerPhone" required placeholder="04X XXX XXX"></div>
+</div>
+<button class="cta" type="submit" id="saveBtn">Shto shpalljen</button>
 <button class="cta secondary hide" type="button" id="cancelBtn" onclick="resetForm()">Anulo</button>
 <p class="err" id="formErr"></p>
 <p class="ok" id="formOk"></p>
@@ -208,7 +213,8 @@ function doLogout(){ auth.signOut(); }
 function resetForm(){
   pId.value=''; pName.value=''; pIcon.value=''; pPrice.value=''; pOld.value=''; pCat.selectedIndex=0;
   pCity.value=''; pCondition.value=''; pPhotoUrl.value=''; photoPreview.innerHTML='';
-  formTitle.textContent='Shto produkt të ri'; saveBtn.textContent='Shto produktin';
+  pSellerName.value=''; pSellerPhone.value='';
+  formTitle.textContent='Shto shpallje të re'; saveBtn.textContent='Shto shpalljen';
   cancelBtn.classList.add('hide'); formErr.textContent=''; formOk.textContent='';
 }
 
@@ -228,9 +234,12 @@ async function saveProduct(e){
     condition: pCondition.value || '',
     price: parseFloat(pPrice.value),
     oldPrice: pOld.value ? parseFloat(pOld.value) : parseFloat(pPrice.value),
-    photoUrl: pPhotoUrl.value.trim() || null
+    photoUrl: pPhotoUrl.value.trim() || null,
+    sellerName: pSellerName.value.trim(),
+    sellerPhone: pSellerPhone.value.trim()
   };
   if(!data.name || isNaN(data.price)){ formErr.textContent = 'Plotëso emrin dhe çmimin.'; return false; }
+  if(!data.sellerName || !data.sellerPhone){ formErr.textContent = 'Plotëso emrin dhe telefonin e kontaktit.'; return false; }
 
   saveBtn.disabled = true;
   const originalBtnText = saveBtn.textContent;
@@ -260,8 +269,9 @@ function editProduct(id, d){
   pCity.value = d.city || ''; pCondition.value = d.condition || '';
   pPrice.value = d.price; pOld.value = d.oldPrice && d.oldPrice!==d.price ? d.oldPrice : '';
   pPhotoUrl.value = d.photoUrl || '';
+  pSellerName.value = d.sellerName || ''; pSellerPhone.value = d.sellerPhone || '';
   updatePhotoPreview();
-  formTitle.textContent = 'Redakto produktin'; saveBtn.textContent = 'Ruaj ndryshimet';
+  formTitle.textContent = 'Redakto shpalljen'; saveBtn.textContent = 'Ruaj ndryshimet';
   cancelBtn.classList.remove('hide');
   window.scrollTo({top:0,behavior:'smooth'});
 }
