@@ -4,7 +4,7 @@
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f7f7f5;color:#202124}
 :root{--p:#d98b93;--g:#879780;--d:#202124}header{background:white;position:sticky;top:0;z-index:5;box-shadow:0 1px 8px #0001}
-.top{background:#202124;color:#fff;text-align:center;padding:8px;font-size:13px}.nav,.cats,main,footer>div{max-width:1250px;margin:auto}
+.top{background:#202124;color:#fff;text-align:center;padding:8px;font-size:13px}.nav,.cats,.countries,main,footer>div{max-width:1250px;margin:auto}
 .nav{padding:12px 18px;display:flex;gap:16px;align-items:center}.logo{width:125px;height:58px;object-fit:contain}
 .search{height:46px;display:flex;flex:1;border:1px solid #ddd;border-radius:25px;overflow:hidden}.search input{flex:1;border:0;outline:0;padding:0 18px;font-size:15px}.search button{border:0;background:var(--p);color:white;padding:0 22px;font-weight:bold}
 .btn{border:1px solid #eee;background:white;border-radius:22px;padding:10px 14px;cursor:pointer}.cats{display:flex;gap:12px;padding:10px 18px;overflow:auto}.cats button{border:2.5px solid #111;background:#e3f6e6;padding:10px 14px;border-radius:16px;white-space:nowrap;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;min-width:74px;font-size:12px;font-family:inherit;color:#111}
@@ -12,6 +12,10 @@
 .cats button .catIcon svg{width:24px;height:24px;stroke:#111}
 .cats button.active{background:#111;color:#fff;border-color:#111}
 .cats button.active .catIcon svg{stroke:#fff}
+.countries{display:flex;gap:8px;padding:0 18px 12px;overflow:auto}
+.countries button{border:1.5px solid #ddd;background:#fff;padding:7px 13px;border-radius:16px;white-space:nowrap;cursor:pointer;font-size:13px;font-family:inherit;color:#333;display:flex;align-items:center;gap:6px}
+.countries button.active{background:#202124;color:#fff;border-color:#202124}
+#langBtn{min-width:46px;font-weight:bold;font-size:13px}
 main{padding:22px 18px}.hero{background:linear-gradient(110deg,#f6dedf,#e9eee8);border-radius:24px;padding:42px;display:flex;justify-content:space-between;align-items:center}.hero h1{font-size:44px;margin:0 0 8px}.hero p{font-size:18px;color:#555;max-width:650px}.cta{background:#202124;color:#fff;border:0;border-radius:24px;padding:13px 22px;font-weight:bold;cursor:pointer}.bags{font-size:85px}
 .features{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}.feature,.card{background:white;border:1px solid #e6e6e2;border-radius:15px}.feature{padding:17px}.feature b{display:block;margin:5px 0}.feature span{font-size:13px;color:#777}
 .head{display:flex;justify-content:space-between;align-items:center;margin:30px 0 15px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card{overflow:hidden;position:relative;cursor:pointer}.pic{height:210px;background:#f0f0ed;display:flex;align-items:center;justify-content:center;font-size:70px}.info{padding:14px}.name{font-weight:bold;margin-bottom:6px}.price{font-size:19px;font-weight:800;margin-top:7px}.old{text-decoration:line-through;color:#999;font-size:13px}.add{width:100%;margin-top:10px;border:0;background:#202124;color:white;border-radius:9px;padding:10px;cursor:pointer;text-decoration:none;display:block;text-align:center;box-sizing:border-box;position:relative;z-index:2}.add.disabled{background:#ccc;cursor:default}.badge{position:absolute;top:10px;left:10px;background:var(--p);color:white;padding:5px 8px;border-radius:12px;font-size:11px}
@@ -32,29 +36,37 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="firebase-config.js"></script>
 </head><body>
-<div class="top">🚚 Në gjithë Kosovën • 📋 Posto e gjej shpallje — kontakto shitësin direkt</div>
+<div class="top"><span data-i18n="topBar">🚚 Në gjithë Kosovën, Shqipërinë, Maqedoninë e Veriut dhe Malin e Zi • 📋 Posto e gjej shpallje — kontakto shitësin direkt</span></div>
 <header><div class="nav">
 <img src="logo.png" class="logo" alt="Çkat’dush">
-<div class="search"><input id="q" placeholder="Çka po kërkon?" onkeydown="if(event.key==='Enter')search()"><button onclick="search()">Kërko</button></div>
-<a href="postoj.html" class="btn postBtn">+ Posto shpallje</a>
+<div class="search"><input id="q" data-i18n-ph="searchPlaceholder" placeholder="Çka po kërkon?" onkeydown="if(event.key==='Enter')search()"><button onclick="search()" data-i18n="searchBtn">Kërko</button></div>
+<a href="postoj.html" class="btn postBtn" data-i18n="postBtn">+ Posto shpallje</a>
+<button class="btn" id="langBtn" onclick="toggleLang()">EN</button>
 </div><div class="cats" id="cats">
-<button data-c="Të gjitha" class="active" onclick="filter('Të gjitha')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.2" y="3.2" width="7" height="7" rx="1.2"/><rect x="13.8" y="3.2" width="7" height="7" rx="1.2"/><rect x="3.2" y="13.8" width="7" height="7" rx="1.2"/><rect x="13.8" y="13.8" width="7" height="7" rx="1.2"/></svg></span><span>Të gjitha</span></button><button data-c="Automjete" onclick="filter('Automjete')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16.5V12l2-5.2h9l3 5.2h1.3a1.7 1.7 0 0 1 1.7 1.7v3"/><path d="M4 16.5h16.5"/><circle cx="7.3" cy="16.8" r="1.9"/><circle cx="16.7" cy="16.8" r="1.9"/></svg></span><span>Automjete</span></button><button data-c="Teknologji" onclick="filter('Teknologji')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><line x1="9.5" y1="19" x2="14.5" y2="19"/></svg></span><span>Teknologji</span></button><button data-c="Moda" onclick="filter('Moda')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 3.5L12 5.2l3.5-1.7 4 2.6-2.3 3-1.7-1V20H9V8.1l-1.7 1-2.3-3z"/></svg></span><span>Moda</span></button><button data-c="Shtëpi" onclick="filter('Shtëpi')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5"/><path d="M6 10v10h12V10"/><rect x="10" y="14.5" width="4" height="5.5"/></svg></span><span>Shtëpi</span></button><button data-c="Bukuri" onclick="filter('Bukuri')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3h5l0.8 4.5-3.3 2.8-3.3-2.8z"/><rect x="8.3" y="10.3" width="7.4" height="9.7" rx="2.2"/></svg></span><span>Bukuri</span></button><button data-c="Fëmijë" onclick="filter('Fëmijë')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="10.5" width="6.5" height="6.5" rx="1.2"/><rect x="14" y="10.5" width="6.5" height="6.5" rx="1.2"/><rect x="8.75" y="3.5" width="6.5" height="6.5" rx="1.2"/></svg></span><span>Fëmijë</span></button><button data-c="Sport" onclick="filter('Sport')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3.3c-2.6 2.5-2.6 15.9 0 17.4M12 3.3c2.6 2.5 2.6 15.9 0 17.4M3.3 12h17.4"/></svg></span><span>Sport</span></button><button data-c="Aksesorë" onclick="filter('Aksesorë')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.7" cy="13" r="3.3"/><circle cx="17.3" cy="13" r="3.3"/><path d="M10 12.3h4M3.4 10.5L2 9M20.6 10.5L22 9"/></svg></span><span>Aksesorë</span></button>
+<button data-c="Të gjitha" class="active" onclick="filter('Të gjitha')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.2" y="3.2" width="7" height="7" rx="1.2"/><rect x="13.8" y="3.2" width="7" height="7" rx="1.2"/><rect x="3.2" y="13.8" width="7" height="7" rx="1.2"/><rect x="13.8" y="13.8" width="7" height="7" rx="1.2"/></svg></span><span data-i18n="catAll">Të gjitha</span></button><button data-c="Automjete" onclick="filter('Automjete')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16.5V12l2-5.2h9l3 5.2h1.3a1.7 1.7 0 0 1 1.7 1.7v3"/><path d="M4 16.5h16.5"/><circle cx="7.3" cy="16.8" r="1.9"/><circle cx="16.7" cy="16.8" r="1.9"/></svg></span><span data-i18n="catAuto">Automjete</span></button><button data-c="Teknologji" onclick="filter('Teknologji')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><line x1="9.5" y1="19" x2="14.5" y2="19"/></svg></span><span data-i18n="catTech">Teknologji</span></button><button data-c="Moda" onclick="filter('Moda')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 3.5L12 5.2l3.5-1.7 4 2.6-2.3 3-1.7-1V20H9V8.1l-1.7 1-2.3-3z"/></svg></span><span data-i18n="catFashion">Moda</span></button><button data-c="Shtëpi" onclick="filter('Shtëpi')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5"/><path d="M6 10v10h12V10"/><rect x="10" y="14.5" width="4" height="5.5"/></svg></span><span data-i18n="catHome">Shtëpi</span></button><button data-c="Bukuri" onclick="filter('Bukuri')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3h5l0.8 4.5-3.3 2.8-3.3-2.8z"/><rect x="8.3" y="10.3" width="7.4" height="9.7" rx="2.2"/></svg></span><span data-i18n="catBeauty">Bukuri</span></button><button data-c="Fëmijë" onclick="filter('Fëmijë')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="10.5" width="6.5" height="6.5" rx="1.2"/><rect x="14" y="10.5" width="6.5" height="6.5" rx="1.2"/><rect x="8.75" y="3.5" width="6.5" height="6.5" rx="1.2"/></svg></span><span data-i18n="catKids">Fëmijë</span></button><button data-c="Sport" onclick="filter('Sport')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3.3c-2.6 2.5-2.6 15.9 0 17.4M12 3.3c2.6 2.5 2.6 15.9 0 17.4M3.3 12h17.4"/></svg></span><span data-i18n="catSport">Sport</span></button><button data-c="Aksesorë" onclick="filter('Aksesorë')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.7" cy="13" r="3.3"/><circle cx="17.3" cy="13" r="3.3"/><path d="M10 12.3h4M3.4 10.5L2 9M20.6 10.5L22 9"/></svg></span><span data-i18n="catAccessories">Aksesorë</span></button>
+</div>
+<div class="countries" id="countries">
+<button data-k="Të gjitha" class="active" onclick="filterCountry('Të gjitha')">🌍 <span data-i18n="countryAll">Të gjitha vendet</span></button>
+<button data-k="Kosovë" onclick="filterCountry('Kosovë')">🇽🇰 <span data-i18n="countryKosovo">Kosovë</span></button>
+<button data-k="Shqipëri" onclick="filterCountry('Shqipëri')">🇦🇱 <span data-i18n="countryAlbania">Shqipëri</span></button>
+<button data-k="Maqedoni e Veriut" onclick="filterCountry('Maqedoni e Veriut')">🇲🇰 <span data-i18n="countryMacedonia">Maqedoni e Veriut</span></button>
+<button data-k="Mali i Zi" onclick="filterCountry('Mali i Zi')">🇲🇪 <span data-i18n="countryMontenegro">Mali i Zi</span></button>
 </div>
 <div class="filters">
-<input id="fMin" type="number" placeholder="Çmimi min €" min="0" oninput="applyFilters()">
-<input id="fMax" type="number" placeholder="Çmimi max €" min="0" oninput="applyFilters()">
-<input id="fCity" list="cityList" placeholder="Qyteti" oninput="applyFilters()">
-<datalist id="cityList"><option>Prishtinë</option><option>Prizren</option><option>Pejë</option><option>Gjakovë</option><option>Ferizaj</option><option>Gjilan</option><option>Mitrovicë</option><option>Vushtrri</option><option>Podujevë</option></datalist>
-<select id="fCond" onchange="applyFilters()"><option value="">Gjendja (të gjitha)</option><option value="I ri">I ri</option><option value="I përdorur">I përdorur</option></select>
-<button class="btn" onclick="clearFilters()">Pastro filtrat</button>
+<input id="fMin" type="number" data-i18n-ph="fMinPh" placeholder="Çmimi min €" min="0" oninput="applyFilters()">
+<input id="fMax" type="number" data-i18n-ph="fMaxPh" placeholder="Çmimi max €" min="0" oninput="applyFilters()">
+<input id="fCity" list="cityList" data-i18n-ph="fCityPh" placeholder="Qyteti" oninput="applyFilters()">
+<datalist id="cityList"><option>Prishtinë</option><option>Prizren</option><option>Pejë</option><option>Gjakovë</option><option>Ferizaj</option><option>Gjilan</option><option>Mitrovicë</option><option>Vushtrri</option><option>Podujevë</option><option>Tiranë</option><option>Shkodër</option><option>Durrës</option><option>Shkup</option><option>Tetovë</option><option>Podgoricë</option></datalist>
+<select id="fCond" onchange="applyFilters()"><option value="" data-i18n="fCondAll">Gjendja (të gjitha)</option><option value="I ri" data-i18n="fCondNew">I ri</option><option value="I përdorur" data-i18n="fCondUsed">I përdorur</option></select>
+<button class="btn" onclick="clearFilters()" data-i18n="clearFilters">Pastro filtrat</button>
 </div>
 </header>
 <main>
-<section class="hero"><div><h1>Çkat’dush 📋</h1><p>Posto shpalljen tënde falas, ose gjej atë që dush nga shitës të tjerë — kontakto direkt, pa ndërmjetës.</p><button class="cta" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Shiko shpalljet</button></div><div class="bags">📋 🔍</div></section>
-<div class="features"><div class="feature">📋<b>Posto falas</b><span>Shpallja jote në pak minuta</span></div><div class="feature">📞<b>Kontakt direkt</b><span>Bisedo me shitësin</span></div><div class="feature">🏙️<b>Sipas qytetit</b><span>Filtro afër teje</span></div><div class="feature">🔄<b>Rifresko</b><span>Mbaje shpalljen aktive</span></div></div>
-<section id="products"><div class="head"><h2>Shpalljet</h2><span id="res"></span></div><div class="grid" id="grid"></div></section>
+<section class="hero"><div><h1 data-i18n="heroTitle">Çkat’dush 📋</h1><p data-i18n="heroDesc">Posto shpalljen tënde falas, ose gjej atë që dush nga shitës të tjerë — kontakto direkt, pa ndërmjetës.</p><button class="cta" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})" data-i18n="heroBtn">Shiko shpalljet</button></div><div class="bags">📋 🔍</div></section>
+<div class="features"><div class="feature">📋<b data-i18n="feat1Title">Posto falas</b><span data-i18n="feat1Sub">Shpallja jote në pak minuta</span></div><div class="feature">📞<b data-i18n="feat2Title">Kontakt direkt</b><span data-i18n="feat2Sub">Bisedo me shitësin</span></div><div class="feature">🏙️<b data-i18n="feat3Title">Sipas qytetit</b><span data-i18n="feat3Sub">Filtro afër teje</span></div><div class="feature">🔄<b data-i18n="feat4Title">Rifresko</b><span data-i18n="feat4Sub">Mbaje shpalljen aktive</span></div></div>
+<section id="products"><div class="head"><h2 data-i18n="sectionTitle">Shpalljet</h2><span id="res"></span></div><div class="grid" id="grid"></div></section>
 </main>
-<footer><div class="foot"><div><img src="logo.png" style="width:145px;background:#fff;border-radius:9px"><p>Çkat’dush — treg shpalljesh për Kosovë.</p></div><div><h3>Shitësit</h3><ul><li><a href="postoj.html" style="color:#bbb">Posto shpallje</a></li><li>Shpalljet e mia</li></ul></div><div><h3>Blerësit</h3><ul><li>Kërko</li><li>Filtro sipas qytetit</li></ul></div><div><h3>Ndihmë</h3><ul><li>Kontakti</li><li>Kushtet</li></ul></div></div></footer>
+<footer><div class="foot"><div><img src="logo.png" style="width:145px;background:#fff;border-radius:9px"><p data-i18n="footerDesc">Çkat’dush — treg shpalljesh për Kosovë, Shqipëri, Maqedoni e Veriut dhe Mal të Zi.</p></div><div><h3 data-i18n="footSellers">Shitësit</h3><ul><li><a href="postoj.html" style="color:#bbb" data-i18n="footPost">Posto shpallje</a></li><li data-i18n="footMyAds">Shpalljet e mia</li></ul></div><div><h3 data-i18n="footBuyers">Blerësit</h3><ul><li data-i18n="footSearch">Kërko</li><li data-i18n="footFilterCity">Filtro sipas qytetit</li></ul></div><div><h3 data-i18n="footHelp">Ndihmë</h3><ul><li data-i18n="footContact">Kontakti</li><li data-i18n="footTerms">Kushtet</li></ul></div></div></footer>
 
 <div class="modal" id="productModal"><div class="box">
 <div style="display:flex;justify-content:space-between"><h2 id="pdName" style="margin:0"></h2><button class="btn" onclick="closeModal('productModal')">×</button></div>
@@ -63,25 +75,106 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <div class="price" id="pdPrice" style="font-size:24px"></div>
 <div id="pdDesc" class="pdDesc"></div>
 <div id="pdContact"></div>
-<a id="pdAddBtn" class="add" href="#">Kontakto shitësin</a>
+<a id="pdAddBtn" class="add" href="#" data-i18n="contactBtn">📞 Kontakto shitësin</a>
 </div></div>
 
 <script>
 // Shpalljet fillestare (përdoren vetëm nëse Firebase s'është konfiguruar ende
 // ose baza e të dhënave është ende bosh — shiko postoj.html / admin.html për t'i shtuar këto vetë)
 const FALLBACK_P=[
-  {id:'demo-1',name:'Smartwatch Pro',cat:'Teknologji',price:39.99,oldPrice:49.99,icon:'⌚',photoUrl:null,city:'Prishtinë',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
-  {id:'demo-2',name:'Kufje Wireless',cat:'Teknologji',price:24.99,oldPrice:34.99,icon:'🎧',photoUrl:null,city:'Prizren',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
-  {id:'demo-3',name:'Çantë elegante',cat:'Moda',price:24.90,oldPrice:32.90,icon:'👜',photoUrl:null,city:'Pejë',condition:'I përdorur',sellerName:'Çkat’dush',sellerPhone:''},
-  {id:'demo-4',name:'Atlete sportive',cat:'Sport',price:44.99,oldPrice:59.99,icon:'👟',photoUrl:null,city:'Ferizaj',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
-  {id:'demo-5',name:'Set kozmetik',cat:'Bukuri',price:16.50,oldPrice:22,icon:'💄',photoUrl:null,city:'Gjilan',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
-  {id:'demo-6',name:'Llambë dekorative',cat:'Shtëpi',price:18.90,oldPrice:25,icon:'💡',photoUrl:null,city:'Mitrovicë',condition:'I përdorur',sellerName:'Çkat’dush',sellerPhone:''},
-  {id:'demo-7',name:'Lodër edukative',cat:'Fëmijë',price:13.90,oldPrice:17.90,icon:'🧸',photoUrl:null,city:'Prishtinë',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
-  {id:'demo-8',name:'Syze dielli',cat:'Aksesorë',price:21.90,oldPrice:29.90,icon:'🕶️',photoUrl:null,city:'Vushtrri',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''}
+  {id:'demo-1',name:'Smartwatch Pro',cat:'Teknologji',price:39.99,oldPrice:49.99,icon:'⌚',photoUrl:null,country:'Kosovë',city:'Prishtinë',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-2',name:'Kufje Wireless',cat:'Teknologji',price:24.99,oldPrice:34.99,icon:'🎧',photoUrl:null,country:'Kosovë',city:'Prizren',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-3',name:'Çantë elegante',cat:'Moda',price:24.90,oldPrice:32.90,icon:'👜',photoUrl:null,country:'Kosovë',city:'Pejë',condition:'I përdorur',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-4',name:'Atlete sportive',cat:'Sport',price:44.99,oldPrice:59.99,icon:'👟',photoUrl:null,country:'Kosovë',city:'Ferizaj',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-5',name:'Set kozmetik',cat:'Bukuri',price:16.50,oldPrice:22,icon:'💄',photoUrl:null,country:'Kosovë',city:'Gjilan',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-6',name:'Llambë dekorative',cat:'Shtëpi',price:18.90,oldPrice:25,icon:'💡',photoUrl:null,country:'Kosovë',city:'Mitrovicë',condition:'I përdorur',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-7',name:'Lodër edukative',cat:'Fëmijë',price:13.90,oldPrice:17.90,icon:'🧸',photoUrl:null,country:'Kosovë',city:'Prishtinë',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''},
+  {id:'demo-8',name:'Syze dielli',cat:'Aksesorë',price:21.90,oldPrice:29.90,icon:'🕶️',photoUrl:null,country:'Kosovë',city:'Vushtrri',condition:'I ri',sellerName:'Çkat’dush',sellerPhone:''}
 ];
+
+const I18N = {
+  sq: {
+    pageTitle: "Çkat’dush — Shpallje",
+    topBar: "🚚 Në gjithë Kosovën, Shqipërinë, Maqedoninë e Veriut dhe Malin e Zi • 📋 Posto e gjej shpallje — kontakto shitësin direkt",
+    searchPlaceholder: "Çka po kërkon?", searchBtn: "Kërko", postBtn: "+ Posto shpallje",
+    catAll: "Të gjitha", catAuto: "Automjete", catTech: "Teknologji", catFashion: "Moda", catHome: "Shtëpi",
+    catBeauty: "Bukuri", catKids: "Fëmijë", catSport: "Sport", catAccessories: "Aksesorë",
+    countryAll: "Të gjitha vendet", countryKosovo: "Kosovë", countryAlbania: "Shqipëri",
+    countryMacedonia: "Maqedoni e Veriut", countryMontenegro: "Mali i Zi",
+    fMinPh: "Çmimi min €", fMaxPh: "Çmimi max €", fCityPh: "Qyteti",
+    fCondAll: "Gjendja (të gjitha)", fCondNew: "I ri", fCondUsed: "I përdorur",
+    clearFilters: "Pastro filtrat",
+    heroTitle: "Çkat’dush 📋",
+    heroDesc: "Posto shpalljen tënde falas, ose gjej atë që dush nga shitës të tjerë — kontakto direkt, pa ndërmjetës.",
+    heroBtn: "Shiko shpalljet",
+    feat1Title: "Posto falas", feat1Sub: "Shpallja jote në pak minuta",
+    feat2Title: "Kontakt direkt", feat2Sub: "Bisedo me shitësin",
+    feat3Title: "Sipas qytetit", feat3Sub: "Filtro afër teje",
+    feat4Title: "Rifresko", feat4Sub: "Mbaje shpalljen aktive",
+    sectionTitle: "Shpalljet", listingsWord: "shpallje", emptyMsg: "Nuk u gjet asnjë shpallje.",
+    badge: "SHPALLJE", contactBtn: "📞 Kontakto shitësin", contactUnavailable: "Kontakt i padisponueshëm",
+    callPrefix: "📞 Telefono: ",
+    footerDesc: "Çkat’dush — treg shpalljesh për Kosovë, Shqipëri, Maqedoni e Veriut dhe Mal të Zi.",
+    footSellers: "Shitësit", footPost: "Posto shpallje", footMyAds: "Shpalljet e mia",
+    footBuyers: "Blerësit", footSearch: "Kërko", footFilterCity: "Filtro sipas qytetit",
+    footHelp: "Ndihmë", footContact: "Kontakti", footTerms: "Kushtet"
+  },
+  en: {
+    pageTitle: "Çkat’dush — Listings",
+    topBar: "🚚 All across Kosovo, Albania, North Macedonia & Montenegro • 📋 Post or find listings — contact the seller directly",
+    searchPlaceholder: "What are you looking for?", searchBtn: "Search", postBtn: "+ Post a listing",
+    catAll: "All", catAuto: "Vehicles", catTech: "Electronics", catFashion: "Fashion", catHome: "Home",
+    catBeauty: "Beauty", catKids: "Kids", catSport: "Sports", catAccessories: "Accessories",
+    countryAll: "All countries", countryKosovo: "Kosovo", countryAlbania: "Albania",
+    countryMacedonia: "North Macedonia", countryMontenegro: "Montenegro",
+    fMinPh: "Min price €", fMaxPh: "Max price €", fCityPh: "City",
+    fCondAll: "Condition (all)", fCondNew: "New", fCondUsed: "Used",
+    clearFilters: "Clear filters",
+    heroTitle: "Çkat’dush 📋",
+    heroDesc: "Post your listing for free, or find what you're looking for from other sellers — contact directly, no middlemen.",
+    heroBtn: "See listings",
+    feat1Title: "Post for free", feat1Sub: "Your listing in minutes",
+    feat2Title: "Direct contact", feat2Sub: "Chat with the seller",
+    feat3Title: "By city", feat3Sub: "Filter near you",
+    feat4Title: "Refresh", feat4Sub: "Keep your listing active",
+    sectionTitle: "Listings", listingsWord: "listings", emptyMsg: "No listings found.",
+    badge: "LISTING", contactBtn: "📞 Contact seller", contactUnavailable: "Contact unavailable",
+    callPrefix: "📞 Call: ",
+    footerDesc: "Çkat’dush — a listings marketplace for Kosovo, Albania, North Macedonia and Montenegro.",
+    footSellers: "Sellers", footPost: "Post a listing", footMyAds: "My listings",
+    footBuyers: "Buyers", footSearch: "Search", footFilterCity: "Filter by city",
+    footHelp: "Help", footContact: "Contact", footTerms: "Terms"
+  }
+};
+const CAT_KEYS = {'Të gjitha':'catAll','Automjete':'catAuto','Teknologji':'catTech','Moda':'catFashion','Shtëpi':'catHome','Bukuri':'catBeauty','Fëmijë':'catKids','Sport':'catSport','Aksesorë':'catAccessories'};
+const COUNTRY_KEYS = {'Të gjitha':'countryAll','Kosovë':'countryKosovo','Shqipëri':'countryAlbania','Maqedoni e Veriut':'countryMacedonia','Mali i Zi':'countryMontenegro'};
+const COND_KEYS = {'I ri':'fCondNew','I përdorur':'fCondUsed'};
+
+let currentLang = 'sq';
+try{ currentLang = localStorage.getItem('lang') || 'sq'; }catch(e){}
+
+function t(key){ return (I18N[currentLang] && I18N[currentLang][key]) || I18N.sq[key] || key; }
+function catLabel(c){ return CAT_KEYS[c] ? t(CAT_KEYS[c]) : (c||''); }
+function countryLabel(c){ return COUNTRY_KEYS[c] ? t(COUNTRY_KEYS[c]) : (c||''); }
+function condLabel(c){ return COND_KEYS[c] ? t(COND_KEYS[c]) : (c||''); }
+
+function applyLang(){
+  document.documentElement.lang = currentLang === 'en' ? 'en' : 'sq';
+  document.title = t('pageTitle');
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.getAttribute('data-i18n')); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = t(el.getAttribute('data-i18n-ph')); });
+  langBtn.textContent = currentLang === 'sq' ? 'EN' : 'SHQ';
+  applyFilters();
+}
+function toggleLang(){
+  currentLang = currentLang === 'sq' ? 'en' : 'sq';
+  try{ localStorage.setItem('lang', currentLang); }catch(e){}
+  applyLang();
+}
 
 let P = FALLBACK_P;
 let currentCat = 'Të gjitha';
+let currentCountry = 'Të gjitha';
 let currentQuery = '';
 
 async function loadProducts(){
@@ -94,7 +187,7 @@ async function loadProducts(){
         return {
           id: d.id, name: x.name, cat: x.cat, price: Number(x.price), oldPrice: Number(x.oldPrice||x.price),
           icon: x.icon || '🛍️', photoUrl: x.photoUrl || null,
-          city: x.city || '', condition: x.condition || '', description: x.description || '',
+          country: x.country || 'Kosovë', city: x.city || '', condition: x.condition || '', description: x.description || '',
           sellerName: x.sellerName || '', sellerPhone: x.sellerPhone || '',
           expiresAt: x.expiresAt || null
         };
@@ -108,16 +201,16 @@ async function loadProducts(){
 
 function render(a=P){
   grid.innerHTML = a.length ? a.map((x)=>{
-    const meta = [x.cat, x.city, x.condition].filter(Boolean).join(' • ');
+    const meta = [catLabel(x.cat), countryLabel(x.country), x.city, condLabel(x.condition)].filter(Boolean).join(' • ');
     const contact = x.sellerName ? `<div style="font-size:12px;color:#777;margin-top:4px">👤 ${x.sellerName}${x.sellerPhone ? ' • 📞 '+x.sellerPhone : ''}</div>` : '';
     const phone = (x.sellerPhone||'').replace(/\s+/g,'');
     const actionBtn = phone
-      ? `<a href="tel:${phone}" class="add" onclick="event.stopPropagation()">📞 Kontakto shitësin</a>`
-      : `<span class="add disabled">Kontakt i padisponueshëm</span>`;
-    return `<div class="card" onclick="openProduct('${x.id}')"><span class="badge">SHPALLJE</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" style="width:100%;height:100%;object-fit:cover">` : x.icon}</div><div class="info"><div class="name">${x.name}</div><small>${meta}</small>${contact}<div class="price">${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}</div>${actionBtn}</div></div>`;
+      ? `<a href="tel:${phone}" class="add" onclick="event.stopPropagation()">${t('contactBtn')}</a>`
+      : `<span class="add disabled">${t('contactUnavailable')}</span>`;
+    return `<div class="card" onclick="openProduct('${x.id}')"><span class="badge">${t('badge')}</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" style="width:100%;height:100%;object-fit:cover">` : x.icon}</div><div class="info"><div class="name">${x.name}</div><small>${meta}</small>${contact}<div class="price">${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}</div>${actionBtn}</div></div>`;
   }).join('')
-    : `<div class="empty">Nuk u gjet asnjë shpallje.</div>`;
-  res.textContent = a.length + ' shpallje';
+    : `<div class="empty">${t('emptyMsg')}</div>`;
+  res.textContent = a.length + ' ' + t('listingsWord');
 }
 
 function openProduct(id){
@@ -125,7 +218,7 @@ function openProduct(id){
   if(!x) return;
   pdName.textContent = x.name;
   pdPic.innerHTML = x.photoUrl ? `<img src="${x.photoUrl}">` : x.icon;
-  pdMeta.textContent = [x.cat, x.city, x.condition].filter(Boolean).join(' • ');
+  pdMeta.textContent = [catLabel(x.cat), countryLabel(x.country), x.city, condLabel(x.condition)].filter(Boolean).join(' • ');
   pdPrice.innerHTML = `${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}`;
   pdDesc.textContent = x.description || '';
   pdDesc.style.display = x.description ? 'block' : 'none';
@@ -133,11 +226,11 @@ function openProduct(id){
   const phone = (x.sellerPhone||'').replace(/\s+/g,'');
   if(phone){
     pdAddBtn.classList.remove('disabled');
-    pdAddBtn.textContent = '📞 Telefono: ' + x.sellerPhone;
+    pdAddBtn.textContent = t('callPrefix') + x.sellerPhone;
     pdAddBtn.href = 'tel:' + phone;
   }else{
     pdAddBtn.classList.add('disabled');
-    pdAddBtn.textContent = 'Kontakt i padisponueshëm';
+    pdAddBtn.textContent = t('contactUnavailable');
     pdAddBtn.removeAttribute('href');
   }
   openModal('productModal');
@@ -151,6 +244,11 @@ function filter(c){
   document.querySelectorAll('#cats button').forEach(b=>b.classList.toggle('active', b.dataset.c===c));
   applyFilters();
 }
+function filterCountry(k){
+  currentCountry = k;
+  document.querySelectorAll('#countries button').forEach(b=>b.classList.toggle('active', b.dataset.k===k));
+  applyFilters();
+}
 function search(){
   currentQuery = document.getElementById('q').value.toLowerCase();
   currentCat = 'Të gjitha';
@@ -161,6 +259,7 @@ function search(){
 function applyFilters(){
   let list = P.slice();
   if(currentCat && currentCat!=='Të gjitha') list = list.filter(x=>x.cat===currentCat);
+  if(currentCountry && currentCountry!=='Të gjitha') list = list.filter(x=>x.country===currentCountry);
   if(currentQuery) list = list.filter(x=>(x.name+' '+x.cat).toLowerCase().includes(currentQuery));
   const min = parseFloat(document.getElementById('fMin').value);
   const max = parseFloat(document.getElementById('fMax').value);
@@ -179,6 +278,6 @@ function clearFilters(){
 
 productModal.addEventListener('click', e=>{ if(e.target===productModal) productModal.style.display='none'; });
 
-render();
+applyLang();
 loadProducts();
 </script></body></html>

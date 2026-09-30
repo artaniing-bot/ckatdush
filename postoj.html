@@ -93,10 +93,14 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 <div class="field"><label>Emoji / ikona (nëse s'ke foto)</label><input id="pIcon" placeholder="🛍️"></div>
 </div>
 <div class="row2">
+<div class="field"><label>Shteti</label>
+<select id="pCountry" required>
+<option value="Kosovë">Kosovë</option><option value="Shqipëri">Shqipëri</option><option value="Maqedoni e Veriut">Maqedoni e Veriut</option><option value="Mali i Zi">Mali i Zi</option>
+</select></div>
 <div class="field"><label>Qyteti</label><input id="pCity" placeholder="p.sh. Prishtinë" required></div>
+</div>
 <div class="field"><label>Gjendja</label>
 <select id="pCondition" required><option value="I ri">I ri</option><option value="I përdorur">I përdorur</option></select></div>
-</div>
 <div class="field">
 <label>Foto e produktit</label>
 <div class="uploadBox">
@@ -178,7 +182,7 @@ function doLogout(){ auth.signOut(); }
 
 function resetForm(){
   pId.value=''; pName.value=''; pIcon.value=''; pPrice.value=''; pOld.value=''; pCat.selectedIndex=0;
-  pCity.value=''; pCondition.selectedIndex=0; pPhotoUrl.value=''; pPhotoFile.value='';
+  pCountry.selectedIndex=0; pCity.value=''; pCondition.selectedIndex=0; pPhotoUrl.value=''; pPhotoFile.value='';
   pDescription.value='';
   pSellerName.value=''; pSellerPhone.value='';
   photoPreview.innerHTML=''; uploadStatus.textContent = 'Zgjidh një foto nga telefoni/kompjuteri jot (opsionale).';
@@ -232,6 +236,7 @@ async function saveListing(e){
     name: pName.value.trim(),
     cat: pCat.value,
     icon: pIcon.value.trim() || '🛍️',
+    country: pCountry.value,
     city: pCity.value.trim(),
     condition: pCondition.value,
     price: parseFloat(pPrice.value),
@@ -273,7 +278,7 @@ async function saveListing(e){
 
 function editListing(id, d){
   pId.value = id; pName.value = d.name; pCat.value = d.cat; pIcon.value = d.icon || '';
-  pCity.value = d.city || ''; pCondition.value = d.condition || 'I ri';
+  pCountry.value = d.country || 'Kosovë'; pCity.value = d.city || ''; pCondition.value = d.condition || 'I ri';
   pPrice.value = d.price; pOld.value = d.oldPrice && d.oldPrice!==d.price ? d.oldPrice : '';
   pPhotoUrl.value = d.photoUrl || '';
   pDescription.value = d.description || '';
@@ -321,7 +326,7 @@ async function loadList(){
       const daysLeft = expMs !== null ? Math.max(0, Math.ceil((expMs-now)/DAY_MS)) : null;
       return `<div class="item">
         <div class="ic">${d.photoUrl ? `<img class="thumb" src="${d.photoUrl}">` : (d.icon||'🛍️')}</div>
-        <div class="info"><b>${d.name}</b><small>${d.cat} • ${d.city||''} • ${d.condition||''}</small>
+        <div class="info"><b>${d.name}</b><small>${d.cat} • ${d.country||''} ${d.city ? '- '+d.city : ''} • ${d.condition||''}</small>
         ${expired ? `<div class="exp">⚠️ Ka skaduar — s'shfaqet më te dyqani</div>` : (daysLeft!==null ? `<div class="exp">Skadon për ${daysLeft} ditë</div>` : '')}</div>
         <div class="price">${Number(d.price).toFixed(2)} €${d.oldPrice && d.oldPrice!==d.price ? `<span class="old">${Number(d.oldPrice).toFixed(2)} €</span>` : ''}</div>
         <div class="actions">
