@@ -83,7 +83,7 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <div class="price" id="pdPrice" style="font-size:24px"></div>
 <div id="pdDesc" class="pdDesc"></div>
 <div id="pdContact"></div>
-<a id="pdAddBtn" class="add" href="#" data-i18n="contactBtn">📞 Kontakto shitësin</a>
+<a id="pdAddBtn" class="add" href="#">Kontakto shitësin</a>
 </div></div>
 
 <script>
@@ -120,8 +120,8 @@ const I18N = {
     feat3Title: "Sipas qytetit", feat3Sub: "Filtro afër teje",
     feat4Title: "Rifresko", feat4Sub: "Mbaje shpalljen aktive",
     sectionTitle: "Shpalljet", listingsWord: "shpallje", emptyMsg: "Nuk u gjet asnjë shpallje.",
-    badge: "SHPALLJE", contactBtn: "📞 Kontakto shitësin", contactUnavailable: "Kontakt i padisponueshëm",
-    callPrefix: "📞 Telefono: ",
+    badge: "SHPALLJE", contactBtn: "Kontakto shitësin", contactUnavailable: "Kontakt i padisponueshëm",
+    callPrefix: "Telefono: ",
     footerDesc: "Çkat’dush — treg shpalljesh për Kosovë, Shqipëri, Maqedoni e Veriut dhe Mal të Zi.",
     footSellers: "Shitësit", footPost: "Posto shpallje", footMyAds: "Shpalljet e mia",
     footBuyers: "Blerësit", footSearch: "Kërko", footFilterCity: "Filtro sipas qytetit",
@@ -147,8 +147,8 @@ const I18N = {
     feat3Title: "By city", feat3Sub: "Filter near you",
     feat4Title: "Refresh", feat4Sub: "Keep your listing active",
     sectionTitle: "Listings", listingsWord: "listings", emptyMsg: "No listings found.",
-    badge: "LISTING", contactBtn: "📞 Contact seller", contactUnavailable: "Contact unavailable",
-    callPrefix: "📞 Call: ",
+    badge: "LISTING", contactBtn: "Contact seller", contactUnavailable: "Contact unavailable",
+    callPrefix: "Call: ",
     footerDesc: "Çkat’dush — a listings marketplace for Kosovo, Albania, North Macedonia and Montenegro.",
     footSellers: "Sellers", footPost: "Post a listing", footMyAds: "My listings",
     footBuyers: "Buyers", footSearch: "Search", footFilterCity: "Filter by city",
@@ -159,6 +159,7 @@ const I18N = {
 const CAT_KEYS = {'Të gjitha':'catAll','Automjete':'catAuto','Teknologji':'catTech','Moda':'catFashion','Shtëpi':'catHome','Bukuri':'catBeauty','Fëmijë':'catKids','Sport':'catSport','Aksesorë':'catAccessories'};
 const COUNTRY_KEYS = {'Të gjitha':'countryAll','Kosovë':'countryKosovo','Shqipëri':'countryAlbania','Maqedoni e Veriut':'countryMacedonia','Mali i Zi':'countryMontenegro'};
 const COND_KEYS = {'I ri':'fCondNew','I përdorur':'fCondUsed'};
+const PHONE_ICON = '<svg viewBox="0 0 24 24" width="15" height="15" style="vertical-align:-3px;margin-right:5px;flex-shrink:0" fill="#f4c20d"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 3.9c0-.6.4-1 1-1H7.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>';
 
 let currentLang = 'sq';
 try{ currentLang = localStorage.getItem('lang') || 'sq'; }catch(e){}
@@ -212,10 +213,10 @@ async function loadProducts(){
 function render(a=P){
   grid.innerHTML = a.length ? a.map((x)=>{
     const meta = [catLabel(x.cat), countryLabel(x.country), x.city, condLabel(x.condition)].filter(Boolean).join(' • ');
-    const contact = x.sellerName ? `<div style="font-size:12px;color:#777;margin-top:4px">👤 ${x.sellerName}${x.sellerPhone ? ' • 📞 '+x.sellerPhone : ''}</div>` : '';
+    const contact = x.sellerName ? `<div style="font-size:12px;color:#777;margin-top:4px">👤 ${x.sellerName}${x.sellerPhone ? ' • '+PHONE_ICON+x.sellerPhone : ''}</div>` : '';
     const phone = (x.sellerPhone||'').replace(/\s+/g,'');
     const actionBtn = phone
-      ? `<a href="tel:${phone}" class="add" onclick="event.stopPropagation()">${t('contactBtn')}</a>`
+      ? `<a href="tel:${phone}" class="add" onclick="event.stopPropagation()">${PHONE_ICON}${t('contactBtn')}</a>`
       : `<span class="add disabled">${t('contactUnavailable')}</span>`;
     return `<div class="card" onclick="openProduct('${x.id}')"><span class="badge">${t('badge')}</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" style="width:100%;height:100%;object-fit:cover">` : x.icon}</div><div class="info"><div class="name">${x.name}</div><small>${meta}</small>${contact}<div class="price">${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}</div>${actionBtn}</div></div>`;
   }).join('')
@@ -232,11 +233,11 @@ function openProduct(id){
   pdPrice.innerHTML = `${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}`;
   pdDesc.textContent = x.description || '';
   pdDesc.style.display = x.description ? 'block' : 'none';
-  pdContact.innerHTML = x.sellerName ? `<div class="pdContact">👤 <b>${x.sellerName}</b>${x.sellerPhone ? `<br>📞 ${x.sellerPhone}` : ''}</div>` : '';
+  pdContact.innerHTML = x.sellerName ? `<div class="pdContact">👤 <b>${x.sellerName}</b>${x.sellerPhone ? `<br>${PHONE_ICON}${x.sellerPhone}` : ''}</div>` : '';
   const phone = (x.sellerPhone||'').replace(/\s+/g,'');
   if(phone){
     pdAddBtn.classList.remove('disabled');
-    pdAddBtn.textContent = t('callPrefix') + x.sellerPhone;
+    pdAddBtn.innerHTML = PHONE_ICON + t('callPrefix') + x.sellerPhone;
     pdAddBtn.href = 'tel:' + phone;
   }else{
     pdAddBtn.classList.add('disabled');
