@@ -22,6 +22,7 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 .pdPic{height:320px;background:#f0f0ed;display:flex;align-items:center;justify-content:center;font-size:110px;border-radius:14px;overflow:hidden;margin-bottom:16px}.pdPic img{width:100%;height:100%;object-fit:cover}
 .pdMeta{color:#777;font-size:14px;margin:6px 0}
 .pdContact{background:#f7f7f5;border-radius:12px;padding:14px;margin:14px 0;font-size:14px;line-height:1.7}
+.pdDesc{white-space:pre-wrap;line-height:1.6;color:#333;margin:14px 0;font-size:15px}
 @media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:repeat(2,1fr)}.nav{flex-wrap:wrap}.search{order:3;flex-basis:100%}.foot{grid-template-columns:1fr 1fr}}@media(max-width:520px){.hero{padding:25px}.hero h1{font-size:32px}.bags{display:none}.grid{gap:9px}.pic{height:150px;font-size:50px}.features{grid-template-columns:1fr}.filters{flex-direction:column}.filters input,.filters select{width:100%}.pdPic{height:220px;font-size:70px}}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -34,7 +35,7 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <div class="search"><input id="q" placeholder="Çka po kërkon?" onkeydown="if(event.key==='Enter')search()"><button onclick="search()">Kërko</button></div>
 <a href="postoj.html" class="btn postBtn">+ Posto shpallje</a>
 </div><div class="cats" id="cats">
-<button data-c="Të gjitha" class="active" onclick="filter('Të gjitha')">Të gjitha</button><button data-c="Teknologji" onclick="filter('Teknologji')">Teknologji</button><button data-c="Moda" onclick="filter('Moda')">Moda</button><button data-c="Shtëpi" onclick="filter('Shtëpi')">Shtëpi</button><button data-c="Bukuri" onclick="filter('Bukuri')">Bukuri</button><button data-c="Fëmijë" onclick="filter('Fëmijë')">Fëmijë</button><button data-c="Sport" onclick="filter('Sport')">Sport</button><button data-c="Aksesorë" onclick="filter('Aksesorë')">Aksesorë</button>
+<button data-c="Të gjitha" class="active" onclick="filter('Të gjitha')">Të gjitha</button><button data-c="Automjete" onclick="filter('Automjete')">Automjete</button><button data-c="Teknologji" onclick="filter('Teknologji')">Teknologji</button><button data-c="Moda" onclick="filter('Moda')">Moda</button><button data-c="Shtëpi" onclick="filter('Shtëpi')">Shtëpi</button><button data-c="Bukuri" onclick="filter('Bukuri')">Bukuri</button><button data-c="Fëmijë" onclick="filter('Fëmijë')">Fëmijë</button><button data-c="Sport" onclick="filter('Sport')">Sport</button><button data-c="Aksesorë" onclick="filter('Aksesorë')">Aksesorë</button>
 </div>
 <div class="filters">
 <input id="fMin" type="number" placeholder="Çmimi min €" min="0" oninput="applyFilters()">
@@ -57,6 +58,7 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <div id="pdPic" class="pdPic"></div>
 <div class="pdMeta" id="pdMeta"></div>
 <div class="price" id="pdPrice" style="font-size:24px"></div>
+<div id="pdDesc" class="pdDesc"></div>
 <div id="pdContact"></div>
 <a id="pdAddBtn" class="add" href="#">Kontakto shitësin</a>
 </div></div>
@@ -89,7 +91,7 @@ async function loadProducts(){
         return {
           id: d.id, name: x.name, cat: x.cat, price: Number(x.price), oldPrice: Number(x.oldPrice||x.price),
           icon: x.icon || '🛍️', photoUrl: x.photoUrl || null,
-          city: x.city || '', condition: x.condition || '',
+          city: x.city || '', condition: x.condition || '', description: x.description || '',
           sellerName: x.sellerName || '', sellerPhone: x.sellerPhone || '',
           expiresAt: x.expiresAt || null
         };
@@ -122,6 +124,8 @@ function openProduct(id){
   pdPic.innerHTML = x.photoUrl ? `<img src="${x.photoUrl}">` : x.icon;
   pdMeta.textContent = [x.cat, x.city, x.condition].filter(Boolean).join(' • ');
   pdPrice.innerHTML = `${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}`;
+  pdDesc.textContent = x.description || '';
+  pdDesc.style.display = x.description ? 'block' : 'none';
   pdContact.innerHTML = x.sellerName ? `<div class="pdContact">👤 <b>${x.sellerName}</b>${x.sellerPhone ? `<br>📞 ${x.sellerPhone}` : ''}</div>` : '';
   const phone = (x.sellerPhone||'').replace(/\s+/g,'');
   if(phone){

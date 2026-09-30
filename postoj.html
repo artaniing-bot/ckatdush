@@ -12,7 +12,8 @@ h1{font-size:22px;margin:0}
 a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;border-radius:20px;padding:8px 14px}
 .card{background:white;border:1px solid #e6e6e2;border-radius:15px;padding:20px;margin-bottom:20px}
 .field{margin-bottom:14px}.field label{display:block;font-size:13px;color:#555;margin-bottom:5px}
-.field input,.field select{width:100%;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;font-family:inherit}
+.field input,.field select,.field textarea{width:100%;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;font-family:inherit}
+.field textarea{resize:vertical;min-height:90px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .cta{background:#202124;color:#fff;border:0;border-radius:22px;padding:12px 20px;font-weight:bold;cursor:pointer}
 .cta.secondary{background:white;color:#202124;border:1px solid #ddd}
@@ -87,7 +88,7 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 <div class="row2">
 <div class="field"><label>Kategoria</label>
 <select id="pCat" required>
-<option>Teknologji</option><option>Moda</option><option>Shtëpi</option><option>Bukuri</option><option>Fëmijë</option><option>Sport</option><option>Aksesorë</option>
+<option>Automjete</option><option>Teknologji</option><option>Moda</option><option>Shtëpi</option><option>Bukuri</option><option>Fëmijë</option><option>Sport</option><option>Aksesorë</option>
 </select></div>
 <div class="field"><label>Emoji / ikona (nëse s'ke foto)</label><input id="pIcon" placeholder="🛍️"></div>
 </div>
@@ -108,6 +109,7 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 <div class="field"><label>Çmimi (€)</label><input id="pPrice" type="number" step="0.01" min="0" required></div>
 <div class="field"><label>Çmimi i vjetër (opsionale, për zbritje)</label><input id="pOld" type="number" step="0.01" min="0"></div>
 </div>
+<div class="field"><label>Përshkrimi i detajuar (opsionale — p.sh. për veturë: viti, kilometrazhi, karburanti, gjendja etj.)</label><textarea id="pDescription" placeholder="Shkruaj këtu të gjitha detajet që blerësi duhet t'i dijë..."></textarea></div>
 <h3 style="margin:18px 0 4px;font-size:15px">Kontakti yt (do t'i shfaqet blerësit)</h3>
 <div class="row2">
 <div class="field"><label>Emri (p.sh. emri yt ose i dyqanit)</label><input id="pSellerName" required></div>
@@ -177,6 +179,7 @@ function doLogout(){ auth.signOut(); }
 function resetForm(){
   pId.value=''; pName.value=''; pIcon.value=''; pPrice.value=''; pOld.value=''; pCat.selectedIndex=0;
   pCity.value=''; pCondition.selectedIndex=0; pPhotoUrl.value=''; pPhotoFile.value='';
+  pDescription.value='';
   pSellerName.value=''; pSellerPhone.value='';
   photoPreview.innerHTML=''; uploadStatus.textContent = 'Zgjidh një foto nga telefoni/kompjuteri jot (opsionale).';
   formTitle.textContent='Posto një shpallje të re'; saveBtn.textContent='Posto shpalljen';
@@ -234,6 +237,7 @@ async function saveListing(e){
     price: parseFloat(pPrice.value),
     oldPrice: pOld.value ? parseFloat(pOld.value) : parseFloat(pPrice.value),
     photoUrl: pPhotoUrl.value.trim() || null,
+    description: pDescription.value.trim(),
     sellerId: user.uid,
     sellerName: pSellerName.value.trim(),
     sellerPhone: pSellerPhone.value.trim()
@@ -272,6 +276,7 @@ function editListing(id, d){
   pCity.value = d.city || ''; pCondition.value = d.condition || 'I ri';
   pPrice.value = d.price; pOld.value = d.oldPrice && d.oldPrice!==d.price ? d.oldPrice : '';
   pPhotoUrl.value = d.photoUrl || '';
+  pDescription.value = d.description || '';
   pSellerName.value = d.sellerName || ''; pSellerPhone.value = d.sellerPhone || '';
   photoPreview.innerHTML = d.photoUrl ? `<img class="thumb" src="${d.photoUrl}">` : '';
   uploadStatus.textContent = 'Zgjidh një foto të re nëse do ta ndryshosh (opsionale).';
