@@ -66,8 +66,7 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <div class="filters">
 <input id="fMin" type="number" data-i18n-ph="fMinPh" placeholder="Çmimi min €" min="0" oninput="applyFilters()">
 <input id="fMax" type="number" data-i18n-ph="fMaxPh" placeholder="Çmimi max €" min="0" oninput="applyFilters()">
-<input id="fCity" list="cityList" data-i18n-ph="fCityPh" placeholder="Qyteti" oninput="applyFilters()">
-<datalist id="cityList"><option>Prishtinë</option><option>Prizren</option><option>Pejë</option><option>Gjakovë</option><option>Ferizaj</option><option>Gjilan</option><option>Mitrovicë</option><option>Vushtrri</option><option>Podujevë</option><option>Tiranë</option><option>Shkodër</option><option>Durrës</option><option>Shkup</option><option>Tetovë</option><option>Podgoricë</option></datalist>
+<select id="fCity" onchange="applyFilters()"><option value="" data-i18n="fCityAll">Qyteti (të gjitha)</option><option>Prishtinë</option><option>Prizren</option><option>Pejë</option><option>Gjakovë</option><option>Ferizaj</option><option>Gjilan</option><option>Mitrovicë</option><option>Vushtrri</option><option>Podujevë</option><option>Tiranë</option><option>Shkodër</option><option>Durrës</option><option>Shkup</option><option>Tetovë</option><option>Podgoricë</option></select>
 <select id="fCond" onchange="applyFilters()"><option value="" data-i18n="fCondAll">Gjendja (të gjitha)</option><option value="I ri" data-i18n="fCondNew">I ri</option><option value="I përdorur" data-i18n="fCondUsed">I përdorur</option></select>
 <button class="btn" onclick="clearFilters()" data-i18n="clearFilters">Pastro filtrat</button>
 </div>
@@ -112,7 +111,7 @@ const I18N = {
     catBeauty: "Bukuri", catKids: "Fëmijë", catSport: "Sport", catAccessories: "Aksesorë",
     countryAll: "Të gjitha vendet", countryKosovo: "Kosovë", countryAlbania: "Shqipëri",
     countryMacedonia: "Maqedoni e Veriut", countryMontenegro: "Mali i Zi",
-    fMinPh: "Çmimi min €", fMaxPh: "Çmimi max €", fCityPh: "Qyteti",
+    fMinPh: "Çmimi min €", fMaxPh: "Çmimi max €", fCityAll: "Qyteti (të gjitha)",
     fCondAll: "Gjendja (të gjitha)", fCondNew: "I ri", fCondUsed: "I përdorur",
     clearFilters: "Pastro filtrat",
     heroTitle: "Çkat’dush 📋",
@@ -139,7 +138,7 @@ const I18N = {
     catBeauty: "Beauty", catKids: "Kids", catSport: "Sports", catAccessories: "Accessories",
     countryAll: "All countries", countryKosovo: "Kosovo", countryAlbania: "Albania",
     countryMacedonia: "North Macedonia", countryMontenegro: "Montenegro",
-    fMinPh: "Min price €", fMaxPh: "Max price €", fCityPh: "City",
+    fMinPh: "Min price €", fMaxPh: "Max price €", fCityAll: "City (all)",
     fCondAll: "Condition (all)", fCondNew: "New", fCondUsed: "Used",
     clearFilters: "Clear filters",
     heroTitle: "Çkat’dush 📋",
