@@ -41,6 +41,15 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 .tabs{display:flex;gap:8px;margin-bottom:16px}
 .uploadBox{border:1.5px dashed #ddd;border-radius:12px;padding:16px;text-align:center}
 .uploadBox input[type=file]{width:100%}
+.photoGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin-top:10px;text-align:left}
+.ph{position:relative;border:1px solid #ddd;border-radius:10px;overflow:hidden;background:#fafafa}
+.ph img{width:100%;height:92px;object-fit:cover;display:block}
+.ph .rm{position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;border:0;background:#000a;color:#fff;cursor:pointer;font-size:15px;line-height:24px;padding:0}
+.ph .cov{display:block;width:100%;border:0;background:#f0f0ed;font-size:11px;padding:5px 2px;cursor:pointer;color:#202124}
+.ph .cov.main{background:#202124;color:#fff;cursor:default}
+.ph.busy{display:flex;align-items:center;justify-content:center;height:122px;color:#777;font-size:12px}
+.attrBox{background:#fafaf8;border:1px solid #eee;border-radius:12px;padding:14px 14px 2px;margin-bottom:14px}
+.attrBox h4{margin:0 0 10px;font-size:14px}
 </style></head><body>
 <div class="wrap">
 <header>
@@ -83,11 +92,10 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 <p class="muted">Shpallja jote do të jetë e dukshme te dyqani për 30 ditë. Mund ta rifreskosh kur të duash që të mos skadojë.</p>
 <form onsubmit="return saveListing(event)" style="margin-top:14px">
 <input type="hidden" id="pId">
-<input type="hidden" id="pPhotoUrl">
 <div class="field"><label>Emri i produktit</label><input id="pName" required></div>
 <div class="row2">
 <div class="field"><label>Kategoria</label>
-<select id="pCat" required>
+<select id="pCat" required onchange="renderAttrFields()">
 <option>Automjete</option><option>Teknologji</option><option>Moda</option><option>Shtëpi</option><option>Bukuri</option><option>Fëmijë</option><option>Sport</option><option>Aksesorë</option>
 </select></div>
 <div class="field"><label>Emoji / ikona (nëse s'ke foto)</label><input id="pIcon" placeholder="🛍️"></div>
@@ -101,19 +109,20 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 </div>
 <div class="field"><label>Gjendja</label>
 <select id="pCondition" required><option value="I ri">I ri</option><option value="I përdorur">I përdorur</option></select></div>
+<div id="attrBox" class="attrBox hide"><h4 id="attrTitle">Detajet</h4><div class="row2" id="attrFields"></div></div>
 <div class="field">
-<label>Foto e produktit</label>
+<label>Fotot e produktit (deri në 20)</label>
 <div class="uploadBox">
-<input id="pPhotoFile" type="file" accept="image/*" onchange="handlePhotoSelect(event)">
-<p class="muted" id="uploadStatus" style="margin:8px 0 0">Zgjidh një foto nga telefoni/kompjuteri jot (opsionale).</p>
-<div id="photoPreview" style="margin-top:8px"></div>
+<input id="pPhotoFile" type="file" accept="image/*" multiple onchange="handlePhotoSelect(event)">
+<p class="muted" id="uploadStatus" style="margin:8px 0 0">Zgjidh deri në 20 foto nga telefoni/kompjuteri (opsionale). Foto e parë është kryesorja.</p>
+<div id="photoPreview" class="photoGrid"></div>
 </div>
 </div>
 <div class="row2">
 <div class="field"><label>Çmimi (€)</label><input id="pPrice" type="number" step="0.01" min="0" required></div>
 <div class="field"><label>Çmimi i vjetër (opsionale, për zbritje)</label><input id="pOld" type="number" step="0.01" min="0"></div>
 </div>
-<div class="field"><label>Përshkrimi i detajuar (opsionale — p.sh. për veturë: viti, kilometrazhi, karburanti, gjendja etj.)</label><textarea id="pDescription" placeholder="Shkruaj këtu të gjitha detajet që blerësi duhet t'i dijë..."></textarea></div>
+<div class="field"><label>Përshkrimi (opsionale — gjendja, defektet, pajisjet shtesë, arsyeja e shitjes etj.)</label><textarea id="pDescription" style="min-height:130px" placeholder="Shkruaj këtu çdo detaj tjetër që blerësi duhet ta dijë..."></textarea></div>
 <h3 style="margin:18px 0 4px;font-size:15px">Kontakti yt (do t'i shfaqet blerësit)</h3>
 <div class="row2">
 <div class="field"><label>Emri (p.sh. emri yt ose i dyqanit)</label><input id="pSellerName" required></div>
@@ -138,6 +147,7 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="imgbb-config.js"></script>
+<script src="category-attrs.js"></script>
 <script>
 const DAY_MS = 24*60*60*1000;
 const LISTING_DAYS = 30;
@@ -180,50 +190,118 @@ function doSignup(){
 
 function doLogout(){ auth.signOut(); }
 
+let photos = [];
+let uploading = 0;
+
+function esc(v){ return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function renderAttrFields(values){
+  values = values || {};
+  const defs = CAT_ATTRS[pCat.value] || [];
+  attrBox.classList.toggle('hide', !defs.length);
+  attrTitle.textContent = 'Detajet — ' + pCat.value;
+  attrFields.innerHTML = defs.map(f=>{
+    const v = values[f.k] != null ? values[f.k] : '';
+    let input;
+    if(f.type==='select'){
+      input = `<select data-attr="${f.k}"><option value="">—</option>` + f.opts.map(o=>`<option value="${esc(o[0])}"${o[0]===v?' selected':''}>${esc(o[0])}</option>`).join('') + `</select>`;
+    }else{
+      input = `<input data-attr="${f.k}" type="${f.type==='number'?'number':'text'}"${f.type==='number'?' min="0" step="any"':''} placeholder="${esc(f.ph||'')}" value="${esc(v)}">`;
+    }
+    return `<div class="field"><label>${esc(f.sq)}</label>${input}</div>`;
+  }).join('');
+}
+
+function collectAttrs(){
+  const out = {};
+  attrFields.querySelectorAll('[data-attr]').forEach(el=>{
+    const v = el.value.trim();
+    if(v) out[el.dataset.attr] = v;
+  });
+  return out;
+}
+
 function resetForm(){
   pId.value=''; pName.value=''; pIcon.value=''; pPrice.value=''; pOld.value=''; pCat.selectedIndex=0;
-  pCountry.selectedIndex=0; pCity.value=''; pCondition.selectedIndex=0; pPhotoUrl.value=''; pPhotoFile.value='';
+  pCountry.selectedIndex=0; pCity.value=''; pCondition.selectedIndex=0; pPhotoFile.value='';
   pDescription.value='';
   pSellerName.value=''; pSellerPhone.value='';
-  photoPreview.innerHTML=''; uploadStatus.textContent = 'Zgjidh një foto nga telefoni/kompjuteri jot (opsionale).';
+  photos = []; renderPhotos(); renderAttrFields();
+  uploadStatus.textContent = 'Zgjidh deri në 20 foto nga telefoni/kompjuteri (opsionale). Foto e parë është kryesorja.';
   formTitle.textContent='Posto një shpallje të re'; saveBtn.textContent='Posto shpalljen';
   cancelBtn.classList.add('hide'); formErr.textContent=''; formOk.textContent='';
 }
 
+function renderPhotos(){
+  photoPreview.innerHTML = photos.map((u,i)=>`<div class="ph"><img src="${esc(u)}" alt=""><button type="button" class="rm" onclick="removePhoto(${i})" title="Hiq">×</button>${i===0?'<span class="cov main">★ Kryesore</span>':`<button type="button" class="cov" onclick="makeCover(${i})">Bëje kryesore</button>`}</div>`).join('')
+    + (uploading ? `<div class="ph busy">Duke ngarkuar…</div>` : '');
+}
+function removePhoto(i){ photos.splice(i,1); renderPhotos(); }
+function makeCover(i){ const [u]=photos.splice(i,1); photos.unshift(u); renderPhotos(); }
+
+// Zvogëlon foton (max 1600px, JPEG) që ngarkimi nga telefoni të jetë i shpejtë
 function fileToBase64(file){
   return new Promise((resolve,reject)=>{
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result).split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
+    const raw = () => { const r=new FileReader(); r.onload=()=>resolve(String(r.result).split(',')[1]); r.onerror=reject; r.readAsDataURL(file); };
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = ()=>{
+      try{
+        const max = 1600, sc = Math.min(1, max/Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.width*sc); c.height = Math.round(img.height*sc);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL('image/jpeg',0.85).split(',')[1]);
+      }catch(e){ URL.revokeObjectURL(url); raw(); }
+    };
+    img.onerror = ()=>{ URL.revokeObjectURL(url); raw(); };
+    img.src = url;
   });
 }
 
+async function uploadOne(file){
+  const base64 = await fileToBase64(file);
+  const form = new FormData();
+  form.append('image', base64);
+  const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method:'POST', body: form });
+  const data = await res.json();
+  if(!(data && data.success)) throw new Error('upload');
+  return data.data.url;
+}
+
 async function handlePhotoSelect(e){
-  const file = e.target.files[0];
-  if(!file) return;
+  let files = Array.from(e.target.files || []).filter(f=>f.type.startsWith('image/'));
+  e.target.value = '';
+  if(!files.length) return;
   if(!IMGBB_API_KEY || IMGBB_API_KEY === 'VENDOS_CELESIN_TEND_KETU'){
     uploadStatus.innerHTML = '<span class="err">Ngarkimi i fotove s\'është konfiguruar ende nga administratori i faqes.</span>';
     return;
   }
-  uploadStatus.textContent = 'Duke ngarkuar foton…';
-  photoPreview.innerHTML = '';
-  try{
-    const base64 = await fileToBase64(file);
-    const form = new FormData();
-    form.append('image', base64);
-    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method:'POST', body: form });
-    const data = await res.json();
-    if(data && data.success){
-      pPhotoUrl.value = data.data.url;
-      photoPreview.innerHTML = `<img class="thumb" src="${data.data.url}">`;
-      uploadStatus.textContent = 'Foto u ngarkua ✓';
-    }else{
-      uploadStatus.innerHTML = '<span class="err">Gabim gjatë ngarkimit të fotos. Provo përsëri.</span>';
+  const room = MAX_PHOTOS - photos.length - uploading;
+  let note = '';
+  if(files.length > room){ files = files.slice(0, Math.max(0,room)); note = ` (maksimumi është ${MAX_PHOTOS} foto)`; }
+  if(!files.length){ uploadStatus.innerHTML = `<span class="err">Ke arritur maksimumin prej ${MAX_PHOTOS} fotove.</span>`; return; }
+
+  const total = files.length;
+  let done = 0, failed = 0, idx = 0;
+  const results = new Array(total).fill(null);
+  uploading += total; renderPhotos(); saveBtn.disabled = true;
+  uploadStatus.textContent = `Duke ngarkuar 0/${total}…`;
+
+  async function worker(){
+    while(idx < total){
+      const my = idx++;
+      try{ results[my] = await uploadOne(files[my]); }catch(err){ failed++; }
+      done++; uploading--;
+      uploadStatus.textContent = `Duke ngarkuar ${done}/${total}…`;
     }
-  }catch(err){
-    uploadStatus.innerHTML = '<span class="err">Gabim: ' + err.message + '</span>';
   }
+  await Promise.all([worker(), worker(), worker()]);
+  results.forEach(u=>{ if(u) photos.push(u); });
+  renderPhotos();
+  if(!uploading) saveBtn.disabled = false;
+  uploadStatus.innerHTML = (failed ? `<span class="err">${failed} foto s'u ngarkuan — provoji përsëri.</span> ` : '') + `${photos.length}/${MAX_PHOTOS} foto${note} ✓`;
 }
 
 async function saveListing(e){
@@ -241,12 +319,15 @@ async function saveListing(e){
     condition: pCondition.value,
     price: parseFloat(pPrice.value),
     oldPrice: pOld.value ? parseFloat(pOld.value) : parseFloat(pPrice.value),
-    photoUrl: pPhotoUrl.value.trim() || null,
+    photoUrl: photos[0] || null,
+    photos: photos.slice(),
+    attrs: collectAttrs(),
     description: pDescription.value.trim(),
     sellerId: user.uid,
     sellerName: pSellerName.value.trim(),
     sellerPhone: pSellerPhone.value.trim()
   };
+  if(uploading){ formErr.textContent = 'Prit të mbarojë ngarkimi i fotove.'; return false; }
   if(!data.name || isNaN(data.price) || !data.city){ formErr.textContent = 'Plotëso emrin, qytetin dhe çmimin.'; return false; }
   if(!data.sellerName || !data.sellerPhone){ formErr.textContent = 'Plotëso emrin dhe telefonin e kontaktit.'; return false; }
 
@@ -280,11 +361,11 @@ function editListing(id, d){
   pId.value = id; pName.value = d.name; pCat.value = d.cat; pIcon.value = d.icon || '';
   pCountry.value = d.country || 'Kosovë'; pCity.value = d.city || ''; pCondition.value = d.condition || 'I ri';
   pPrice.value = d.price; pOld.value = d.oldPrice && d.oldPrice!==d.price ? d.oldPrice : '';
-  pPhotoUrl.value = d.photoUrl || '';
+  photos = Array.isArray(d.photos) && d.photos.length ? d.photos.slice() : (d.photoUrl ? [d.photoUrl] : []);
+  renderPhotos(); renderAttrFields(d.attrs || {});
   pDescription.value = d.description || '';
   pSellerName.value = d.sellerName || ''; pSellerPhone.value = d.sellerPhone || '';
-  photoPreview.innerHTML = d.photoUrl ? `<img class="thumb" src="${d.photoUrl}">` : '';
-  uploadStatus.textContent = 'Zgjidh një foto të re nëse do ta ndryshosh (opsionale).';
+  uploadStatus.textContent = 'Mund të shtosh foto të reja ose të heqësh/riorganizosh ato ekzistuese.';
   formTitle.textContent = 'Redakto shpalljen'; saveBtn.textContent = 'Ruaj ndryshimet';
   cancelBtn.classList.remove('hide');
   window.scrollTo({top:0,behavior:'smooth'});
@@ -342,5 +423,6 @@ async function loadList(){
 }
 
 showAuthTab('login');
+renderAttrFields();
 </script>
 </body></html>

@@ -35,9 +35,21 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 .postBtn{text-decoration:none;color:inherit;display:inline-flex;align-items:center;white-space:nowrap}
 .pdPic{height:320px;background:#f0f0ed;display:flex;align-items:center;justify-content:center;font-size:110px;border-radius:14px;overflow:hidden;margin-bottom:16px}.pdPic img{width:100%;height:100%;object-fit:cover}
 .pdMeta{color:#777;font-size:14px;margin:6px 0}
+.pdPic{position:relative;margin-bottom:8px;touch-action:pan-y}
+.galNav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:0;background:#000a;color:#fff;font-size:20px;cursor:pointer;line-height:36px;padding:0;z-index:2}
+.galNav.prev{left:8px}.galNav.next{right:8px}
+.galCount{position:absolute;right:10px;bottom:10px;background:#000a;color:#fff;font-size:12px;padding:4px 9px;border-radius:12px;z-index:2}
+.pdThumbs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:4px}
+.pdThumbs img{width:62px;height:62px;object-fit:cover;border-radius:8px;border:2px solid transparent;cursor:pointer;flex-shrink:0;opacity:.75}
+.pdThumbs img.on{border-color:#202124;opacity:1}
+.pdAttrs{display:grid;grid-template-columns:1fr 1fr;gap:0 18px;margin:12px 0;border-top:1px solid #eee}
+.pdAttrs div{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #eee;font-size:14px}
+.pdAttrs span{color:#777}.pdAttrs b{text-align:right}
+.photoCount{position:absolute;right:10px;bottom:10px;background:#000a;color:#fff;font-size:12px;padding:3px 8px;border-radius:12px}
+.pic{position:relative}
 .pdContact{background:#f7f7f5;border-radius:12px;padding:14px;margin:14px 0;font-size:14px;line-height:1.7}
 .pdDesc{white-space:pre-wrap;line-height:1.6;color:#333;margin:14px 0;font-size:15px}
-@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:repeat(2,1fr)}.nav{flex-wrap:wrap}.search{order:3;flex-basis:100%}.foot{grid-template-columns:1fr 1fr}}@media(max-width:520px){.hero{padding:25px}.hero h1{font-size:32px}.bags{display:none}.grid{gap:9px}.pic{height:150px;font-size:50px}.features{grid-template-columns:1fr}.filters{flex-direction:column}.filters input,.filters select{width:100%}.pdPic{height:220px;font-size:70px}}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:repeat(2,1fr)}.nav{flex-wrap:wrap}.search{order:3;flex-basis:100%}.foot{grid-template-columns:1fr 1fr}}@media(max-width:520px){.pdAttrs{grid-template-columns:1fr}.hero{padding:25px}.hero h1{font-size:32px}.bags{display:none}.grid{gap:9px}.pic{height:150px;font-size:50px}.features{grid-template-columns:1fr}.filters{flex-direction:column}.filters input,.filters select{width:100%}.pdPic{height:220px;font-size:70px}}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -81,13 +93,16 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <div class="modal" id="productModal"><div class="box">
 <div style="display:flex;justify-content:space-between"><h2 id="pdName" style="margin:0"></h2><button class="btn" onclick="closeModal('productModal')">×</button></div>
 <div id="pdPic" class="pdPic"></div>
+<div id="pdThumbs" class="pdThumbs"></div>
 <div class="pdMeta" id="pdMeta"></div>
 <div class="price" id="pdPrice" style="font-size:24px"></div>
+<div id="pdAttrs" class="pdAttrs"></div>
 <div id="pdDesc" class="pdDesc"></div>
 <div id="pdContact"></div>
 <a id="pdAddBtn" class="add" href="#">Kontakto shitësin</a>
 </div></div>
 
+<script src="category-attrs.js"></script>
 <script>
 // Shpalljet fillestare (përdoren vetëm nëse Firebase s'është konfiguruar ende
 // ose baza e të dhënave është ende bosh — shiko postoj.html / admin.html për t'i shtuar këto vetë)
@@ -202,6 +217,7 @@ async function loadProducts(){
         return {
           id: d.id, name: x.name, cat: x.cat, price: Number(x.price), oldPrice: Number(x.oldPrice||x.price),
           icon: x.icon || '🛍️', photoUrl: x.photoUrl || null,
+          photos: Array.isArray(x.photos) && x.photos.length ? x.photos : (x.photoUrl ? [x.photoUrl] : []), attrs: x.attrs || {},
           country: x.country || 'Kosovë', city: x.city || '', condition: x.condition || '', description: x.description || '',
           sellerName: x.sellerName || '', sellerPhone: x.sellerPhone || '',
           expiresAt: x.expiresAt || null
@@ -222,7 +238,7 @@ function render(a=P){
     const actionBtn = phone
       ? `<a href="tel:${phone}" class="add" onclick="event.stopPropagation()">${PHONE_ICON_WHITE}${t('contactBtn')}</a>`
       : `<span class="add disabled">${t('contactUnavailable')}</span>`;
-    return `<div class="card" onclick="openProduct('${x.id}')"><span class="badge">${t('badge')}</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" style="width:100%;height:100%;object-fit:cover">` : x.icon}</div><div class="info"><div class="name">${x.name}</div><small>${meta}</small>${contact}<div class="price">${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}</div>${actionBtn}</div></div>`;
+    return `<div class="card" onclick="openProduct('${x.id}')"><span class="badge">${t('badge')}</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" style="width:100%;height:100%;object-fit:cover">` : x.icon}${(x.photos&&x.photos.length>1) ? `<span class="photoCount">📷 ${x.photos.length}</span>` : ''}</div><div class="info"><div class="name">${x.name}</div><small>${meta}</small>${contact}<div class="price">${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}</div>${actionBtn}</div></div>`;
   }).join('')
     : `<div class="empty">${t('emptyMsg')}</div>`;
   res.textContent = a.length + ' ' + t('listingsWord');
@@ -232,7 +248,9 @@ function openProduct(id){
   const x = P.find(p=>p.id===id);
   if(!x) return;
   pdName.textContent = x.name;
-  pdPic.innerHTML = x.photoUrl ? `<img src="${x.photoUrl}">` : x.icon;
+  galPhotos = (x.photos && x.photos.length) ? x.photos : (x.photoUrl ? [x.photoUrl] : []);
+  galIdx = 0; renderGallery(x.icon);
+  pdAttrs.innerHTML = attrsHtml(x);
   pdMeta.textContent = [catLabel(x.cat), countryLabel(x.country), x.city, condLabel(x.condition)].filter(Boolean).join(' • ');
   pdPrice.innerHTML = `${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}`;
   pdDesc.textContent = x.description || '';
@@ -251,6 +269,30 @@ function openProduct(id){
   openModal('productModal');
 }
 
+let galPhotos = [], galIdx = 0, galIcon = '';
+function escH(v){ return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function renderGallery(icon){
+  if(icon!==undefined) galIcon = icon;
+  const n = galPhotos.length;
+  if(!n){ pdPic.innerHTML = galIcon; pdThumbs.innerHTML = ''; return; }
+  pdPic.innerHTML = `<img src="${escH(galPhotos[galIdx])}" alt="">` + (n>1 ? `<button class="galNav prev" onclick="galGo(-1)">‹</button><button class="galNav next" onclick="galGo(1)">›</button><span class="galCount">${galIdx+1}/${n}</span>` : '');
+  pdThumbs.innerHTML = n>1 ? galPhotos.map((u,i)=>`<img src="${escH(u)}" class="${i===galIdx?'on':''}" onclick="galSet(${i})" alt="">`).join('') : '';
+  const on = pdThumbs.querySelector('img.on'); if(on) on.scrollIntoView({block:'nearest',inline:'center'});
+}
+function galGo(d){ galIdx = (galIdx + d + galPhotos.length) % galPhotos.length; renderGallery(); }
+function galSet(i){ galIdx = i; renderGallery(); }
+let galX = null;
+pdPic.addEventListener('touchstart', e=>{ galX = e.touches[0].clientX; }, {passive:true});
+pdPic.addEventListener('touchend', e=>{ if(galX===null||galPhotos.length<2) return; const dx = e.changedTouches[0].clientX - galX; galX = null; if(Math.abs(dx)>40) galGo(dx<0?1:-1); });
+document.addEventListener('keydown', e=>{ if(productModal.style.display!=='flex'||galPhotos.length<2) return; if(e.key==='ArrowLeft') galGo(-1); if(e.key==='ArrowRight') galGo(1); if(e.key==='Escape') closeModal('productModal'); });
+function attrsHtml(x){
+  const defs = CAT_ATTRS[x.cat] || [], a = x.attrs || {};
+  return defs.filter(f=>a[f.k]!=null && a[f.k]!=='').map(f=>{
+    let v = a[f.k];
+    if(f.type==='select' && currentLang==='en'){ const o = f.opts.find(o=>o[0]===v); if(o) v = o[1]; }
+    return `<div><span>${escH(currentLang==='en'?f.en:f.sq)}</span><b>${escH(v)}</b></div>`;
+  }).join('');
+}
 function openModal(id){ document.getElementById(id).style.display='flex'; }
 function closeModal(id){ document.getElementById(id).style.display='none'; }
 
