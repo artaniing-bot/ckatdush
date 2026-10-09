@@ -1,0 +1,59 @@
+/* Tema e errët (aktivizohet me html[data-theme=dark]) */
+html[data-theme=dark]{color-scheme:dark}
+html[data-theme=dark] body{background:#111214;color:#e8e8ea}
+html[data-theme=dark] header{background:#1a1b1e;box-shadow:0 1px 8px #0008}
+html[data-theme=dark] .top{background:#000}
+html[data-theme=dark] .logo,html[data-theme=dark] header img{background:#fff;border-radius:10px}
+html[data-theme=dark] .search{border-color:#3a3b40;background:#24252a}
+html[data-theme=dark] .search input{background:transparent;color:#e8e8ea}
+html[data-theme=dark] input::placeholder,html[data-theme=dark] textarea::placeholder{color:#8a8b92}
+html[data-theme=dark] .btn{background:#24252a;border-color:#3a3b40;color:#e8e8ea}
+html[data-theme=dark] .cats button{background:#1f3326;border-color:#e8e8ea;color:#e8e8ea}
+html[data-theme=dark] .cats button .catIcon svg{stroke:#e8e8ea}
+html[data-theme=dark] .cats button.active{background:#e8e8ea;color:#111;border-color:#e8e8ea}
+html[data-theme=dark] .cats button.active .catIcon svg{stroke:#111}
+html[data-theme=dark] .cats .promoBanner{background:linear-gradient(120deg,#3a2a2c,#26302a);border-color:#4a3a3c;color:#e8e8ea}
+html[data-theme=dark] .cats .promoBanner .promoBtn{background:#e8e8ea;color:#111}
+html[data-theme=dark] .countries button{background:#24252a;border-color:#3a3b40;color:#e8e8ea}
+html[data-theme=dark] .countries button.active{background:#e8e8ea;color:#111;border-color:#e8e8ea}
+html[data-theme=dark] .filters input,html[data-theme=dark] .filters select,html[data-theme=dark] .field input,html[data-theme=dark] .field select,html[data-theme=dark] .field textarea{background:#24252a;border-color:#3a3b40;color:#e8e8ea}
+html[data-theme=dark] .hero{background:#26272b}
+html[data-theme=dark] .hero p{color:#b5b6bc}
+html[data-theme=dark] .cta{background:#e8e8ea;color:#111}
+html[data-theme=dark] .cta.secondary{background:#24252a;color:#e8e8ea;border-color:#3a3b40}
+html[data-theme=dark] .cta.danger{color:#fff;background:#c0392b}
+html[data-theme=dark] .skyline-wrap svg{filter:invert(1) hue-rotate(180deg)}
+html[data-theme=dark] .skyline-wrap .city-label{color:#e8e8ea}
+html[data-theme=dark] .feature,html[data-theme=dark] .card{background:#1a1b1e;border-color:#2e2f34}
+html[data-theme=dark] .feature span,html[data-theme=dark] .muted{color:#9a9ba2}
+html[data-theme=dark] .pic,html[data-theme=dark] .pdPic{background:#24252a}
+html[data-theme=dark] .old{color:#80818a}
+html[data-theme=dark] .add{background:#e8e8ea;color:#111}
+html[data-theme=dark] .add.disabled{background:#3a3b40;color:#9a9ba2}
+html[data-theme=dark] .empty{color:#9a9ba2}
+html[data-theme=dark] footer{background:#0a0a0b}
+html[data-theme=dark] .modal{background:#000b}
+html[data-theme=dark] .box{background:#1a1b1e;color:#e8e8ea}
+html[data-theme=dark] .pdContact{background:#24252a}
+html[data-theme=dark] .pdDesc{color:#d0d0d4}
+html[data-theme=dark] .pdMeta{color:#9a9ba2}
+html[data-theme=dark] .pdAttrs,html[data-theme=dark] .pdAttrs div{border-color:#2e2f34}
+html[data-theme=dark] .pdAttrs span{color:#9a9ba2}
+html[data-theme=dark] .pdThumbs img.on{border-color:#e8e8ea}
+html[data-theme=dark] a.back{color:#e8e8ea;border-color:#3a3b40}
+html[data-theme=dark] .field label{color:#b5b6bc}
+html[data-theme=dark] .uploadBox{border-color:#3a3b40}
+html[data-theme=dark] .ph{background:#24252a;border-color:#3a3b40}
+html[data-theme=dark] .ph .cov{background:#2e2f34;color:#e8e8ea}
+html[data-theme=dark] .ph .cov.main{background:#e8e8ea;color:#111}
+html[data-theme=dark] .attrBox{background:#1f2024;border-color:#2e2f34}
+html[data-theme=dark] .item{border-color:#2e2f34}
+html[data-theme=dark] .item .edit{color:#e8e8ea}
+html[data-theme=dark] .item .info small{color:#9a9ba2}
+html[data-theme=dark] .pw button,html[data-theme=dark] .linkBtn{color:#b5b6bc}
+html[data-theme=dark] .ok{color:#6fcf7a}
+html[data-theme=dark] .err{color:#ff7b6b}
+html[data-theme=dark] .exp{color:#e0a458}
+html[data-theme=dark] .add svg{fill:#111}
+html[data-theme=dark] .add.disabled svg{fill:#9a9ba2}
+html[data-theme=dark] .pdContact svg,html[data-theme=dark] .info svg{fill:#e8e8ea}
