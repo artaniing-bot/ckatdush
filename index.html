@@ -34,6 +34,7 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 .filters{display:flex;gap:10px;flex-wrap:wrap;padding:0 18px 14px;max-width:1250px;margin:auto}
 .filters input,.filters select{padding:9px 12px;border:1px solid #ddd;border-radius:20px;font-size:14px;font-family:inherit;background:white}
 .filters input{width:150px}
+.priceBox{display:contents}.priceBox.off{display:none}
 .postBtn{text-decoration:none;color:inherit;display:inline-flex;align-items:center;white-space:nowrap}
 .pdPic{height:320px;background:#f0f0ed;display:flex;align-items:center;justify-content:center;font-size:110px;border-radius:14px;overflow:hidden;margin-bottom:16px}.pdPic img{width:100%;height:100%;object-fit:cover}
 .pdMeta{color:#777;font-size:14px;margin:6px 0}
@@ -81,8 +82,8 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <button data-k="Mali i Zi" onclick="filterCountry('Mali i Zi')">🇲🇪 <span data-i18n="countryMontenegro">Mali i Zi</span></button>
 </div>
 <div class="filters">
-<input id="fMin" type="number" data-i18n-ph="fMinPh" placeholder="Çmimi min €" min="0" oninput="applyFilters()">
-<input id="fMax" type="number" data-i18n-ph="fMaxPh" placeholder="Çmimi max €" min="0" oninput="applyFilters()">
+<div class="priceBox off" id="priceBox"><input id="fMin" type="number" data-i18n-ph="fMinPh" placeholder="Çmimi min €" min="0" oninput="applyFilters()">
+<input id="fMax" type="number" data-i18n-ph="fMaxPh" placeholder="Çmimi max €" min="0" oninput="applyFilters()"></div>
 <select id="fCity" onchange="applyFilters()"><option value="" data-i18n="fCityAll">Qyteti (të gjitha)</option><option>Prishtinë</option><option>Prizren</option><option>Pejë</option><option>Gjakovë</option><option>Ferizaj</option><option>Gjilan</option><option>Mitrovicë</option><option>Vushtrri</option><option>Podujevë</option><option>Tiranë</option><option>Shkodër</option><option>Durrës</option><option>Shkup</option><option>Tetovë</option><option>Podgoricë</option></select>
 <select id="fCond" onchange="applyFilters()"><option value="" data-i18n="fCondAll">Gjendja (të gjitha)</option><option value="I ri" data-i18n="fCondNew">I ri</option><option value="I përdorur" data-i18n="fCondUsed">I përdorur</option></select>
 <button class="btn" onclick="clearFilters()" data-i18n="clearFilters">Pastro filtrat</button>
@@ -400,6 +401,10 @@ function search(){
   products.scrollIntoView({behavior:'smooth'});
 }
 function applyFilters(){
+  // Çmimi min/max shfaqet vetëm te kategoria Automjete
+  const showPrice = currentCat === 'Automjete';
+  document.getElementById('priceBox').classList.toggle('off', !showPrice);
+  if(!showPrice){ document.getElementById('fMin').value=''; document.getElementById('fMax').value=''; }
   let list = P.slice();
   if(currentCat && currentCat!=='Të gjitha') list = list.filter(x=>x.cat===currentCat);
   if(currentCountry && currentCountry!=='Të gjitha') list = list.filter(x=>x.country===currentCountry);
