@@ -400,9 +400,10 @@ function search(){
   applyFilters();
   products.scrollIntoView({behavior:'smooth'});
 }
+const PRICE_CATS = ['Automjete','Patundshmëri','Teknologji'];
 function applyFilters(){
-  // Çmimi min/max shfaqet vetëm te kategoria Automjete
-  const showPrice = currentCat === 'Automjete';
+  // Çmimi min/max shfaqet vetëm kur ka nevojë: kategoritë me çmime të larta ose kur përdoruesi kërkon diçka
+  const showPrice = PRICE_CATS.includes(currentCat) || !!currentQuery;
   document.getElementById('priceBox').classList.toggle('off', !showPrice);
   if(!showPrice){ document.getElementById('fMin').value=''; document.getElementById('fMax').value=''; }
   let list = P.slice();
