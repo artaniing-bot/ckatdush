@@ -28,12 +28,18 @@ const CAT_ATTRS = {
     {k:'color', sq:'Ngjyra', en:'Color', type:'text'},
     {k:'for', sq:'Për', en:'For', type:'select', opts:[['Femra','Women'],['Meshkuj','Men'],['Unisex','Unisex']]}
   ],
-  'Shtëpi': [
-    {k:'type', sq:'Lloji', en:'Type', type:'text', ph:'p.sh. Divan'},
-    {k:'brand', sq:'Marka', en:'Brand', type:'text'},
-    {k:'material', sq:'Materiali', en:'Material', type:'text'},
-    {k:'dims', sq:'Dimensionet', en:'Dimensions', type:'text', ph:'p.sh. 200x90x80 cm'},
-    {k:'color', sq:'Ngjyra', en:'Color', type:'text'}
+  'Patundshmëri': [
+    {k:'deal', sq:'Lloji i ofertës', en:'Offer', type:'select', opts:[['Në shitje','For sale'],['Me qira','For rent']]},
+    {k:'type', sq:'Lloji i pronës', en:'Property type', type:'select', opts:[['Banesë','Apartment'],['Shtëpi','House'],['Vilë','Villa'],['Truall / Tokë','Land'],['Lokal biznesi','Commercial space'],['Zyrë','Office'],['Garazhë / Parking','Garage / Parking'],['Tjetër','Other']]},
+    {k:'area', sq:'Sipërfaqja (m²)', en:'Area (m²)', type:'number', ph:'p.sh. 75'},
+    {k:'rooms', sq:'Dhoma', en:'Rooms', type:'number', ph:'p.sh. 3'},
+    {k:'baths', sq:'Banjo', en:'Bathrooms', type:'number', ph:'p.sh. 1'},
+    {k:'floor', sq:'Kati', en:'Floor', type:'text', ph:'p.sh. 3 nga 7'},
+    {k:'year', sq:'Viti i ndërtimit', en:'Year built', type:'number', ph:'p.sh. 2018'},
+    {k:'furnished', sq:'Me mobilje', en:'Furnished', type:'select', opts:[['Po','Yes'],['Jo','No'],['Pjesërisht','Partly']]},
+    {k:'heating', sq:'Ngrohja', en:'Heating', type:'text', ph:'p.sh. Qendrore, Klimë'},
+    {k:'parking', sq:'Parkim', en:'Parking', type:'select', opts:[['Po','Yes'],['Jo','No']]},
+    {k:'elevator', sq:'Ashensor', en:'Elevator', type:'select', opts:[['Po','Yes'],['Jo','No']]}
   ],
   'Bukuri': [
     {k:'type', sq:'Lloji', en:'Type', type:'text'},
@@ -59,3 +65,6 @@ const CAT_ATTRS = {
   ]
 };
 const MAX_PHOTOS = 20;
+
+// Kategoria e vjetër 'Shtëpi' u riemërtua 'Patundshmëri'
+function normCat(c){ return c === 'Shtëpi' ? 'Patundshmëri' : c; }

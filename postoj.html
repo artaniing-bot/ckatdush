@@ -102,7 +102,7 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 <div class="row2">
 <div class="field"><label>Kategoria</label>
 <select id="pCat" required onchange="renderAttrFields()">
-<option>Automjete</option><option>Teknologji</option><option>Moda</option><option>Shtëpi</option><option>Bukuri</option><option>Fëmijë</option><option>Sport</option><option>Aksesorë</option>
+<option>Automjete</option><option>Teknologji</option><option>Moda</option><option>Patundshmëri</option><option>Bukuri</option><option>Fëmijë</option><option>Sport</option><option>Aksesorë</option>
 </select></div>
 <div class="field"><label>Emoji / ikona (nëse s'ke foto)</label><input id="pIcon" placeholder="🛍️"></div>
 </div>
@@ -395,7 +395,7 @@ async function saveListing(e){
 }
 
 function editListing(id, d){
-  pId.value = id; pName.value = d.name; pCat.value = d.cat; pIcon.value = d.icon || '';
+  pId.value = id; pName.value = d.name; pCat.value = normCat(d.cat); pIcon.value = d.icon || '';
   pCountry.value = d.country || 'Kosovë'; pCity.value = d.city || ''; pCondition.value = d.condition || 'I ri';
   pPrice.value = d.price; pOld.value = d.oldPrice && d.oldPrice!==d.price ? d.oldPrice : '';
   photos = Array.isArray(d.photos) && d.photos.length ? d.photos.slice() : (d.photoUrl ? [d.photoUrl] : []);

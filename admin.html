@@ -82,7 +82,7 @@ select.statusSel{margin-top:8px;padding:8px;border-radius:8px;border:1px solid #
 <div class="row2">
 <div class="field"><label>Kategoria</label>
 <select id="pCat" required>
-<option>Automjete</option><option>Teknologji</option><option>Moda</option><option>Shtëpi</option><option>Bukuri</option><option>Fëmijë</option><option>Sport</option><option>Aksesorë</option>
+<option>Automjete</option><option>Teknologji</option><option>Moda</option><option>Patundshmëri</option><option>Bukuri</option><option>Fëmijë</option><option>Sport</option><option>Aksesorë</option>
 </select></div>
 <div class="field"><label>Emoji / ikona</label><input id="pIcon" placeholder="🛍️"></div>
 </div>
@@ -273,7 +273,7 @@ async function saveProduct(e){
 }
 
 function editProduct(id, d){
-  pId.value = id; pName.value = d.name; pCat.value = d.cat; pIcon.value = d.icon || '';
+  pId.value = id; pName.value = d.name; pCat.value = (d.cat==='Shtëpi'?'Patundshmëri':d.cat); pIcon.value = d.icon || '';
   pCountry.value = d.country || 'Kosovë'; pCity.value = d.city || ''; pCondition.value = d.condition || '';
   pPrice.value = d.price; pOld.value = d.oldPrice && d.oldPrice!==d.price ? d.oldPrice : '';
   pPhotoUrl.value = d.photoUrl || '';
