@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="sq"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Çkat’dush — Shërbime pranë teje</title>
+<link rel="stylesheet" href="theme.css">
+<script src="theme.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#e6e8eb;color:#202124}
+.wrap{max-width:900px;margin:0 auto;padding:18px}
+header.sv{display:flex;align-items:center;gap:12px;margin-bottom:16px;justify-content:space-between;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+header.sv img{width:84px;object-fit:contain}
+h1{font-size:21px;margin:0}
+a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;border-radius:20px;padding:8px 14px;background:#fff}
+.card{background:#fff;border:1px solid #e6e6e2;border-radius:15px;padding:16px;margin-bottom:16px}
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.types button{border:2.5px solid #111;background:#e3f6e6;border-radius:16px;padding:10px 6px;cursor:pointer;font-family:inherit;font-size:13px;color:#111;display:flex;flex-direction:column;align-items:center;gap:4px}
+.types button .em{font-size:24px;line-height:1}
+.types button.active{background:#111;color:#fff}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center}
+select{padding:10px 12px;border:1px solid #ddd;border-radius:20px;font-size:14px;font-family:inherit;background:#fff;flex:1;min-width:140px}
+.btn{border:1px solid #ddd;background:#fff;border-radius:22px;padding:10px 14px;cursor:pointer;font-family:inherit;font-size:14px;color:#202124;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn.dark{background:#202124;color:#fff;border-color:#202124}
+.muted{color:#777;font-size:13px}
+#map{height:320px;border-radius:12px;margin-bottom:14px;background:#dfe2e6}
+.mk{width:34px;height:34px;border-radius:50%;background:#fff;border:2px solid #202124;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 1px 4px #0005}
+.mk.own{border-color:#d98b93;background:#fff4f5}.mk.me{background:#2d7ff9;border-color:#fff;color:#fff;font-size:14px}
+.res{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid #eee;align-items:flex-start}
+.res:last-child{border-bottom:0}
+.res .ic{font-size:26px;width:36px;text-align:center;flex-shrink:0}
+.res .body{flex:1;min-width:0}
+.res b{display:block;word-break:break-word}
+.res small{color:#777;display:block;margin-top:2px;word-break:break-word}
+.res .dist{font-weight:800;white-space:nowrap}
+.res .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.res .acts .btn{padding:6px 11px;font-size:13px}
+.tag{display:inline-block;background:#d98b93;color:#fff;border-radius:10px;font-size:11px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.note{font-size:12px;color:#777;margin:10px 0 0;line-height:1.5}
+.empty{text-align:center;color:#777;padding:26px 8px;line-height:1.6}
+.err{color:#c0392b;font-size:13px;margin:8px 0 0}
+</style></head><body>
+<div class="wrap">
+<header class="sv">
+<div class="brand"><img src="logo.png" alt="Çkat’dush"><h1>Shërbime pranë teje</h1></div>
+<div style="display:flex;gap:8px;align-items:center"><button class="btn" id="themeBtn" type="button" onclick="toggleTheme()">🌙</button><a class="back" href="index.html">← Kthehu</a></div>
+</header>
+
+<div class="card">
+<div class="types" id="types"></div>
+<div class="row">
+<select id="country" onchange="onCountry()"></select>
+<select id="city" onchange="onCity()"></select>
+</div>
+<div class="row">
+<button class="btn dark" type="button" onclick="useMyLocation()">📍 Përdor lokacionin tim</button>
+<a class="btn" href="shto-biznes.html">➕ Shto biznesin tënd</a>
+</div>
+<p class="err" id="geoErr"></p>
+<p class="muted" id="anchorInfo" style="margin:10px 0 0"></p>
+</div>
+
+<div class="card">
+<div id="map"></div>
+<div id="results"><div class="empty">Duke ngarkuar…</div></div>
+<p class="note">Të dhënat vijnë nga bizneset e regjistruara këtu dhe nga hartat e hapura © OpenStreetMap contributors. Mund të jenë jo të plota ose të vjetruara — telefono para se të nisesh.</p>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="places-common.js"></script>
+<script>
+let curType = 'hotel';
+let anchor = null;          // {lat, lon, label, user}
+let map = null, markerLayer = null, meMarker = null;
+let searchToken = 0;
+let ownCache = {};          // type -> lista e biznesave të regjistruara
+
+// ---------- UI bazë ----------
+function buildTypes(){
+  types.innerHTML = Object.keys(PLACE_TYPES).map(k=>`<button type="button" data-t="${k}" class="${k===curType?'active':''}" onclick="pickType('${k}')"><span class="em">${PLACE_TYPES[k].icon}</span>${PLACE_TYPES[k].label}</button>`).join('');
+}
+function buildCountries(){
+  country.innerHTML = Object.keys(GEO).map(c=>`<option>${esc(c)}</option>`).join('');
+  fillCities();
+}
+function fillCities(){
+  city.innerHTML = GEO[country.value].cities.map((c,i)=>`<option value="${i}">${esc(c[0])}</option>`).join('');
+}
+function onCountry(){ fillCities(); onCity(); }
+function onCity(){
+  const c = GEO[country.value].cities[+city.value];
+  anchor = {lat:c[1], lon:c[2], label:c[0], user:false};
+  geoErr.textContent = '';
+  search();
+}
+function pickType(k){
+  curType = k;
+  document.querySelectorAll('#types button').forEach(b=>b.classList.toggle('active', b.dataset.t===k));
+  search();
+}
+
+// ---------- Lokacioni ----------
+function useMyLocation(){
+  geoErr.textContent = '';
+  if(!navigator.geolocation){ geoErr.textContent = 'Shfletuesi yt nuk e mbështet lokacionin.'; return; }
+  anchorInfo.textContent = 'Duke marrë lokacionin tënd…';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    anchor = {lat:pos.coords.latitude, lon:pos.coords.longitude, label:'lokacionit tënd', user:true};
+    search();
+  }, err=>{
+    anchorInfo.textContent = '';
+    geoErr.textContent = err && err.code === 1
+      ? 'Nuk e lejove lokacionin. Lejoje te cilësimet e shfletuesit ose zgjidh qytetin më sipër.'
+      : 'S\'u mor lokacioni. Zgjidh qytetin më sipër.';
+    if(!anchor) onCity();
+  }, {enableHighAccuracy:true, timeout:12000, maximumAge:60000});
+}
+
+// ---------- Të dhënat: OpenStreetMap (Overpass) ----------
+const OVERPASS = ['https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter'];
+
+function overpassFilters(type){
+  switch(type){
+    case 'hotel':    return ['["tourism"~"^(hotel|motel|guest_house|hostel|apartment)$"]'];
+    case 'mechanic': return ['["shop"="car_repair"]','["craft"="mechanic"]','["amenity"="car_repair"]'];
+    case 'vulc':     return ['["shop"="tyres"]','["service:vehicle:tyres"="yes"]'];
+    case 'taxi':     return ['["amenity"="taxi"]','["office"="taxi"]'];
+    case 'bus':      return ['["amenity"="bus_station"]'];
+    case 'train':    return ['["railway"="station"]["station"!="subway"]["station"!="light_rail"]','["railway"="halt"]'];
+  }
+  return [];
+}
+function overpassQuery(type, lat, lon, radiusKm){
+  const around = `(around:${Math.round(radiusKm*1000)},${lat.toFixed(5)},${lon.toFixed(5)})`;
+  const parts = overpassFilters(type).map(f=>`nwr${f}${around};`).join('');
+  return `[out:json][timeout:25];(${parts});out center tags 120;`;
+}
+
+async function fetchOSM(type, lat, lon, radiusKm){
+  const key = `osm:${type}:${lat.toFixed(2)}:${lon.toFixed(2)}:${radiusKm}`;
+  try{ const c = sessionStorage.getItem(key); if(c) return JSON.parse(c); }catch(e){}
+  const body = 'data=' + encodeURIComponent(overpassQuery(type, lat, lon, radiusKm));
+  let lastErr = null;
+  for(const url of OVERPASS){
+    try{
+      const ctl = new AbortController(); const to = setTimeout(()=>ctl.abort(), 28000);
+      const res = await fetch(url, {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body, signal: ctl.signal});
+      clearTimeout(to);
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const data = await res.json();
+      const items = (data.elements||[]).map(osmToPlace).filter(Boolean);
+      try{ sessionStorage.setItem(key, JSON.stringify(items)); }catch(e){}
+      return items;
+    }catch(e){ lastErr = e; }
+  }
+  throw lastErr || new Error('osm');
+}
+
+function osmToPlace(el){
+  const t = el.tags || {};
+  const lat = el.lat != null ? el.lat : (el.center && el.center.lat);
+  const lon = el.lon != null ? el.lon : (el.center && el.center.lon);
+  if(lat == null || lon == null) return null;
+  const name = t.name || t['name:sq'] || t['name:en'] || t.brand || t.operator || '';
+  const addr = [t['addr:street'] && (t['addr:street'] + (t['addr:housenumber'] ? ' ' + t['addr:housenumber'] : '')), t['addr:city']].filter(Boolean).join(', ');
+  return {id:'osm-'+el.type+el.id, own:false, name, address:addr, phone: t.phone || t['contact:phone'] || '', website: t.website || t['contact:website'] || '', lat, lon};
+}
+
+// ---------- Të dhënat: bizneset e regjistruara (Firestore) ----------
+async function fetchOwn(type){
+  if(ownCache[type]) return ownCache[type];
+  let list = [];
+  try{
+    const snap = await db.collection('places').where('type','==',type).limit(400).get();
+    list = snap.docs.map(d=>{ const x = d.data(); return {id:d.id, own:true, name:x.name||'', address:[x.address, x.city].filter(Boolean).join(', '), phone:x.phone||'', website:'', lat:Number(x.lat), lon:Number(x.lon)}; })
+      .filter(p=>isFinite(p.lat) && isFinite(p.lon));
+  }catch(e){ console.warn('Biznesat e regjistruara s\'u ngarkuan:', e.message); }
+  ownCache[type] = list;
+  return list;
+}
+
+// ---------- Kërkimi ----------
+async function search(){
+  if(!anchor){ const c = GEO[country.value].cities[+city.value]; anchor = {lat:c[1], lon:c[2], label:c[0], user:false}; }
+  const my = ++searchToken;
+  const T = PLACE_TYPES[curType];
+  results.innerHTML = '<div class="empty">Duke kërkuar…</div>';
+  anchorInfo.textContent = `Po kërkoj ${T.label.toLowerCase()} pranë ${anchor.label}…`;
+  const a = anchor;
+  let merged = [], usedRadius = T.radii[0], osmFailed = false;
+  const own = await fetchOwn(curType);
+  if(my !== searchToken) return;
+  for(const r of T.radii){
+    usedRadius = r;
+    let osm = [];
+    try{ osm = await fetchOSM(curType, a.lat, a.lon, r); }catch(e){ osmFailed = true; }
+    if(my !== searchToken) return;
+    merged = combine(own, osm, a, r);
+    if(merged.length >= 5) break;
+  }
+  renderResults(merged, usedRadius, osmFailed, T);
+}
+
+function combine(own, osm, a, radiusKm){
+  const all = [];
+  own.forEach(p=>{ const d = haversineKm(a.lat,a.lon,p.lat,p.lon); if(d <= radiusKm) all.push(Object.assign({dist:d}, p)); });
+  osm.forEach(p=>{
+    const d = haversineKm(a.lat,a.lon,p.lat,p.lon); if(d > radiusKm) return;
+    const norm = (p.name||'').toLowerCase().trim();
+    // mos e dyfisho nëse biznesi i regjistruar është i njëjti (emër i njëjtë, <200 m)
+    if(norm && all.some(q=>q.own && (q.name||'').toLowerCase().trim()===norm && haversineKm(q.lat,q.lon,p.lat,p.lon) < 0.2)) return;
+    all.push(Object.assign({dist:d}, p));
+  });
+  all.sort((x,y)=> (x.own===y.own ? x.dist-y.dist : (x.own?-1:1)));
+  return all.slice(0, 60);
+}
+
+function renderResults(list, radiusKm, osmFailed, T){
+  anchorInfo.textContent = `${T.label} pranë ${anchor.label} (deri në ${radiusKm} km)`;
+  if(!list.length){
+    results.innerHTML = `<div class="empty">S'u gjet asnjë ${esc(T.one.toLowerCase())} deri në ${radiusKm} km.${osmFailed ? '<br>Harta e hapur s\'u arrit tani — provo përsëri pas pak.' : ''}<br>Provo një qytet tjetër, ose <a href="shto-biznes.html">shto biznesin tënd</a>.</div>`;
+    drawMap([]);
+    return;
+  }
+  results.innerHTML = list.map((p,i)=>{
+    const name = p.name || (T.one + ' (pa emër)');
+    const tel = (p.phone||'').split(/[;,]/)[0].replace(/[^\d+]/g,'');
+    const nav = `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}`;
+    return `<div class="res" id="r${i}"><div class="ic">${T.icon}</div><div class="body"><b>${esc(name)}${p.own?'<span class="tag">Regjistruar</span>':''}</b>${p.address?`<small>${esc(p.address)}</small>`:''}${p.phone?`<small>📞 ${esc(p.phone)}</small>`:''}<div class="acts">${tel?`<a class="btn dark" href="tel:${esc(tel)}">📞 Telefono</a>`:''}<a class="btn" target="_blank" rel="noopener" href="${nav}">🧭 Navigo</a><button class="btn" type="button" onclick="focusPlace(${i})">🗺 Në hartë</button></div></div><div class="dist">${fmtDist(p.dist)}</div></div>`;
+  }).join('');
+  drawMap(list);
+}
+
+// ---------- Harta ----------
+let shown = [];
+function drawMap(list){
+  shown = list;
+  if(typeof L === 'undefined'){ document.getElementById('map').style.display = 'none'; return; }
+  if(!map){
+    map = L.map('map', {scrollWheelZoom:false}).setView([anchor.lat, anchor.lon], 12);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© OpenStreetMap contributors'}).addTo(map);
+    markerLayer = L.layerGroup().addTo(map);
+  }
+  markerLayer.clearLayers();
+  if(meMarker){ map.removeLayer(meMarker); meMarker = null; }
+  const T = PLACE_TYPES[curType], pts = [[anchor.lat, anchor.lon]];
+  if(anchor.user){ meMarker = L.marker([anchor.lat, anchor.lon], {icon: emojiIcon('●','me'), zIndexOffset:1000}).addTo(map).bindPopup('Ti je këtu'); }
+  list.forEach((p,i)=>{
+    const m = L.marker([p.lat,p.lon], {icon: emojiIcon(T.icon, p.own?'own':'')}).addTo(markerLayer);
+    m.bindPopup(`<b>${esc(p.name || T.one)}</b><br>${fmtDist(p.dist)}`);
+    m.on('click', ()=>{ const el = document.getElementById('r'+i); if(el) el.scrollIntoView({behavior:'smooth', block:'center'}); });
+    p._m = m; pts.push([p.lat,p.lon]);
+  });
+  setTimeout(()=>{ map.invalidateSize(); if(pts.length>1) map.fitBounds(pts, {padding:[30,30], maxZoom:15}); else map.setView([anchor.lat, anchor.lon], 12); }, 50);
+}
+function focusPlace(i){
+  const p = shown[i]; if(!p || !map) return;
+  document.getElementById('map').scrollIntoView({behavior:'smooth', block:'center'});
+  map.setView([p.lat,p.lon], 16);
+  if(p._m) p._m.openPopup();
+}
+
+// ---------- Nisja ----------
+buildTypes(); buildCountries(); onCity();
+</script>
+</body></html>

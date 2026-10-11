@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="sq"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Çkat’dush — Shto biznesin tënd</title>
+<link rel="stylesheet" href="theme.css">
+<script src="theme.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#e6e8eb;color:#202124}
+.wrap{max-width:760px;margin:0 auto;padding:18px}
+header.sv{display:flex;align-items:center;gap:12px;margin-bottom:16px;justify-content:space-between;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+header.sv img{width:84px;object-fit:contain}
+h1{font-size:21px;margin:0}
+a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;border-radius:20px;padding:8px 14px;background:#fff}
+.card{background:#fff;border:1px solid #e6e6e2;border-radius:15px;padding:18px;margin-bottom:16px}
+.hide{display:none}
+.field{margin-bottom:14px}.field label{display:block;font-size:13px;color:#555;margin-bottom:5px}
+.field input,.field select{width:100%;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;font-family:inherit;background:#fff;color:#202124}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.row2{grid-template-columns:1fr}}
+.btn{border:1px solid #ddd;background:#fff;border-radius:22px;padding:10px 14px;cursor:pointer;font-family:inherit;font-size:14px;color:#202124;display:inline-flex;align-items:center;gap:6px}
+.btn.dark{background:#202124;color:#fff;border-color:#202124}
+.btn.small{padding:6px 11px;font-size:13px}
+.btn.danger{color:#c0392b;border-color:#c0392b}
+.muted{color:#777;font-size:13px}
+.err{color:#c0392b;font-size:13px;margin:8px 0 0}.ok{color:#2e7d32;font-size:13px;margin:8px 0 0}
+#pickMap{height:300px;border-radius:12px;margin:8px 0;background:#dfe2e6}
+.mk{width:34px;height:34px;border-radius:50%;background:#fff;border:2px solid #d98b93;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 1px 4px #0005}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #eee}
+.item:last-child{border-bottom:0}.item .ic{font-size:24px;width:34px;text-align:center}.item .info{flex:1;min-width:0}.item small{color:#777;display:block}
+.pw{position:relative}.pw input{padding-right:46px}
+.pw button{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;cursor:pointer;font-size:18px;padding:6px 10px}
+.linkBtn{border:0;background:none;color:#555;text-decoration:underline;cursor:pointer;font-size:13px;padding:8px 0 0;font-family:inherit}
+</style></head><body>
+<div class="wrap">
+<header class="sv">
+<div class="brand"><img src="logo.png" alt="Çkat’dush"><h1>Shto biznesin tënd</h1></div>
+<div style="display:flex;gap:8px;align-items:center"><button class="btn" id="themeBtn" type="button" onclick="toggleTheme()">🌙</button><a class="back" href="services.html">← Shërbimet</a></div>
+</header>
+
+<div class="card" id="authCard">
+<p class="muted" style="margin-top:0">Hyr (ose regjistrohu) për të shtuar hotelin, servisin, vulkanizerin, taksinë etj. Është falas.</p>
+<div class="tabs"><button class="btn dark" id="tabLoginBtn" onclick="showAuthTab('login')">Hyr</button><button class="btn" id="tabSignupBtn" onclick="showAuthTab('signup')">Regjistrohu</button></div>
+<div id="loginBox">
+<div class="field"><label>Email</label><input id="loginEmail" type="email" autocomplete="email"></div>
+<div class="field"><label>Fjalëkalimi</label><div class="pw"><input id="loginPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"><button type="button" onclick="togglePw('loginPass',this)">👁</button></div></div>
+<button class="btn dark" onclick="doLogin()">Hyr</button>
+<div><button type="button" class="linkBtn" onclick="doReset()">Harrova fjalëkalimin</button></div>
+<p class="err" id="loginErr"></p><p class="ok" id="loginOk"></p>
+</div>
+<div id="signupBox" class="hide">
+<div class="field"><label>Email</label><input id="suEmail" type="email" autocomplete="email"></div>
+<div class="field"><label>Fjalëkalimi (min. 6 shkronja/numra)</label><div class="pw"><input id="suPass" type="password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doSignup()"><button type="button" onclick="togglePw('suPass',this)">👁</button></div></div>
+<button class="btn dark" onclick="doSignup()">Regjistrohu</button>
+<p class="err" id="suErr"></p>
+</div>
+</div>
+
+<div id="area" class="hide">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<p class="muted" style="margin:0">I kyçur si <b id="whoAmI"></b></p><button class="btn small" onclick="auth.signOut()">Dil</button>
+</div>
+<div class="card">
+<h3 style="margin-top:0">Biznes i ri</h3>
+<form onsubmit="return savePlace(event)">
+<div class="field"><label>Lloji</label><select id="fType"></select></div>
+<div class="field"><label>Emri i biznesit</label><input id="fName" required maxlength="80"></div>
+<div class="row2">
+<div class="field"><label>Shteti</label><select id="fCountry" onchange="onCountryChange()"></select></div>
+<div class="field"><label>Qyteti</label><input id="fCity" required maxlength="60" placeholder="p.sh. Prishtinë"></div>
+</div>
+<div class="field"><label>Adresa (rruga, numri)</label><input id="fAddress" maxlength="120"></div>
+<div class="field"><label>Telefoni</label><input id="fPhone" required maxlength="30" placeholder="p.sh. +383 44 123 456"></div>
+<div class="field">
+<label>Lokacioni në hartë (kliko në hartë ose zhvendos shenjën)</label>
+<button type="button" class="btn small" onclick="useMyLocation()">📍 Përdor lokacionin tim aktual</button>
+<div id="pickMap"></div>
+<div class="muted" id="coordInfo">Ende pa zgjedhur lokacion.</div>
+</div>
+<button class="btn dark" type="submit" id="saveBtn">Shto biznesin</button>
+<p class="err" id="formErr"></p><p class="ok" id="formOk"></p>
+</form>
+</div>
+<div class="card"><h3 style="margin-top:0">Bizneset e mia</h3><div id="mine" class="muted">Duke ngarkuar…</div></div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="places-common.js"></script>
+<script>
+let pickMap = null, pickMarker = null, picked = null;
+
+auth.onAuthStateChanged(u=>{
+  authCard.classList.toggle('hide', !!u);
+  area.classList.toggle('hide', !u);
+  if(u){ whoAmI.textContent = u.email; initMap(); loadMine(); }
+});
+
+function showAuthTab(n){
+  loginBox.classList.toggle('hide', n!=='login'); signupBox.classList.toggle('hide', n!=='signup');
+  tabLoginBtn.classList.toggle('dark', n==='login'); tabSignupBtn.classList.toggle('dark', n==='signup');
+}
+function authMsg(e){
+  switch(e && e.code){
+    case 'auth/invalid-email': return 'Email-i nuk duket i vlefshëm.';
+    case 'auth/user-not-found': case 'auth/wrong-password': case 'auth/invalid-credential': case 'auth/invalid-login-credentials': return 'Email ose fjalëkalim i gabuar.';
+    case 'auth/too-many-requests': return 'Shumë përpjekje. Prit pak minuta.';
+    case 'auth/network-request-failed': return 'Probleme me internetin.';
+    case 'auth/weak-password': return 'Fjalëkalimi është shumë i dobët (min. 6).';
+    case 'auth/email-already-in-use': return 'Ky email ka tashmë llogari — provo "Hyr".';
+    default: return 'Gabim: ' + ((e && e.message) || 'provo përsëri.');
+  }
+}
+function togglePw(id, btn){ const el = document.getElementById(id); const s = el.type==='password'; el.type = s?'text':'password'; btn.textContent = s?'🙈':'👁'; }
+function doLogin(){ loginErr.textContent=''; loginOk.textContent=''; auth.signInWithEmailAndPassword(loginEmail.value.trim(), loginPass.value).catch(e=>{ loginErr.textContent = authMsg(e); }); }
+function doReset(){
+  loginErr.textContent=''; loginOk.textContent='';
+  const em = loginEmail.value.trim();
+  if(!em){ loginErr.textContent='Shkruaj email-in më lart, pastaj kliko "Harrova fjalëkalimin".'; return; }
+  auth.sendPasswordResetEmail(em).then(()=>{ loginOk.textContent='Të dërguam një email me lidhjen për fjalëkalim të ri (shiko edhe te Spam).'; })
+    .catch(e=>{ if(e && e.code==='auth/user-not-found') loginOk.textContent='Nëse ky email ka llogari, do të marrë një lidhje.'; else loginErr.textContent=authMsg(e); });
+}
+function doSignup(){
+  suErr.textContent=''; const em=suEmail.value.trim(), pw=suPass.value;
+  if(!em || pw.length<6){ suErr.textContent='Vendos email dhe fjalëkalim me të paktën 6 shkronja/numra.'; return; }
+  auth.createUserWithEmailAndPassword(em, pw).catch(e=>{ suErr.textContent = authMsg(e); });
+}
+
+// ---------- Forma ----------
+fType.innerHTML = Object.keys(PLACE_TYPES).map(k=>`<option value="${k}">${PLACE_TYPES[k].icon} ${esc(PLACE_TYPES[k].one)}</option>`).join('');
+fCountry.innerHTML = Object.keys(GEO).map(c=>`<option>${esc(c)}</option>`).join('');
+
+function initMap(){
+  if(pickMap || typeof L === 'undefined') return;
+  const c = GEO[fCountry.value].center;
+  pickMap = L.map('pickMap', {scrollWheelZoom:false}).setView(c, 8);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© OpenStreetMap contributors'}).addTo(pickMap);
+  pickMap.on('click', e=>setPick(e.latlng.lat, e.latlng.lng));
+  setTimeout(()=>pickMap.invalidateSize(), 100);
+}
+function setPick(lat, lon, zoom){
+  picked = {lat, lon};
+  coordInfo.textContent = `Lokacioni: ${lat.toFixed(5)}, ${lon.toFixed(5)} ✓`;
+  if(!pickMap) return;
+  if(!pickMarker){
+    pickMarker = L.marker([lat,lon], {draggable:true, icon: emojiIcon('📍')}).addTo(pickMap);
+    pickMarker.on('dragend', ()=>{ const p = pickMarker.getLatLng(); setPick(p.lat, p.lng); });
+  } else pickMarker.setLatLng([lat,lon]);
+  if(zoom) pickMap.setView([lat,lon], zoom);
+}
+function onCountryChange(){ if(pickMap && !picked) pickMap.setView(GEO[fCountry.value].center, 8); }
+function useMyLocation(){
+  formErr.textContent='';
+  if(!navigator.geolocation){ formErr.textContent='Shfletuesi nuk e mbështet lokacionin. Kliko në hartë.'; return; }
+  navigator.geolocation.getCurrentPosition(p=>setPick(p.coords.latitude, p.coords.longitude, 17),
+    ()=>{ formErr.textContent='S\'u mor lokacioni. Kliko në hartë ku ndodhet biznesi.'; }, {enableHighAccuracy:true, timeout:12000});
+}
+
+async function savePlace(e){
+  e.preventDefault(); formErr.textContent=''; formOk.textContent='';
+  const u = auth.currentUser; if(!u){ formErr.textContent='Duhet të jesh i kyçur.'; return false; }
+  if(!picked){ formErr.textContent='Zgjidh lokacionin në hartë (ose shtyp "Përdor lokacionin tim").'; return false; }
+  const data = {
+    type: fType.value, name: fName.value.trim(), country: fCountry.value, city: fCity.value.trim(),
+    address: fAddress.value.trim(), phone: fPhone.value.trim(), lat: picked.lat, lon: picked.lon,
+    ownerId: u.uid, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  if(!data.name || !data.city || !data.phone){ formErr.textContent='Plotëso emrin, qytetin dhe telefonin.'; return false; }
+  saveBtn.disabled = true; saveBtn.textContent = 'Duke ruajtur…';
+  try{
+    await db.collection('places').add(data);
+    formOk.textContent = 'Biznesi u shtua! Do të shfaqet te "Shërbime pranë teje".';
+    fName.value=''; fAddress.value=''; fPhone.value=''; fCity.value='';
+    loadMine();
+  }catch(err){
+    formErr.textContent = (err && err.code === 'permission-denied')
+      ? 'S\'ke leje të ruash (administratori duhet të aktivizojë rregullat për "places" te Firebase).'
+      : 'Diçka shkoi keq: ' + err.message;
+  }
+  saveBtn.disabled = false; saveBtn.textContent = 'Shto biznesin';
+  return false;
+}
+
+async function loadMine(){
+  const u = auth.currentUser; if(!u) return;
+  mine.textContent = 'Duke ngarkuar…';
+  try{
+    const snap = await db.collection('places').where('ownerId','==',u.uid).get();
+    if(snap.empty){ mine.innerHTML = '<p class="muted" style="margin:0">S\'ke shtuar ende asnjë biznes.</p>'; return; }
+    mine.innerHTML = snap.docs.map(d=>{
+      const x = d.data(), T = PLACE_TYPES[x.type] || {icon:'📍', one:''};
+      return `<div class="item"><div class="ic">${T.icon}</div><div class="info"><b>${esc(x.name)}</b><small>${esc(T.one)} • ${esc(x.country||'')} ${x.city?'- '+esc(x.city):''}</small><small>📞 ${esc(x.phone||'')}</small></div><button class="btn small danger" onclick="delPlace('${d.id}')">Fshi</button></div>`;
+    }).join('');
+  }catch(err){ mine.innerHTML = '<p class="err" style="margin:0">S\'u ngarkuan: ' + esc(err.message) + '</p>'; }
+}
+async function delPlace(id){
+  if(!confirm('Ta fshish këtë biznes?')) return;
+  try{ await db.collection('places').doc(id).delete(); loadMine(); }catch(e){ alert('Gabim: ' + e.message); }
+}
+showAuthTab('login');
+</script>
+</body></html>
