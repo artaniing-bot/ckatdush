@@ -9,7 +9,7 @@ html[data-theme=dark] .search input{background:transparent;color:#e8e8ea}
 html[data-theme=dark] input::placeholder,html[data-theme=dark] textarea::placeholder{color:#8a8b92}
 html[data-theme=dark] .btn{background:#24252a;border-color:#3a3b40;color:#e8e8ea}
 html[data-theme=dark] .cats button{background:#1a1b1e;border-color:#33353b;color:#dbe6f5}
-html[data-theme=dark] .cats button .catIcon{background:#22314a}
+html[data-theme=dark] .cats button .catIcon{background:#1f3a2b}
 html[data-theme=dark] .cats button .catIcon svg{stroke:#8db8f0}
 html[data-theme=dark] .cats button.active{background:#8db8f0;color:#0f1b2d;border-color:#8db8f0}
 html[data-theme=dark] .cats button.active .catIcon{background:rgba(15,27,45,.15)}
