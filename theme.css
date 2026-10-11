@@ -8,10 +8,12 @@ html[data-theme=dark] .search{border-color:#3a3b40;background:#24252a}
 html[data-theme=dark] .search input{background:transparent;color:#e8e8ea}
 html[data-theme=dark] input::placeholder,html[data-theme=dark] textarea::placeholder{color:#8a8b92}
 html[data-theme=dark] .btn{background:#24252a;border-color:#3a3b40;color:#e8e8ea}
-html[data-theme=dark] .cats button{background:#1f3326;border-color:#e8e8ea;color:#e8e8ea}
-html[data-theme=dark] .cats button .catIcon svg{stroke:#e8e8ea}
-html[data-theme=dark] .cats button.active{background:#e8e8ea;color:#111;border-color:#e8e8ea}
-html[data-theme=dark] .cats button.active .catIcon svg{stroke:#111}
+html[data-theme=dark] .cats button{background:#1a1b1e;border-color:#33353b;color:#dbe6f5}
+html[data-theme=dark] .cats button .catIcon{background:#22314a}
+html[data-theme=dark] .cats button .catIcon svg{stroke:#8db8f0}
+html[data-theme=dark] .cats button.active{background:#8db8f0;color:#0f1b2d;border-color:#8db8f0}
+html[data-theme=dark] .cats button.active .catIcon{background:rgba(15,27,45,.15)}
+html[data-theme=dark] .cats button.active .catIcon svg{stroke:#0f1b2d}
 html[data-theme=dark] .cats .promoBanner{background:linear-gradient(120deg,#3a2a2c,#26302a);border-color:#4a3a3c;color:#e8e8ea}
 html[data-theme=dark] .cats .promoBanner .promoBtn{background:#e8e8ea;color:#111}
 html[data-theme=dark] .countries button{background:#24252a;border-color:#3a3b40;color:#e8e8ea}
