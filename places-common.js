@@ -1,6 +1,6 @@
 // Të përbashkëta për services.html dhe shto-biznes.html
 const PLACE_TYPES = {
-  hotel:    {label:'Hotele',     icon:'🏨', one:'Hotel',      radii:[10,25,50]},
+  hotel:    {label:'Hotele',     icon:'🛏️', one:'Hotel',      radii:[10,25,50]},
   mechanic: {label:'Mekanik',    icon:'🔧', one:'Mekanik',    radii:[10,25,50]},
   vulc:     {label:'Vulkanizer', icon:'🛞', one:'Vulkanizer', radii:[10,25,50]},
   taxi:     {label:'Taksi',      icon:'🚕', one:'Taksi',      radii:[10,25,50]},

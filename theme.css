@@ -65,12 +65,12 @@ html[data-theme=dark] select{background:#24252a;border-color:#3a3b40;color:#e8e8
 html[data-theme=dark] .btn.dark{background:#e8e8ea;color:#111;border-color:#e8e8ea}
 html[data-theme=dark] .res{border-color:#2e2f34}
 html[data-theme=dark] .res small,html[data-theme=dark] .note,html[data-theme=dark] .empty{color:#9a9ba2}
-html[data-theme=dark] .empty a,html[data-theme=dark] .note a{color:#d98b93}
+html[data-theme=dark] .empty a,html[data-theme=dark] .note a{color:#4cc27e}
 html[data-theme=dark] #map{background:#24252a}
 html[data-theme=dark] .leaflet-container{background:#24252a}
 html[data-theme=dark] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.95) contrast(.9)}
 html[data-theme=dark] .mk{background:#24252a;border-color:#e8e8ea}
-html[data-theme=dark] .mk.own{background:#3a2a2c;border-color:#d98b93}
+html[data-theme=dark] .mk.own{background:#1f3326;border-color:#4cc27e}
 html[data-theme=dark] .field input,html[data-theme=dark] .field select{background:#24252a;border-color:#3a3b40;color:#e8e8ea}
 html[data-theme=dark] .btn{background:#24252a;border-color:#3a3b40;color:#e8e8ea}
 html[data-theme=dark] .btn.dark{background:#e8e8ea;color:#111}
