@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="sq"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Çkat’dush — Punë të hapura</title>
+<link rel="stylesheet" href="theme.css">
+<script src="theme.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#e6e8eb;color:#202124}
+.wrap{max-width:760px;margin:0 auto;padding:18px}
+header.sv{display:flex;align-items:center;gap:12px;margin-bottom:16px;justify-content:space-between;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+header.sv img{width:84px;object-fit:contain}
+h1{font-size:21px;margin:0}
+a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;border-radius:20px;padding:8px 14px;background:#fff}
+.card{background:#fff;border:1px solid #e6e6e2;border-radius:15px;padding:18px;margin-bottom:16px}
+.hide{display:none}
+.field{margin-bottom:14px}.field label{display:block;font-size:13px;color:#555;margin-bottom:5px}
+.field input,.field select{width:100%;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;font-family:inherit;background:#fff;color:#202124}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.row2{grid-template-columns:1fr}}
+.btn{border:1px solid #ddd;background:#fff;border-radius:22px;padding:10px 14px;cursor:pointer;font-family:inherit;font-size:14px;color:#202124;display:inline-flex;align-items:center;gap:6px}
+.btn.dark{background:#202124;color:#fff;border-color:#202124}
+.btn.small{padding:6px 11px;font-size:13px}
+.btn.danger{color:#c0392b;border-color:#c0392b}
+.muted{color:#777;font-size:13px}
+.err{color:#c0392b;font-size:13px;margin:8px 0 0}.ok{color:#2e7d32;font-size:13px;margin:8px 0 0}
+#pickMap{height:300px;border-radius:12px;margin:8px 0;background:#dfe2e6}
+.mk{width:34px;height:34px;border-radius:50%;background:#fff;border:2px solid #d98b93;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 1px 4px #0005}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #eee}
+.item:last-child{border-bottom:0}.item .ic{font-size:24px;width:34px;text-align:center}.item .info{flex:1;min-width:0}.item small{color:#777;display:block}
+.pw{position:relative}.pw input{padding-right:46px}
+.pw button{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;cursor:pointer;font-size:18px;padding:6px 10px}
+.linkBtn{border:0;background:none;color:#555;text-decoration:underline;cursor:pointer;font-size:13px;padding:8px 0 0;font-family:inherit}
+
+textarea{width:100%;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;font-family:inherit;background:#fff;color:#202124;min-height:110px;resize:vertical}
+.filters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:600px){.filters{grid-template-columns:1fr}}
+.job{border-bottom:1px solid #eee;padding:14px 0}.job:last-child{border-bottom:0}
+.job h3{margin:0 0 4px;font-size:17px}.job .meta{color:#777;font-size:13px;margin-bottom:6px}
+.tag{display:inline-block;background:#f0f1f3;border-radius:12px;padding:2px 9px;font-size:12px;margin-right:6px;color:#444}
+.job .desc{white-space:pre-wrap;font-size:14px;margin:8px 0;max-height:4.6em;overflow:hidden}.job.open .desc{max-height:none}
+.job .acts{display:flex;gap:8px;flex-wrap:wrap}
+a.btn{text-decoration:none}
+</style></head><body>
+<div class="wrap">
+<header class="sv">
+<div class="brand"><img src="logo.png" alt="Çkat’dush"><h1>💼 Punë të hapura</h1></div>
+<div style="display:flex;gap:8px;align-items:center"><button class="btn" id="themeBtn" type="button" onclick="toggleTheme()">🌙</button><a class="back" href="index.html">← Faqja kryesore</a></div>
+</header>
+
+<div class="card">
+<div class="filters">
+<div class="field" style="margin:0"><label>Shteti</label><select id="qCountry" onchange="renderJobs()"></select></div>
+<div class="field" style="margin:0"><label>Qyteti</label><input id="qCity" placeholder="Të gjitha" oninput="renderJobs()"></div>
+<div class="field" style="margin:0"><label>Kategoria</label><select id="qCat" onchange="renderJobs()"></select></div>
+</div>
+<div class="field" style="margin:10px 0 0"><input id="qText" placeholder="Kërko (p.sh. shofer, kamarier, kontabilist)" oninput="renderJobs()"></div>
+</div>
+<div style="margin-bottom:12px"><button class="btn dark" onclick="toggleForm()">➕ Shpall një punë</button></div>
+
+<div id="formWrap" class="hide">
+<div class="card" id="authCard">
+<p class="muted" style="margin-top:0">Hyr (ose regjistrohu) për të shpallur një vend pune. Është falas.</p>
+<div class="tabs"><button class="btn dark" id="tabLoginBtn" onclick="showAuthTab('login')">Hyr</button><button class="btn" id="tabSignupBtn" onclick="showAuthTab('signup')">Regjistrohu</button></div>
+<div id="loginBox">
+<div class="field"><label>Email</label><input id="loginEmail" type="email" autocomplete="email"></div>
+<div class="field"><label>Fjalëkalimi</label><div class="pw"><input id="loginPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"><button type="button" onclick="togglePw('loginPass',this)">👁</button></div></div>
+<button class="btn dark" onclick="doLogin()">Hyr</button>
+<div><button type="button" class="linkBtn" onclick="doReset()">Harrova fjalëkalimin</button></div>
+<p class="err" id="loginErr"></p><p class="ok" id="loginOk"></p>
+</div>
+<div id="signupBox" class="hide">
+<div class="field"><label>Email</label><input id="suEmail" type="email" autocomplete="email"></div>
+<div class="field"><label>Fjalëkalimi (min. 6 shkronja/numra)</label><div class="pw"><input id="suPass" type="password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doSignup()"><button type="button" onclick="togglePw('suPass',this)">👁</button></div></div>
+<button class="btn dark" onclick="doSignup()">Regjistrohu</button>
+<p class="err" id="suErr"></p>
+</div>
+</div>
+
+<div id="area" class="hide">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<p class="muted" style="margin:0">I kyçur si <b id="whoAmI"></b></p><button class="btn small" onclick="auth.signOut()">Dil</button>
+</div>
+<div class="card">
+<h3 style="margin-top:0">Punë e re</h3>
+<form onsubmit="return saveJob(event)">
+<div class="field"><label>Titulli i pozitës</label><input id="fTitle" required maxlength="80" placeholder="p.sh. Shofer, Kamarier, Kontabilist"></div>
+<div class="field"><label>Firma / punëdhënësi</label><input id="fCompany" required maxlength="80"></div>
+<div class="row2">
+<div class="field"><label>Kategoria</label><select id="fCat"></select></div>
+<div class="field"><label>Lloji</label><select id="fKind"></select></div>
+</div>
+<div class="row2">
+<div class="field"><label>Shteti</label><select id="fCountry"></select></div>
+<div class="field"><label>Qyteti</label><input id="fCity" required maxlength="60"></div>
+</div>
+<div class="field"><label>Paga (opsionale)</label><input id="fSalary" maxlength="40" placeholder="p.sh. 600–800 €"></div>
+<div class="field"><label>Përshkrimi (detyrat, kërkesat)</label><textarea id="fDesc" required maxlength="2000"></textarea></div>
+<div class="row2">
+<div class="field"><label>Telefoni</label><input id="fPhone" maxlength="30" placeholder="+383 44 123 456"></div>
+<div class="field"><label>Email</label><input id="fEmail" type="email" maxlength="80"></div>
+</div>
+<button class="btn dark" type="submit" id="saveBtn">Publiko</button>
+<p class="err" id="formErr"></p><p class="ok" id="formOk"></p>
+</form>
+</div>
+<div class="card"><h3 style="margin-top:0">Shpalljet e mia</h3><div id="mine" class="muted">Duke ngarkuar…</div></div>
+</div>
+</div>
+</div>
+
+<div class="card" id="list"><div class="muted">Duke ngarkuar…</div></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="places-common.js"></script>
+<script>
+const CATS=['Ndërtim','Shitje','Gastronomi & Hoteleri','Transport & Shofer','Administratë & Kontabilitet','IT & Teknologji','Shëndetësi','Arsim','Prodhim & Magazinë','Shërbime','Tjetër'];
+const KINDS=['Kohë e plotë','Kohë e pjesshme','Sezonale','Praktikë'];
+const COUNTRIES=Object.keys(GEO);
+qCountry.innerHTML='<option value="">Të gjitha shtetet</option>'+COUNTRIES.map(c=>`<option>${esc(c)}</option>`).join('');
+qCat.innerHTML='<option value="">Të gjitha</option>'+CATS.map(c=>`<option>${esc(c)}</option>`).join('');
+fCat.innerHTML=CATS.map(c=>`<option>${esc(c)}</option>`).join('');
+fKind.innerHTML=KINDS.map(c=>`<option>${esc(c)}</option>`).join('');
+fCountry.innerHTML=COUNTRIES.map(c=>`<option>${esc(c)}</option>`).join('');
+let JOBS=[];
+
+auth.onAuthStateChanged(u=>{
+  authCard.classList.toggle('hide', !!u);
+  area.classList.toggle('hide', !u);
+  if(u){ whoAmI.textContent=u.email; loadMine(); }
+});
+function toggleForm(){ formWrap.classList.toggle('hide'); }
+function showAuthTab(n){
+  loginBox.classList.toggle('hide', n!=='login'); signupBox.classList.toggle('hide', n!=='signup');
+  tabLoginBtn.classList.toggle('dark', n==='login'); tabSignupBtn.classList.toggle('dark', n==='signup');
+}
+function authMsg(e){
+  switch(e && e.code){
+    case 'auth/invalid-email': return 'Email-i nuk duket i vlefshëm.';
+    case 'auth/user-not-found': case 'auth/wrong-password': case 'auth/invalid-credential': case 'auth/invalid-login-credentials': return 'Email ose fjalëkalim i gabuar.';
+    case 'auth/too-many-requests': return 'Shumë përpjekje. Prit pak minuta.';
+    case 'auth/network-request-failed': return 'Probleme me internetin.';
+    case 'auth/weak-password': return 'Fjalëkalimi është shumë i dobët (min. 6).';
+    case 'auth/email-already-in-use': return 'Ky email ka tashmë llogari — provo "Hyr".';
+    default: return 'Gabim: ' + ((e && e.message) || 'provo përsëri.');
+  }
+}
+function togglePw(id, btn){ const el = document.getElementById(id); const s = el.type==='password'; el.type = s?'text':'password'; btn.textContent = s?'🙈':'👁'; }
+function doLogin(){ loginErr.textContent=''; loginOk.textContent=''; auth.signInWithEmailAndPassword(loginEmail.value.trim(), loginPass.value).catch(e=>{ loginErr.textContent = authMsg(e); }); }
+function doReset(){
+  loginErr.textContent=''; loginOk.textContent='';
+  const em = loginEmail.value.trim();
+  if(!em){ loginErr.textContent='Shkruaj email-in më lart, pastaj kliko "Harrova fjalëkalimin".'; return; }
+  auth.sendPasswordResetEmail(em).then(()=>{ loginOk.textContent='Të dërguam një email me lidhjen për fjalëkalim të ri (shiko edhe te Spam).'; })
+    .catch(e=>{ if(e && e.code==='auth/user-not-found') loginOk.textContent='Nëse ky email ka llogari, do të marrë një lidhje.'; else loginErr.textContent=authMsg(e); });
+}
+function doSignup(){
+  suErr.textContent=''; const em=suEmail.value.trim(), pw=suPass.value;
+  if(!em || pw.length<6){ suErr.textContent='Vendos email dhe fjalëkalim me të paktën 6 shkronja/numra.'; return; }
+  auth.createUserWithEmailAndPassword(em, pw).catch(e=>{ suErr.textContent = authMsg(e); });
+}
+
+
+function ago(ts){
+  try{ const d=ts.toDate?ts.toDate():new Date(ts); const n=Math.floor((Date.now()-d)/86400000);
+    return n<=0?'sot':n===1?'dje':'para '+n+' ditësh'; }catch(e){ return ''; }
+}
+function jobHtml(j,mine){
+  const contact=[];
+  if(j.phone) contact.push(`<a class="btn small" href="tel:${esc(j.phone.replace(/[^+\d]/g,''))}">📞 ${esc(j.phone)}</a>`);
+  if(j.email) contact.push(`<a class="btn small" href="mailto:${esc(j.email)}?subject=${encodeURIComponent('Aplikim: '+j.title)}">✉️ Apliko me email</a>`);
+  return `<div class="job" onclick="this.classList.toggle('open')">
+  <h3>${esc(j.title)}</h3>
+  <div class="meta">${esc(j.company)} • ${esc(j.city)}, ${esc(j.country)} • ${ago(j.createdAt)}</div>
+  <div><span class="tag">${esc(j.cat||'')}</span><span class="tag">${esc(j.kind||'')}</span>${j.salary?`<span class="tag">💶 ${esc(j.salary)}</span>`:''}</div>
+  <div class="desc">${esc(j.desc||'')}</div>
+  <div class="acts" onclick="event.stopPropagation()">${contact.join('')}${mine?`<button class="btn small danger" onclick="delJob('${j.id}')">Fshi</button>`:''}</div>
+  </div>`;
+}
+function renderJobs(){
+  const c=qCountry.value, city=qCity.value.trim().toLowerCase(), cat=qCat.value, tx=qText.value.trim().toLowerCase();
+  const r=JOBS.filter(j=>(!c||j.country===c)&&(!city||(j.city||'').toLowerCase().includes(city))&&(!cat||j.cat===cat)&&(!tx||((j.title||'')+' '+(j.company||'')+' '+(j.desc||'')).toLowerCase().includes(tx)));
+  list.innerHTML=r.length?r.map(j=>jobHtml(j,false)).join(''):'<div class="muted">Nuk ka punë të hapura me këto filtra. Provo të ndryshosh filtrat ose shpall ti një punë.</div>';
+}
+async function loadJobs(){
+  try{
+    const s=await db.collection('jobs').orderBy('createdAt','desc').limit(300).get();
+    JOBS=s.docs.map(d=>({id:d.id,...d.data()}));
+    renderJobs();
+  }catch(e){ list.innerHTML='<div class="err">S\'u ngarkuan punët: '+esc(e.message)+'</div>'; }
+}
+async function saveJob(e){
+  e.preventDefault(); formErr.textContent=''; formOk.textContent='';
+  const u=auth.currentUser; if(!u){ formErr.textContent='Duhet të jesh i kyçur.'; return false; }
+  const d={title:fTitle.value.trim(),company:fCompany.value.trim(),cat:fCat.value,kind:fKind.value,country:fCountry.value,city:fCity.value.trim(),
+    salary:fSalary.value.trim(),desc:fDesc.value.trim(),phone:fPhone.value.trim(),email:fEmail.value.trim(),ownerId:u.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(!d.title||!d.company||!d.city||!d.desc){ formErr.textContent='Plotëso titullin, firmën, qytetin dhe përshkrimin.'; return false; }
+  if(!d.phone&&!d.email){ formErr.textContent='Vendos të paktën telefonin ose email-in për kontakt.'; return false; }
+  saveBtn.disabled=true; saveBtn.textContent='Duke ruajtur…';
+  try{
+    await db.collection('jobs').add(d);
+    formOk.textContent='Puna u publikua!';
+    fTitle.value='';fSalary.value='';fDesc.value='';
+    loadMine(); loadJobs();
+  }catch(err){
+    formErr.textContent=(err&&err.code==='permission-denied')?'S\'ke leje të ruash (duhet aktivizuar rregulli për "jobs" te Firebase).':'Diçka shkoi keq: '+err.message;
+  }
+  saveBtn.disabled=false; saveBtn.textContent='Publiko';
+  return false;
+}
+async function loadMine(){
+  const u=auth.currentUser; if(!u) return;
+  const m=JOBS.filter(j=>j.ownerId===u.uid);
+  if(!JOBS.length){ try{ await loadJobs(); }catch(e){} }
+  const mm=JOBS.filter(j=>j.ownerId===u.uid);
+  mine.innerHTML=mm.length?mm.map(j=>jobHtml(j,true)).join(''):'<p class="muted" style="margin:0">S\'ke shpallur ende asnjë punë.</p>';
+}
+async function delJob(id){
+  if(!confirm('Ta fshish këtë shpallje?')) return;
+  try{ await db.collection('jobs').doc(id).delete(); await loadJobs(); loadMine(); }catch(e){ alert('Gabim: '+e.message); }
+}
+showAuthTab('login');
+loadJobs();
+</script>
+</body></html>
