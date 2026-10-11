@@ -41,6 +41,13 @@ const CAT_ATTRS = {
     {k:'parking', sq:'Parkim', en:'Parking', type:'select', opts:[['Po','Yes'],['Jo','No']]},
     {k:'elevator', sq:'Ashensor', en:'Elevator', type:'select', opts:[['Po','Yes'],['Jo','No']]}
   ],
+  'Mobilje': [
+    {k:'type', sq:'Lloji', en:'Type', type:'text', ph:'p.sh. Divan, Dollap, Frigorifer'},
+    {k:'brand', sq:'Marka', en:'Brand', type:'text'},
+    {k:'material', sq:'Materiali', en:'Material', type:'text'},
+    {k:'dims', sq:'Dimensionet', en:'Dimensions', type:'text', ph:'p.sh. 200x90x80 cm'},
+    {k:'color', sq:'Ngjyra', en:'Color', type:'text'}
+  ],
   'Bukuri': [
     {k:'type', sq:'Lloji', en:'Type', type:'text'},
     {k:'brand', sq:'Marka', en:'Brand', type:'text'},
