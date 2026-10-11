@@ -127,6 +127,15 @@ fCat.innerHTML=CATS.map(c=>`<option>${esc(c)}</option>`).join('');
 fKind.innerHTML=KINDS.map(c=>`<option>${esc(c)}</option>`).join('');
 fCountry.innerHTML=COUNTRIES.map(c=>`<option>${esc(c)}</option>`).join('');
 let JOBS=[];
+const DAYS=30, DAY_MS=86400000;
+function expMs(j){
+  try{
+    if(j.expiresAt) return (j.expiresAt.toDate?j.expiresAt.toDate():new Date(j.expiresAt)).getTime();
+    const c=j.createdAt&&(j.createdAt.toDate?j.createdAt.toDate():new Date(j.createdAt));
+    return c? c.getTime()+DAYS*DAY_MS : Infinity;
+  }catch(e){ return Infinity; }
+}
+const isExpired=j=>expMs(j)<Date.now();
 
 auth.onAuthStateChanged(u=>{
   authCard.classList.toggle('hide', !!u);
@@ -175,15 +184,15 @@ function jobHtml(j,mine){
   if(j.email) contact.push(`<a class="btn small" href="mailto:${esc(j.email)}?subject=${encodeURIComponent('Aplikim: '+j.title)}">✉️ Apliko me email</a>`);
   return `<div class="job" onclick="this.classList.toggle('open')">
   <h3>${esc(j.title)}</h3>
-  <div class="meta">${esc(j.company)} • ${esc(j.city)}, ${esc(j.country)} • ${ago(j.createdAt)}</div>
+  <div class="meta">${esc(j.company)} • ${esc(j.city)}, ${esc(j.country)} • ${ago(j.createdAt)}${mine?(isExpired(j)?' • <b style="color:#c0392b">Skaduar</b>':' • skadon '+new Date(expMs(j)).toLocaleDateString('sq')):''}</div>
   <div><span class="tag">${esc(j.cat||'')}</span><span class="tag">${esc(j.kind||'')}</span>${j.salary?`<span class="tag">💶 ${esc(j.salary)}</span>`:''}</div>
   <div class="desc">${esc(j.desc||'')}</div>
-  <div class="acts" onclick="event.stopPropagation()">${contact.join('')}${mine?`<button class="btn small danger" onclick="delJob('${j.id}')">Fshi</button>`:''}</div>
+  <div class="acts" onclick="event.stopPropagation()">${contact.join('')}${mine?`<button class="btn small" onclick="renewJob('${j.id}')">🔄 Rinovo ${DAYS} ditë</button><button class="btn small danger" onclick="delJob('${j.id}')">Fshi</button>`:''}</div>
   </div>`;
 }
 function renderJobs(){
   const c=qCountry.value, city=qCity.value.trim().toLowerCase(), cat=qCat.value, tx=qText.value.trim().toLowerCase();
-  const r=JOBS.filter(j=>(!c||j.country===c)&&(!city||(j.city||'').toLowerCase().includes(city))&&(!cat||j.cat===cat)&&(!tx||((j.title||'')+' '+(j.company||'')+' '+(j.desc||'')).toLowerCase().includes(tx)));
+  const r=JOBS.filter(j=>!isExpired(j)&&(!c||j.country===c)&&(!city||(j.city||'').toLowerCase().includes(city))&&(!cat||j.cat===cat)&&(!tx||((j.title||'')+' '+(j.company||'')+' '+(j.desc||'')).toLowerCase().includes(tx)));
   list.innerHTML=r.length?r.map(j=>jobHtml(j,false)).join(''):'<div class="muted">Nuk ka punë të hapura me këto filtra. Provo të ndryshosh filtrat ose shpall ti një punë.</div>';
 }
 async function loadJobs(){
@@ -197,7 +206,7 @@ async function saveJob(e){
   e.preventDefault(); formErr.textContent=''; formOk.textContent='';
   const u=auth.currentUser; if(!u){ formErr.textContent='Duhet të jesh i kyçur.'; return false; }
   const d={title:fTitle.value.trim(),company:fCompany.value.trim(),cat:fCat.value,kind:fKind.value,country:fCountry.value,city:fCity.value.trim(),
-    salary:fSalary.value.trim(),desc:fDesc.value.trim(),phone:fPhone.value.trim(),email:fEmail.value.trim(),ownerId:u.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+    salary:fSalary.value.trim(),desc:fDesc.value.trim(),phone:fPhone.value.trim(),email:fEmail.value.trim(),ownerId:u.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp(),expiresAt:new Date(Date.now()+DAYS*DAY_MS)};
   if(!d.title||!d.company||!d.city||!d.desc){ formErr.textContent='Plotëso titullin, firmën, qytetin dhe përshkrimin.'; return false; }
   if(!d.phone&&!d.email){ formErr.textContent='Vendos të paktën telefonin ose email-in për kontakt.'; return false; }
   saveBtn.disabled=true; saveBtn.textContent='Duke ruajtur…';
@@ -218,6 +227,9 @@ async function loadMine(){
   if(!JOBS.length){ try{ await loadJobs(); }catch(e){} }
   const mm=JOBS.filter(j=>j.ownerId===u.uid);
   mine.innerHTML=mm.length?mm.map(j=>jobHtml(j,true)).join(''):'<p class="muted" style="margin:0">S\'ke shpallur ende asnjë punë.</p>';
+}
+async function renewJob(id){
+  try{ await db.collection('jobs').doc(id).update({expiresAt:new Date(Date.now()+DAYS*DAY_MS)}); await loadJobs(); loadMine(); }catch(e){ alert('Gabim: '+e.message); }
 }
 async function delJob(id){
   if(!confirm('Ta fshish këtë shpallje?')) return;
