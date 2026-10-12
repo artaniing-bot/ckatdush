@@ -432,25 +432,38 @@ productModal.addEventListener('click', e=>{ if(e.target===productModal) productM
 applyLang();
 loadProducts();
 </script><script>
-// Kategoritë rrëshqasin vetë (djathtas→majtas dhe kthim) që të shihen të gjitha; ndalen sapo prek/lëviz përdoruesi
+// Kategoritë rrotullohen pa pushim (djathtas→majtas); pushojnë vetëm kur prek përdoruesi dhe vazhdojnë pas 2.5 sek
 (function(){
   const el=document.getElementById('cats'); if(!el) return;
   if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches) return;
-  let stopped=false, pos=0, dir=1, last=0, pauseUntil=0;
-  const SPEED=38; // px/sek
-  function stop(){ stopped=true; }
-  ['touchstart','mousedown','wheel','keydown','pointerdown'].forEach(ev=>el.addEventListener(ev,stop,{passive:true,once:true}));
+  const orig=[...el.querySelectorAll(':scope > button')];
+  if(!orig.length) return;
+  let cloned=false, setW=0;
+  function ensureClones(){
+    if(cloned) return true;
+    if(el.scrollWidth<=el.clientWidth+4) return false; // gjithçka del në ekran, s'ka nevojë
+    orig.forEach(b=>{ const c=b.cloneNode(true); c.setAttribute('aria-hidden','true'); c.tabIndex=-1; c.dataset.dup='1'; el.appendChild(c); });
+    cloned=true; return true;
+  }
+  let pos=0, last=0, hold=false, pauseUntil=0;
+  const RESUME=2500, SPEED=42; // ms, px/sek
+  const press=()=>{ hold=true; };
+  const release=()=>{ hold=false; pauseUntil=performance.now()+RESUME; };
+  ['touchstart','pointerdown','mousedown'].forEach(e=>el.addEventListener(e,press,{passive:true}));
+  ['touchend','touchcancel','pointerup','pointercancel','mouseup','mouseleave'].forEach(e=>el.addEventListener(e,release,{passive:true}));
+  el.addEventListener('wheel',()=>{ pauseUntil=performance.now()+RESUME; },{passive:true});
   function step(t){
-    if(stopped) return;
     if(!last) last=t;
     const dt=Math.min(t-last,60)/1000; last=t;
-    const max=el.scrollWidth-el.clientWidth;
-    if(max>4 && t>pauseUntil){
-      if(Math.abs(el.scrollLeft-pos)>2){ stopped=true; return; } // përdoruesi e lëvizi vetë
-      pos+=dir*SPEED*dt;
-      if(pos>=max){ pos=max; dir=-1; pauseUntil=t+1200; }
-      else if(pos<=0){ pos=0; dir=1; pauseUntil=t+1200; }
-      el.scrollLeft=pos;
+    if(ensureClones()){
+      const first=el.querySelector(':scope > button[data-dup]');
+      setW=first.offsetLeft-orig[0].offsetLeft;
+      if(Math.abs(el.scrollLeft-pos)>2){ pos=el.scrollLeft; pauseUntil=t+RESUME; } // përdoruesi e lëvizi vetë
+      if(!hold && t>pauseUntil && setW>0){
+        pos+=SPEED*dt;
+        if(pos>=setW) pos-=setW;
+        el.scrollLeft=pos;
+      } else if(setW>0 && el.scrollLeft>=setW){ pos=el.scrollLeft-setW; el.scrollLeft=pos; }
     }
     requestAnimationFrame(step);
   }
