@@ -15,10 +15,7 @@
 .cats button.active{background:#1f4e8c;color:#fff;border-color:#1f4e8c}
 .cats button.active .catIcon{background:rgba(255,255,255,.18)}
 .cats button.active .catIcon svg{stroke:#fff}
-@keyframes catSlide{0%{opacity:0;transform:translateX(70px)}100%{opacity:1;transform:none}}
-.cats button{animation:catSlide .55s cubic-bezier(.2,.8,.3,1) both}
-.cats button:nth-child(1){animation-delay:0.05s}.cats button:nth-child(2){animation-delay:0.10s}.cats button:nth-child(3){animation-delay:0.15s}.cats button:nth-child(4){animation-delay:0.20s}.cats button:nth-child(5){animation-delay:0.25s}.cats button:nth-child(6){animation-delay:0.30s}.cats button:nth-child(7){animation-delay:0.35s}.cats button:nth-child(8){animation-delay:0.40s}.cats button:nth-child(9){animation-delay:0.45s}.cats button:nth-child(10){animation-delay:0.50s}.cats button:nth-child(11){animation-delay:0.55s}.cats button:nth-child(12){animation-delay:0.60s}
-@media(prefers-reduced-motion:reduce){.cats button{animation:none!important}}
+
 .countries{display:flex;gap:8px;padding:0 18px 12px;overflow:auto}
 .countries button{border:1.5px solid #ddd;background:#fff;padding:7px 13px;border-radius:16px;white-space:nowrap;cursor:pointer;font-size:13px;font-family:inherit;color:#333;display:flex;align-items:center;gap:6px}
 .countries button.active{background:#202124;color:#fff;border-color:#202124}
@@ -434,4 +431,30 @@ productModal.addEventListener('click', e=>{ if(e.target===productModal) productM
 
 applyLang();
 loadProducts();
-</script></body></html>
+</script><script>
+// Kategoritë rrëshqasin vetë (djathtas→majtas dhe kthim) që të shihen të gjitha; ndalen sapo prek/lëviz përdoruesi
+(function(){
+  const el=document.getElementById('cats'); if(!el) return;
+  if(window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  let stopped=false, pos=0, dir=1, last=0, pauseUntil=0;
+  const SPEED=38; // px/sek
+  function stop(){ stopped=true; }
+  ['touchstart','mousedown','wheel','keydown','pointerdown'].forEach(ev=>el.addEventListener(ev,stop,{passive:true,once:true}));
+  function step(t){
+    if(stopped) return;
+    if(!last) last=t;
+    const dt=Math.min(t-last,60)/1000; last=t;
+    const max=el.scrollWidth-el.clientWidth;
+    if(max>4 && t>pauseUntil){
+      if(Math.abs(el.scrollLeft-pos)>2){ stopped=true; return; } // përdoruesi e lëvizi vetë
+      pos+=dir*SPEED*dt;
+      if(pos>=max){ pos=max; dir=-1; pauseUntil=t+1200; }
+      else if(pos<=0){ pos=0; dir=1; pauseUntil=t+1200; }
+      el.scrollLeft=pos;
+    }
+    requestAnimationFrame(step);
+  }
+  setTimeout(()=>requestAnimationFrame(step),900);
+})();
+</script>
+</body></html>
