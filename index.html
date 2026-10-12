@@ -15,15 +15,10 @@
 .cats button.active{background:#1f4e8c;color:#fff;border-color:#1f4e8c}
 .cats button.active .catIcon{background:rgba(255,255,255,.18)}
 .cats button.active .catIcon svg{stroke:#fff}
-@keyframes catPop{0%{opacity:0;transform:translateY(14px) scale(.6)}60%{opacity:1;transform:translateY(-4px) scale(1.08)}100%{opacity:1;transform:none}}
-@keyframes catBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-.cats button{animation:catPop .55s cubic-bezier(.2,.9,.3,1.2) both}
-.cats button .catIcon{animation:catBob 3.2s ease-in-out infinite}
-.cats button:nth-child(1){animation-delay:.05s}.cats button:nth-child(2){animation-delay:.12s}.cats button:nth-child(3){animation-delay:.19s}.cats button:nth-child(4){animation-delay:.26s}.cats button:nth-child(5){animation-delay:.33s}.cats button:nth-child(6){animation-delay:.40s}.cats button:nth-child(7){animation-delay:.47s}.cats button:nth-child(8){animation-delay:.54s}.cats button:nth-child(9){animation-delay:.61s}.cats button:nth-child(10){animation-delay:.68s}.cats button:nth-child(11){animation-delay:.75s}.cats button:nth-child(12){animation-delay:.82s}
-.cats button:nth-child(even) .catIcon{animation-delay:.6s}.cats button:nth-child(3n) .catIcon{animation-delay:1.2s}
-.cats button:active .catIcon{transform:scale(.9)}
-@media(hover:hover){.cats button:hover .catIcon svg{animation:catBob .6s ease-in-out}}
-@media(prefers-reduced-motion:reduce){.cats button,.cats button .catIcon{animation:none!important}}
+@keyframes catSlide{0%{opacity:0;transform:translateX(70px)}100%{opacity:1;transform:none}}
+.cats button{animation:catSlide .55s cubic-bezier(.2,.8,.3,1) both}
+.cats button:nth-child(1){animation-delay:0.05s}.cats button:nth-child(2){animation-delay:0.10s}.cats button:nth-child(3){animation-delay:0.15s}.cats button:nth-child(4){animation-delay:0.20s}.cats button:nth-child(5){animation-delay:0.25s}.cats button:nth-child(6){animation-delay:0.30s}.cats button:nth-child(7){animation-delay:0.35s}.cats button:nth-child(8){animation-delay:0.40s}.cats button:nth-child(9){animation-delay:0.45s}.cats button:nth-child(10){animation-delay:0.50s}.cats button:nth-child(11){animation-delay:0.55s}.cats button:nth-child(12){animation-delay:0.60s}
+@media(prefers-reduced-motion:reduce){.cats button{animation:none!important}}
 .countries{display:flex;gap:8px;padding:0 18px 12px;overflow:auto}
 .countries button{border:1.5px solid #ddd;background:#fff;padding:7px 13px;border-radius:16px;white-space:nowrap;cursor:pointer;font-size:13px;font-family:inherit;color:#333;display:flex;align-items:center;gap:6px}
 .countries button.active{background:#202124;color:#fff;border-color:#202124}
