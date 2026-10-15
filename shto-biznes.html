@@ -91,6 +91,7 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="firebase-config.js"></script>
+<script src="i18n-pages.js"></script>
 <script src="places-common.js"></script>
 <script>
 let pickMap = null, pickMarker = null, picked = null;
@@ -107,13 +108,13 @@ function showAuthTab(n){
 }
 function authMsg(e){
   switch(e && e.code){
-    case 'auth/invalid-email': return 'Email-i nuk duket i vlefshëm.';
-    case 'auth/user-not-found': case 'auth/wrong-password': case 'auth/invalid-credential': case 'auth/invalid-login-credentials': return 'Email ose fjalëkalim i gabuar.';
-    case 'auth/too-many-requests': return 'Shumë përpjekje. Prit pak minuta.';
-    case 'auth/network-request-failed': return 'Probleme me internetin.';
-    case 'auth/weak-password': return 'Fjalëkalimi është shumë i dobët (min. 6).';
-    case 'auth/email-already-in-use': return 'Ky email ka tashmë llogari — provo "Hyr".';
-    default: return 'Gabim: ' + ((e && e.message) || 'provo përsëri.');
+    case 'auth/invalid-email': return tr('Email-i nuk duket i vlefshëm.');
+    case 'auth/user-not-found': case 'auth/wrong-password': case 'auth/invalid-credential': case 'auth/invalid-login-credentials': return tr('Email ose fjalëkalim i gabuar.');
+    case 'auth/too-many-requests': return tr('Shumë përpjekje. Prit pak minuta.');
+    case 'auth/network-request-failed': return tr('Probleme me internetin.');
+    case 'auth/weak-password': return tr('Fjalëkalimi është shumë i dobët (min. 6).');
+    case 'auth/email-already-in-use': return tr('Ky email ka tashmë llogari — provo "Hyr".');
+    default: return tr('Gabim: ') + ((e && e.message) || tr('provo përsëri.'));
   }
 }
 function togglePw(id, btn){ const el = document.getElementById(id); const s = el.type==='password'; el.type = s?'text':'password'; btn.textContent = s?'🙈':'👁'; }
@@ -121,19 +122,19 @@ function doLogin(){ loginErr.textContent=''; loginOk.textContent=''; auth.signIn
 function doReset(){
   loginErr.textContent=''; loginOk.textContent='';
   const em = loginEmail.value.trim();
-  if(!em){ loginErr.textContent='Shkruaj email-in më lart, pastaj kliko "Harrova fjalëkalimin".'; return; }
-  auth.sendPasswordResetEmail(em).then(()=>{ loginOk.textContent='Të dërguam një email me lidhjen për fjalëkalim të ri (shiko edhe te Spam).'; })
-    .catch(e=>{ if(e && e.code==='auth/user-not-found') loginOk.textContent='Nëse ky email ka llogari, do të marrë një lidhje.'; else loginErr.textContent=authMsg(e); });
+  if(!em){ loginErr.textContent=tr('Shkruaj email-in më lart, pastaj kliko "Harrova fjalëkalimin".'); return; }
+  auth.sendPasswordResetEmail(em).then(()=>{ loginOk.textContent=tr('Të dërguam një email me lidhjen për fjalëkalim të ri (shiko edhe te Spam).'); })
+    .catch(e=>{ if(e && e.code==='auth/user-not-found') loginOk.textContent=tr('Nëse ky email ka llogari, do të marrë një lidhje.'); else loginErr.textContent=authMsg(e); });
 }
 function doSignup(){
   suErr.textContent=''; const em=suEmail.value.trim(), pw=suPass.value;
-  if(!em || pw.length<6){ suErr.textContent='Vendos email dhe fjalëkalim me të paktën 6 shkronja/numra.'; return; }
+  if(!em || pw.length<6){ suErr.textContent=tr('Vendos email dhe fjalëkalim me të paktën 6 shkronja/numra.'); return; }
   auth.createUserWithEmailAndPassword(em, pw).catch(e=>{ suErr.textContent = authMsg(e); });
 }
 
 // ---------- Forma ----------
-fType.innerHTML = Object.keys(PLACE_TYPES).map(k=>`<option value="${k}">${PLACE_TYPES[k].icon} ${esc(PLACE_TYPES[k].one)}</option>`).join('');
-fCountry.innerHTML = Object.keys(GEO).map(c=>`<option>${esc(c)}</option>`).join('');
+fType.innerHTML = Object.keys(PLACE_TYPES).map(k=>`<option value="${k}">${PLACE_TYPES[k].icon} ${esc(tr(PLACE_TYPES[k].one))}</option>`).join('');
+fCountry.innerHTML = Object.keys(GEO).map(c=>`<option value="${esc(c)}">${esc(tr(c))}</option>`).join('');
 
 function initMap(){
   if(pickMap || typeof L === 'undefined') return;
@@ -145,7 +146,7 @@ function initMap(){
 }
 function setPick(lat, lon, zoom){
   picked = {lat, lon};
-  coordInfo.textContent = `Lokacioni: ${lat.toFixed(5)}, ${lon.toFixed(5)} ✓`;
+  coordInfo.textContent = `${X('Lokacioni','Location')}: ${lat.toFixed(5)}, ${lon.toFixed(5)} ✓`;
   if(!pickMap) return;
   if(!pickMarker){
     pickMarker = L.marker([lat,lon], {draggable:true, icon: emojiIcon('📍')}).addTo(pickMap);
@@ -156,51 +157,51 @@ function setPick(lat, lon, zoom){
 function onCountryChange(){ if(pickMap && !picked) pickMap.setView(GEO[fCountry.value].center, 8); }
 function useMyLocation(){
   formErr.textContent='';
-  if(!navigator.geolocation){ formErr.textContent='Shfletuesi nuk e mbështet lokacionin. Kliko në hartë.'; return; }
+  if(!navigator.geolocation){ formErr.textContent=tr('Shfletuesi nuk e mbështet lokacionin. Kliko në hartë.'); return; }
   navigator.geolocation.getCurrentPosition(p=>setPick(p.coords.latitude, p.coords.longitude, 17),
-    ()=>{ formErr.textContent='S\'u mor lokacioni. Kliko në hartë ku ndodhet biznesi.'; }, {enableHighAccuracy:true, timeout:12000});
+    ()=>{ formErr.textContent=tr('S\'u mor lokacioni. Kliko në hartë ku ndodhet biznesi.'); }, {enableHighAccuracy:true, timeout:12000});
 }
 
 async function savePlace(e){
   e.preventDefault(); formErr.textContent=''; formOk.textContent='';
-  const u = auth.currentUser; if(!u){ formErr.textContent='Duhet të jesh i kyçur.'; return false; }
-  if(!picked){ formErr.textContent='Zgjidh lokacionin në hartë (ose shtyp "Përdor lokacionin tim").'; return false; }
+  const u = auth.currentUser; if(!u){ formErr.textContent=tr('Duhet të jesh i kyçur.'); return false; }
+  if(!picked){ formErr.textContent=tr('Zgjidh lokacionin në hartë (ose shtyp "Përdor lokacionin tim").'); return false; }
   const data = {
     type: fType.value, name: fName.value.trim(), country: fCountry.value, city: fCity.value.trim(),
     address: fAddress.value.trim(), phone: fPhone.value.trim(), lat: picked.lat, lon: picked.lon,
     ownerId: u.uid, createdAt: firebase.firestore.FieldValue.serverTimestamp()
   };
-  if(!data.name || !data.city || !data.phone){ formErr.textContent='Plotëso emrin, qytetin dhe telefonin.'; return false; }
-  saveBtn.disabled = true; saveBtn.textContent = 'Duke ruajtur…';
+  if(!data.name || !data.city || !data.phone){ formErr.textContent=tr('Plotëso emrin, qytetin dhe telefonin.'); return false; }
+  saveBtn.disabled = true; saveBtn.textContent = tr('Duke ruajtur…');
   try{
     await db.collection('places').add(data);
-    formOk.textContent = 'Biznesi u shtua! Do të shfaqet te "Shërbime pranë teje".';
+    formOk.textContent = tr('Biznesi u shtua! Do të shfaqet te "Shërbime pranë teje".');
     fName.value=''; fAddress.value=''; fPhone.value=''; fCity.value='';
     loadMine();
   }catch(err){
     formErr.textContent = (err && err.code === 'permission-denied')
-      ? 'S\'ke leje të ruash (administratori duhet të aktivizojë rregullat për "places" te Firebase).'
-      : 'Diçka shkoi keq: ' + err.message;
+      ? tr('S\'ke leje të ruash (administratori duhet të aktivizojë rregullat për "places" te Firebase).')
+      : tr('Diçka shkoi keq: ') + err.message;
   }
-  saveBtn.disabled = false; saveBtn.textContent = 'Shto biznesin';
+  saveBtn.disabled = false; saveBtn.textContent = tr('Shto biznesin');
   return false;
 }
 
 async function loadMine(){
   const u = auth.currentUser; if(!u) return;
-  mine.textContent = 'Duke ngarkuar…';
+  mine.textContent = tr('Duke ngarkuar…');
   try{
     const snap = await db.collection('places').where('ownerId','==',u.uid).get();
-    if(snap.empty){ mine.innerHTML = '<p class="muted" style="margin:0">S\'ke shtuar ende asnjë biznes.</p>'; return; }
+    if(snap.empty){ mine.innerHTML = '<p class="muted" style="margin:0">'+tr('S\'ke shtuar ende asnjë biznes.')+'</p>'; return; }
     mine.innerHTML = snap.docs.map(d=>{
       const x = d.data(), T = PLACE_TYPES[x.type] || {icon:'📍', one:''};
-      return `<div class="item"><div class="ic">${T.icon}</div><div class="info"><b>${esc(x.name)}</b><small>${esc(T.one)} • ${esc(x.country||'')} ${x.city?'- '+esc(x.city):''}</small><small>📞 ${esc(x.phone||'')}</small></div><button class="btn small danger" onclick="delPlace('${d.id}')">Fshi</button></div>`;
+      return `<div class="item"><div class="ic">${T.icon}</div><div class="info"><b>${esc(x.name)}</b><small>${esc(tr(T.one))} • ${esc(tr(x.country||''))} ${x.city?'- '+esc(x.city):''}</small><small>📞 ${esc(x.phone||'')}</small></div><button class="btn small danger" onclick="delPlace('${d.id}')">${tr('Fshi')}</button></div>`;
     }).join('');
-  }catch(err){ mine.innerHTML = '<p class="err" style="margin:0">S\'u ngarkuan: ' + esc(err.message) + '</p>'; }
+  }catch(err){ mine.innerHTML = '<p class="err" style="margin:0">' + tr('S\'u ngarkuan: ') + esc(err.message) + '</p>'; }
 }
 async function delPlace(id){
-  if(!confirm('Ta fshish këtë biznes?')) return;
-  try{ await db.collection('places').doc(id).delete(); loadMine(); }catch(e){ alert('Gabim: ' + e.message); }
+  if(!confirm(tr('Ta fshish këtë biznes?'))) return;
+  try{ await db.collection('places').doc(id).delete(); loadMine(); }catch(e){ alert(tr('Gabim: ') + e.message); }
 }
 showAuthTab('login');
 </script>

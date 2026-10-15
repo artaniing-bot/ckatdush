@@ -116,16 +116,17 @@ a.btn{text-decoration:none}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="firebase-config.js"></script>
+<script src="i18n-pages.js"></script>
 <script src="places-common.js"></script>
 <script>
 const CATS=['Ndërtim','Shitje','Gastronomi & Hoteleri','Transport & Shofer','Administratë & Kontabilitet','IT & Teknologji','Inxhinieri','Shëndetësi','Arsim','Prodhim & Magazinë','Shërbime','Tjetër'];
 const KINDS=['Kohë e plotë','Kohë e pjesshme','Sezonale','Praktikë'];
 const COUNTRIES=Object.keys(GEO);
-qCountry.innerHTML='<option value="">Të gjitha shtetet</option>'+COUNTRIES.map(c=>`<option>${esc(c)}</option>`).join('');
-qCat.innerHTML='<option value="">Të gjitha</option>'+CATS.map(c=>`<option>${esc(c)}</option>`).join('');
-fCat.innerHTML=CATS.map(c=>`<option>${esc(c)}</option>`).join('');
-fKind.innerHTML=KINDS.map(c=>`<option>${esc(c)}</option>`).join('');
-fCountry.innerHTML=COUNTRIES.map(c=>`<option>${esc(c)}</option>`).join('');
+qCountry.innerHTML=`<option value="">${tr('Të gjitha shtetet')}</option>`+COUNTRIES.map(c=>`<option value="${esc(c)}">${esc(tr(c))}</option>`).join('');
+qCat.innerHTML=`<option value="">${tr('Të gjitha')}</option>`+CATS.map(c=>`<option value="${esc(c)}">${esc(tr(c))}</option>`).join('');
+fCat.innerHTML=CATS.map(c=>`<option value="${esc(c)}">${esc(tr(c))}</option>`).join('');
+fKind.innerHTML=KINDS.map(c=>`<option value="${esc(c)}">${esc(tr(c))}</option>`).join('');
+fCountry.innerHTML=COUNTRIES.map(c=>`<option value="${esc(c)}">${esc(tr(c))}</option>`).join('');
 let JOBS=[];
 const DAYS=30, DAY_MS=86400000;
 function expMs(j){
@@ -149,13 +150,13 @@ function showAuthTab(n){
 }
 function authMsg(e){
   switch(e && e.code){
-    case 'auth/invalid-email': return 'Email-i nuk duket i vlefshëm.';
-    case 'auth/user-not-found': case 'auth/wrong-password': case 'auth/invalid-credential': case 'auth/invalid-login-credentials': return 'Email ose fjalëkalim i gabuar.';
-    case 'auth/too-many-requests': return 'Shumë përpjekje. Prit pak minuta.';
-    case 'auth/network-request-failed': return 'Probleme me internetin.';
-    case 'auth/weak-password': return 'Fjalëkalimi është shumë i dobët (min. 6).';
-    case 'auth/email-already-in-use': return 'Ky email ka tashmë llogari — provo "Hyr".';
-    default: return 'Gabim: ' + ((e && e.message) || 'provo përsëri.');
+    case 'auth/invalid-email': return tr('Email-i nuk duket i vlefshëm.');
+    case 'auth/user-not-found': case 'auth/wrong-password': case 'auth/invalid-credential': case 'auth/invalid-login-credentials': return tr('Email ose fjalëkalim i gabuar.');
+    case 'auth/too-many-requests': return tr('Shumë përpjekje. Prit pak minuta.');
+    case 'auth/network-request-failed': return tr('Probleme me internetin.');
+    case 'auth/weak-password': return tr('Fjalëkalimi është shumë i dobët (min. 6).');
+    case 'auth/email-already-in-use': return tr('Ky email ka tashmë llogari — provo "Hyr".');
+    default: return tr('Gabim: ') + ((e && e.message) || tr('provo përsëri.'));
   }
 }
 function togglePw(id, btn){ const el = document.getElementById(id); const s = el.type==='password'; el.type = s?'text':'password'; btn.textContent = s?'🙈':'👁'; }
@@ -163,62 +164,62 @@ function doLogin(){ loginErr.textContent=''; loginOk.textContent=''; auth.signIn
 function doReset(){
   loginErr.textContent=''; loginOk.textContent='';
   const em = loginEmail.value.trim();
-  if(!em){ loginErr.textContent='Shkruaj email-in më lart, pastaj kliko "Harrova fjalëkalimin".'; return; }
-  auth.sendPasswordResetEmail(em).then(()=>{ loginOk.textContent='Të dërguam një email me lidhjen për fjalëkalim të ri (shiko edhe te Spam).'; })
-    .catch(e=>{ if(e && e.code==='auth/user-not-found') loginOk.textContent='Nëse ky email ka llogari, do të marrë një lidhje.'; else loginErr.textContent=authMsg(e); });
+  if(!em){ loginErr.textContent=tr('Shkruaj email-in më lart, pastaj kliko "Harrova fjalëkalimin".'); return; }
+  auth.sendPasswordResetEmail(em).then(()=>{ loginOk.textContent=tr('Të dërguam një email me lidhjen për fjalëkalim të ri (shiko edhe te Spam).'); })
+    .catch(e=>{ if(e && e.code==='auth/user-not-found') loginOk.textContent=tr('Nëse ky email ka llogari, do të marrë një lidhje.'); else loginErr.textContent=authMsg(e); });
 }
 function doSignup(){
   suErr.textContent=''; const em=suEmail.value.trim(), pw=suPass.value;
-  if(!em || pw.length<6){ suErr.textContent='Vendos email dhe fjalëkalim me të paktën 6 shkronja/numra.'; return; }
+  if(!em || pw.length<6){ suErr.textContent=tr('Vendos email dhe fjalëkalim me të paktën 6 shkronja/numra.'); return; }
   auth.createUserWithEmailAndPassword(em, pw).catch(e=>{ suErr.textContent = authMsg(e); });
 }
 
 
 function ago(ts){
   try{ const d=ts.toDate?ts.toDate():new Date(ts); const n=Math.floor((Date.now()-d)/86400000);
-    return n<=0?'sot':n===1?'dje':'para '+n+' ditësh'; }catch(e){ return ''; }
+    return n<=0?X('sot','today'):n===1?X('dje','yesterday'):X('para '+n+' ditësh',n+' days ago'); }catch(e){ return ''; }
 }
 function jobHtml(j,mine){
   const contact=[];
   if(j.phone) contact.push(`<a class="btn small" href="tel:${esc(j.phone.replace(/[^+\d]/g,''))}">📞 ${esc(j.phone)}</a>`);
-  if(j.email) contact.push(`<a class="btn small" href="mailto:${esc(j.email)}?subject=${encodeURIComponent('Aplikim: '+j.title)}">✉️ Apliko me email</a>`);
+  if(j.email) contact.push(`<a class="btn small" href="mailto:${esc(j.email)}?subject=${encodeURIComponent(tr('Aplikim: ')+j.title)}">${tr('✉️ Apliko me email')}</a>`);
   return `<div class="job" onclick="this.classList.toggle('open')">
   <h3>${esc(j.title)}</h3>
-  <div class="meta">${esc(j.company)} • ${esc(j.city)}, ${esc(j.country)} • ${ago(j.createdAt)}${mine?(isExpired(j)?' • <b style="color:#c0392b">Skaduar</b>':' • skadon '+new Date(expMs(j)).toLocaleDateString('sq')):''}</div>
-  <div><span class="tag">${esc(j.cat||'')}</span><span class="tag">${esc(j.kind||'')}</span>${j.salary?`<span class="tag">💶 ${esc(j.salary)}</span>`:''}</div>
+  <div class="meta">${esc(j.company)} • ${esc(j.city)}, ${esc(tr(j.country))} • ${ago(j.createdAt)}${mine?(isExpired(j)?' • <b style="color:#c0392b">'+tr('Skaduar')+'</b>':' • '+X('skadon ','expires ')+new Date(expMs(j)).toLocaleDateString(X('sq','en-GB'))):''}</div>
+  <div><span class="tag">${esc(tr(j.cat||''))}</span><span class="tag">${esc(tr(j.kind||''))}</span>${j.salary?`<span class="tag">💶 ${esc(j.salary)}</span>`:''}</div>
   <div class="desc">${esc(j.desc||'')}</div>
-  <div class="acts" onclick="event.stopPropagation()">${contact.join('')}${mine?`<button class="btn small" onclick="renewJob('${j.id}')">🔄 Rinovo ${DAYS} ditë</button><button class="btn small danger" onclick="delJob('${j.id}')">Fshi</button>`:''}</div>
+  <div class="acts" onclick="event.stopPropagation()">${contact.join('')}${mine?`<button class="btn small" onclick="renewJob('${j.id}')">${X('🔄 Rinovo '+DAYS+' ditë','🔄 Renew '+DAYS+' days')}</button><button class="btn small danger" onclick="delJob('${j.id}')">${tr('Fshi')}</button>`:''}</div>
   </div>`;
 }
 function renderJobs(){
   const c=qCountry.value, city=qCity.value.trim().toLowerCase(), cat=qCat.value, tx=qText.value.trim().toLowerCase();
   const r=JOBS.filter(j=>!isExpired(j)&&(!c||j.country===c)&&(!city||(j.city||'').toLowerCase().includes(city))&&(!cat||j.cat===cat)&&(!tx||((j.title||'')+' '+(j.company||'')+' '+(j.desc||'')).toLowerCase().includes(tx)));
-  list.innerHTML=r.length?r.map(j=>jobHtml(j,false)).join(''):'<div class="muted">Nuk ka punë të hapura me këto filtra. Provo të ndryshosh filtrat ose shpall ti një punë.</div>';
+  list.innerHTML=r.length?r.map(j=>jobHtml(j,false)).join(''):'<div class="muted">'+tr('Nuk ka punë të hapura me këto filtra. Provo të ndryshosh filtrat ose shpall ti një punë.')+'</div>';
 }
 async function loadJobs(){
   try{
     const s=await db.collection('jobs').orderBy('createdAt','desc').limit(300).get();
     JOBS=s.docs.map(d=>({id:d.id,...d.data()}));
     renderJobs();
-  }catch(e){ list.innerHTML='<div class="err">S\'u ngarkuan punët: '+esc(e.message)+'</div>'; }
+  }catch(e){ list.innerHTML='<div class="err">'+tr('S\'u ngarkuan punët: ')+esc(e.message)+'</div>'; }
 }
 async function saveJob(e){
   e.preventDefault(); formErr.textContent=''; formOk.textContent='';
-  const u=auth.currentUser; if(!u){ formErr.textContent='Duhet të jesh i kyçur.'; return false; }
+  const u=auth.currentUser; if(!u){ formErr.textContent=tr('Duhet të jesh i kyçur.'); return false; }
   const d={title:fTitle.value.trim(),company:fCompany.value.trim(),cat:fCat.value,kind:fKind.value,country:fCountry.value,city:fCity.value.trim(),
     salary:fSalary.value.trim(),desc:fDesc.value.trim(),phone:fPhone.value.trim(),email:fEmail.value.trim(),ownerId:u.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp(),expiresAt:new Date(Date.now()+DAYS*DAY_MS)};
-  if(!d.title||!d.company||!d.city||!d.desc){ formErr.textContent='Plotëso titullin, firmën, qytetin dhe përshkrimin.'; return false; }
-  if(!d.phone&&!d.email){ formErr.textContent='Vendos të paktën telefonin ose email-in për kontakt.'; return false; }
-  saveBtn.disabled=true; saveBtn.textContent='Duke ruajtur…';
+  if(!d.title||!d.company||!d.city||!d.desc){ formErr.textContent=tr('Plotëso titullin, firmën, qytetin dhe përshkrimin.'); return false; }
+  if(!d.phone&&!d.email){ formErr.textContent=tr('Vendos të paktën telefonin ose email-in për kontakt.'); return false; }
+  saveBtn.disabled=true; saveBtn.textContent=tr('Duke ruajtur…');
   try{
     await db.collection('jobs').add(d);
-    formOk.textContent='Puna u publikua!';
+    formOk.textContent=tr('Puna u publikua!');
     fTitle.value='';fSalary.value='';fDesc.value='';
     loadMine(); loadJobs();
   }catch(err){
-    formErr.textContent=(err&&err.code==='permission-denied')?'S\'ke leje të ruash (duhet aktivizuar rregulli për "jobs" te Firebase).':'Diçka shkoi keq: '+err.message;
+    formErr.textContent=(err&&err.code==='permission-denied')?tr('S\'ke leje të ruash (duhet aktivizuar rregulli për "jobs" te Firebase).'):tr('Diçka shkoi keq: ')+err.message;
   }
-  saveBtn.disabled=false; saveBtn.textContent='Publiko';
+  saveBtn.disabled=false; saveBtn.textContent=tr('Publiko');
   return false;
 }
 async function loadMine(){
@@ -226,14 +227,14 @@ async function loadMine(){
   const m=JOBS.filter(j=>j.ownerId===u.uid);
   if(!JOBS.length){ try{ await loadJobs(); }catch(e){} }
   const mm=JOBS.filter(j=>j.ownerId===u.uid);
-  mine.innerHTML=mm.length?mm.map(j=>jobHtml(j,true)).join(''):'<p class="muted" style="margin:0">S\'ke shpallur ende asnjë punë.</p>';
+  mine.innerHTML=mm.length?mm.map(j=>jobHtml(j,true)).join(''):'<p class="muted" style="margin:0">'+tr('S\'ke shpallur ende asnjë punë.')+'</p>';
 }
 async function renewJob(id){
-  try{ await db.collection('jobs').doc(id).update({expiresAt:new Date(Date.now()+DAYS*DAY_MS)}); await loadJobs(); loadMine(); }catch(e){ alert('Gabim: '+e.message); }
+  try{ await db.collection('jobs').doc(id).update({expiresAt:new Date(Date.now()+DAYS*DAY_MS)}); await loadJobs(); loadMine(); }catch(e){ alert(tr('Gabim: ')+e.message); }
 }
 async function delJob(id){
-  if(!confirm('Ta fshish këtë shpallje?')) return;
-  try{ await db.collection('jobs').doc(id).delete(); await loadJobs(); loadMine(); }catch(e){ alert('Gabim: '+e.message); }
+  if(!confirm(tr('Ta fshish këtë shpallje?'))) return;
+  try{ await db.collection('jobs').doc(id).delete(); await loadJobs(); loadMine(); }catch(e){ alert(tr('Gabim: ')+e.message); }
 }
 showAuthTab('login');
 loadJobs();
