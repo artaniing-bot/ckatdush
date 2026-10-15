@@ -85,3 +85,10 @@ html[data-theme=dark] .job{border-color:#2e2f34}
 html[data-theme=dark] .job .meta{color:#9a9ba2}
 html[data-theme=dark] .field input{background:#24252a}
 html[data-theme=dark] .pdPic,html[data-theme=dark] .pdPic img{background:#24252a}
+html[data-theme=dark] .adSlot{background:#1a1b1e;border-color:#33353b;color:#dbe6f5}
+html[data-theme=dark] .adItem .adSub{color:#9fb0c8}
+html[data-theme=dark] .adItem .adBtn{background:#8db8f0;color:#0f1b2d}
+html[data-theme=dark] .adHere{background:linear-gradient(120deg,#22314a,#1f3a2b)}
+html[data-theme=dark] .adTag{color:#8a97ad}
+html[data-theme=dark] .adDots i{background:#3a3b40}html[data-theme=dark] .adDots i.on{background:#8db8f0}
+html[data-theme=dark] .adItem img{background:#22314a}

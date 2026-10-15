@@ -35,6 +35,18 @@ main{padding:22px 18px}.hero{background:#dcdcdc;border-radius:24px;padding:42px;
 footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:25px}.foot p,.foot li{color:#bbb;font-size:14px;line-height:1.8}.foot ul{padding:0;list-style:none}
 .modal{display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:16px}.box{background:white;width:min(600px,92%);max-height:88vh;overflow:auto;border-radius:18px;padding:22px}
 .filters{display:flex;gap:10px;flex-wrap:wrap;padding:0 18px 14px;max-width:1250px;margin:auto}
+.subrow{display:grid;grid-template-columns:1fr minmax(260px,520px);gap:16px;align-items:start;max-width:1250px;margin:auto}
+.subrow .countries,.subrow .filters{max-width:none;margin:0}
+.adSlot{position:relative;margin:2px 18px 12px 0;height:112px;border:1.5px solid #cfd8e3;border-radius:16px;background:#fff;overflow:hidden;display:block;text-decoration:none;color:#1b3556}
+.adItem{position:absolute;inset:0;display:flex;align-items:center;gap:14px;padding:10px 14px;opacity:0;transition:opacity .6s;text-decoration:none;color:inherit}
+.adItem.on{opacity:1}
+.adItem img{width:92px;height:92px;object-fit:cover;border-radius:12px;flex-shrink:0;background:#e4eefb}
+.adItem .adTx{min-width:0}.adItem b{display:block;font-size:15px;line-height:1.25;margin-bottom:3px}.adItem span.adSub{display:block;font-size:12.5px;color:#4a5b73;line-height:1.35;max-height:2.7em;overflow:hidden}
+.adItem .adBtn{margin-left:auto;background:#1f4e8c;color:#fff;border-radius:14px;padding:7px 14px;font-weight:bold;font-size:12px;white-space:nowrap;flex-shrink:0}
+.adTag{position:absolute;top:6px;right:8px;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:#7a8aa3;z-index:2}
+.adDots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:2}.adDots i{width:6px;height:6px;border-radius:50%;background:#cfd8e3}.adDots i.on{background:#1f4e8c}
+.adHere{background:linear-gradient(120deg,#e4eefb,#dff3e4)}
+@media(max-width:1150px){.subrow{display:block}.adSlot{margin:0 18px 12px;height:96px}.adItem img{width:76px;height:76px}}
 .filters input,.filters select{padding:9px 12px;border:1px solid #ddd;border-radius:20px;font-size:14px;font-family:inherit;background:white}
 .filters input{width:150px}
 .priceBox{display:contents}.priceBox.off{display:none}
@@ -78,7 +90,7 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <a href="postoj.html" class="promoBtn" data-i18n="promoBtnText">Posto tani →</a>
 </div>
 </div>
-<div class="countries" id="countries">
+<div class="subrow"><div class="subLeft"><div class="countries" id="countries">
 <button data-k="Të gjitha" class="active" onclick="filterCountry('Të gjitha')">🌍 <span data-i18n="countryAll">Të gjitha vendet</span></button>
 <button data-k="Kosovë" onclick="filterCountry('Kosovë')">🇽🇰 <span data-i18n="countryKosovo">Kosovë</span></button>
 <button data-k="Shqipëri" onclick="filterCountry('Shqipëri')">🇦🇱 <span data-i18n="countryAlbania">Shqipëri</span></button>
@@ -91,6 +103,9 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <select id="fCity" onchange="applyFilters()"><option value="" data-i18n="fCityAll">Qyteti (të gjitha)</option><option>Prishtinë</option><option>Prizren</option><option>Pejë</option><option>Gjakovë</option><option>Ferizaj</option><option>Gjilan</option><option>Mitrovicë</option><option>Vushtrri</option><option>Podujevë</option><option>Tiranë</option><option>Shkodër</option><option>Durrës</option><option>Shkup</option><option>Tetovë</option><option>Podgoricë</option></select>
 <select id="fCond" onchange="applyFilters()"><option value="" data-i18n="fCondAll">Gjendja (të gjitha)</option><option value="I ri" data-i18n="fCondNew">I ri</option><option value="I përdorur" data-i18n="fCondUsed">I përdorur</option></select>
 <button class="btn" onclick="clearFilters()" data-i18n="clearFilters">Pastro filtrat</button>
+</div>
+</div>
+<div class="adSlot" id="adSlot" aria-label="Reklamë"><span class="adTag" data-i18n="adLabel">Reklamë</span><div id="adItems"></div><div class="adDots" id="adDots"></div></div>
 </div>
 </header>
 <main>
@@ -153,7 +168,7 @@ const I18N = {
     footSellers: "Shitësit", footPost: "Posto shpallje", footMyAds: "Shpalljet e mia",
     footBuyers: "Blerësit", footSearch: "Kërko", footFilterCity: "Filtro sipas qytetit",
     footHelp: "Ndihmë", footContact: "Kontakti", footTerms: "Kushtet",
-    promoText: "🎉 Posto FALAS shpalljen tënde tani!", promoBtnText: "Posto tani →"
+    promoText: "🎉 Posto FALAS shpalljen tënde tani!", promoBtnText: "Posto tani →", adLabel: "Reklamë", adHereT: "📢 Reklamo këtu", adHereS: "Shfaq biznesin tënd te vizitorët nga Kosova, Shqipëria, Maqedonia e Veriut dhe Mali i Zi.", adHereB: "Kontakto"
   },
   en: {
     pageTitle: "Çkat’dush — Listings",
@@ -180,7 +195,7 @@ const I18N = {
     footSellers: "Sellers", footPost: "Post a listing", footMyAds: "My listings",
     footBuyers: "Buyers", footSearch: "Search", footFilterCity: "Filter by city",
     footHelp: "Help", footContact: "Contact", footTerms: "Terms",
-    promoText: "🎉 Post your listing for FREE today!", promoBtnText: "Post now →"
+    promoText: "🎉 Post your listing for FREE today!", promoBtnText: "Post now →", adLabel: "Ad", adHereT: "📢 Advertise here", adHereS: "Show your business to visitors from Kosovo, Albania, North Macedonia and Montenegro.", adHereB: "Contact"
   }
 };
 const CAT_KEYS = {'Të gjitha':'catAll','Automjete':'catAuto','Teknologji':'catTech','Moda':'catFashion','Patundshmëri':'catHome','Mobilje':'catFurn','Bukuri':'catBeauty','Fëmijë':'catKids','Sport':'catSport','Aksesorë':'catAccessories'};
@@ -470,6 +485,51 @@ loadProducts();
     requestAnimationFrame(step);
   }
   setTimeout(()=>requestAnimationFrame(step),900);
+})();
+</script>
+<script>
+// Hapësira e reklamave: lexon koleksionin 'ads' nga Firestore (active=true, jo të skaduara); nëse s'ka, shfaq "Reklamo këtu"
+(function(){
+  const CONTACT='ckatdush@gmail.com';
+  const slot=document.getElementById('adSlot'), box=document.getElementById('adItems'), dots=document.getElementById('adDots');
+  if(!slot||!box) return;
+  const esc=x=>String(x==null?'':x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'';
+  let timer=null, idx=0, nodes=[];
+  function show(i){
+    idx=i; nodes.forEach((n,k)=>n.classList.toggle('on',k===i));
+    [...dots.children].forEach((d,k)=>d.classList.toggle('on',k===i));
+  }
+  function startRotate(){
+    clearInterval(timer);
+    if(nodes.length>1) timer=setInterval(()=>show((idx+1)%nodes.length),6000);
+  }
+  function placeholder(){
+    box.innerHTML=`<a class="adItem adHere on" href="mailto:${CONTACT}?subject=${encodeURIComponent('Reklamë në Çkat’dush')}"><div class="adTx"><b data-i18n="adHereT">📢 Reklamo këtu</b><span class="adSub" data-i18n="adHereS"></span></div><span class="adBtn" data-i18n="adHereB">Kontakto</span></a>`;
+    dots.innerHTML=''; nodes=[]; if(typeof applyLang==='function') applyLang();
+  }
+  function render(ads){
+    if(!ads.length){ placeholder(); return; }
+    box.innerHTML=ads.map(a=>{
+      const url=safeUrl(a.link), img=safeUrl(a.imageUrl);
+      const tag=url?'a':'div', href=url?` href="${esc(url)}" target="_blank" rel="sponsored noopener"`:'';
+      return `<${tag} class="adItem"${href}>${img?`<img src="${esc(img)}" alt="" loading="lazy">`:''}<div class="adTx"><b>${esc(a.title||a.company||'')}</b><span class="adSub">${esc(a.text||'')}</span></div>${url?`<span class="adBtn">${esc(a.cta||'Shiko më shumë')}</span>`:''}</${tag}>`;
+    }).join('');
+    nodes=[...box.children];
+    dots.innerHTML=ads.length>1?ads.map(()=>'<i></i>').join(''):'';
+    show(0); startRotate();
+  }
+  placeholder();
+  try{
+    db.collection('ads').where('active','==',true).limit(20).get().then(snap=>{
+      const now=Date.now();
+      const ads=snap.docs.map(d=>d.data()).filter(a=>{
+        const e=a.expiresAt&&(a.expiresAt.toDate?a.expiresAt.toDate().getTime():new Date(a.expiresAt).getTime());
+        return !e||e>now;
+      }).sort((x,y)=>(x.order||0)-(y.order||0));
+      render(ads);
+    }).catch(()=>{});
+  }catch(e){}
 })();
 </script>
 </body></html>
