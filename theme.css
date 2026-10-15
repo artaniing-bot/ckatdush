@@ -84,3 +84,4 @@ html[data-theme=dark] .tag{background:#2a2b30;color:#c8c9ce}
 html[data-theme=dark] .job{border-color:#2e2f34}
 html[data-theme=dark] .job .meta{color:#9a9ba2}
 html[data-theme=dark] .field input{background:#24252a}
+html[data-theme=dark] .pdPic,html[data-theme=dark] .pdPic img{background:#24252a}
