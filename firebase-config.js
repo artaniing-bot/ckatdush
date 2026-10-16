@@ -1,6 +1,6 @@
 const firebaseConfig = {
   apiKey: "AIzaSyCprJ7OCC3xWS3cgfnqvbf4ea5rObp1Jq4",
-  authDomain: "artan-86cc0.firebaseapp.com",
+  authDomain: "ckatdush.net",
   projectId: "artan-86cc0",
   storageBucket: "artan-86cc0.firebasestorage.app",
   messagingSenderId: "286877258345",
