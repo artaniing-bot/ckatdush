@@ -74,4 +74,4 @@ const CAT_ATTRS = {
 const MAX_PHOTOS = 20;
 
 // Kategoria e vjetër 'Shtëpi' u riemërtua 'Patundshmëri'
-function normCat(c){ return c === 'Shtëpi' ? 'Patundshmëri' : c; }
+function normCat(c){ return c === 'Shtëpi' ? 'Patundshmëri' : (c === 'Bukuri' ? 'Moda' : c); }
