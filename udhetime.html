@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="sq"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Çkat’dush — Udhëtime & pako</title>
+<link rel="stylesheet" href="theme.css">
+<script src="theme.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#d2d6db;color:#202124}
+.wrap{max-width:760px;margin:0 auto;padding:18px}
+header.sv{display:flex;align-items:center;gap:12px;margin-bottom:16px;justify-content:space-between;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+header.sv img{width:84px;object-fit:contain}
+h1{font-size:21px;margin:0}
+a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;border-radius:20px;padding:8px 14px;background:#fff}
+.card{background:#fff;border:1px solid #e6e6e2;border-radius:15px;padding:18px;margin-bottom:16px}
+.hide{display:none}
+.field{margin-bottom:14px}.field label{display:block;font-size:13px;color:#555;margin-bottom:5px}
+.field input,.field select{width:100%;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;font-family:inherit;background:#fff;color:#202124}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.row2{grid-template-columns:1fr}}
+.btn{border:1px solid #ddd;background:#fff;border-radius:22px;padding:10px 14px;cursor:pointer;font-family:inherit;font-size:14px;color:#202124;display:inline-flex;align-items:center;gap:6px}
+.btn.dark{background:#202124;color:#fff;border-color:#202124}
+.btn.small{padding:6px 11px;font-size:13px}
+.btn.danger{color:#c0392b;border-color:#c0392b}
+.muted{color:#777;font-size:13px}
+.err{color:#c0392b;font-size:13px;margin:8px 0 0}.ok{color:#2e7d32;font-size:13px;margin:8px 0 0}
+#pickMap{height:300px;border-radius:12px;margin:8px 0;background:#dfe2e6}
+.mk{width:34px;height:34px;border-radius:50%;background:#fff;border:2px solid #d98b93;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 1px 4px #0005}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #eee}
+.item:last-child{border-bottom:0}.item .ic{font-size:24px;width:34px;text-align:center}.item .info{flex:1;min-width:0}.item small{color:#777;display:block}
+.pw{position:relative}.pw input{padding-right:46px}
+.pw button{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;cursor:pointer;font-size:18px;padding:6px 10px}
+.linkBtn{border:0;background:none;color:#555;text-decoration:underline;cursor:pointer;font-size:13px;padding:8px 0 0;font-family:inherit}
+
+textarea{width:100%;padding:11px 12px;border:1px solid #ddd;border-radius:9px;font-size:15px;font-family:inherit;background:#fff;color:#202124;min-height:110px;resize:vertical}
+.filters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:600px){.filters{grid-template-columns:1fr}}
+.job{border-bottom:1px solid #eee;padding:14px 0}.job:last-child{border-bottom:0}
+.job h3{margin:0 0 4px;font-size:17px}.job .meta{color:#777;font-size:13px;margin-bottom:6px}
+.tag{display:inline-block;background:#f0f1f3;border-radius:12px;padding:2px 9px;font-size:12px;margin-right:6px;color:#444}
+.job .desc{white-space:pre-wrap;font-size:14px;margin:8px 0;max-height:4.6em;overflow:hidden}.job.open .desc{max-height:none}
+.job .acts{display:flex;gap:8px;flex-wrap:wrap}
+a.btn{text-decoration:none}
+.seg{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}.job .route{font-size:17px;font-weight:bold;margin:0 0 4px}.badge{display:inline-block;border-radius:12px;padding:2px 9px;font-size:12px;margin-right:6px;color:#fff}.badge.offer{background:#2e9e5b}.badge.need{background:#1f4e8c}
+</style></head><body>
+<div class="wrap">
+<header class="sv">
+<div class="brand"><img src="logo.png" alt="Çkat’dush"><h1>🚐 Udhëtime &amp; pako</h1></div>
+<div style="display:flex;gap:8px;align-items:center"><button class="btn" id="themeBtn" type="button" onclick="toggleTheme()">🌙</button><a class="back" href="index.html">← Faqja kryesore</a></div>
+</header>
+
+<div class="card">
+<p class="muted" style="margin:0 0 12px">Dikush udhëton dhe ka vend në makinë, furgon ose autobus? Dikush tjetër dëshiron të dërgojë një pako? Gjejini njëri-tjetrin këtu. Kontaktoni drejtpërdrejt dhe merruni vesh vetë për çmimin e sigurinë.</p>
+<div class="seg" id="seg">
+<button class="btn dark" id="segAll" onclick="setSeg('')">Të gjitha</button>
+<button class="btn" id="segOffer" onclick="setSeg('offer')">🚐 Kam vend</button>
+<button class="btn" id="segNeed" onclick="setSeg('need')">📦 Dua të dërgoj</button>
+</div>
+<div class="filters">
+<div class="field" style="margin:0"><label>Nga</label><input id="qFrom" list="places" placeholder="p.sh. Gjermani, Shtutgart" oninput="renderTrips()"></div>
+<div class="field" style="margin:0"><label>Për</label><input id="qTo" list="places" placeholder="p.sh. Kosovë, Prishtinë" oninput="renderTrips()"></div>
+<div class="field" style="margin:0"><label>Data (nga)</label><input id="qDate" type="date" onchange="renderTrips()"></div>
+</div>
+<datalist id="places"><option value="Gjermani"><option value="Zvicër"><option value="Itali"><option value="Austri"><option value="Francë"><option value="Belgjikë"><option value="Suedi"><option value="Angli"><option value="Kosovë"><option value="Shqipëri"><option value="Maqedoni e Veriut"><option value="Mali i Zi"></datalist>
+</div>
+<div style="margin-bottom:12px"><button class="btn dark" onclick="toggleForm()">➕ Shpall udhëtim ose pako</button></div>
+
+<div id="formWrap" class="hide">
+<div class="card" id="authCard">
+<p class="muted" style="margin-top:0">Hyr (ose regjistrohu) për të shpallur një udhëtim ose pako. Është falas.</p>
+<div class="tabs"><button class="btn dark" id="tabLoginBtn" onclick="showAuthTab('login')">Hyr</button><button class="btn" id="tabSignupBtn" onclick="showAuthTab('signup')">Regjistrohu</button></div>
+<div id="gBlock" style="margin:0 0 14px"><button type="button" class="btn" onclick="doGoogle()" style="width:100%;justify-content:center;display:flex;align-items:center;gap:10px"><svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.5 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.6 5.9c4.4-4.1 7-10.1 7-17.6z"/><path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.3 0-11.6-4-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg><span>Vazhdo me Google</span></button><p class="err" id="gErr" style="margin:6px 0 0"></p><div style="text-align:center;color:#888;font-size:13px;margin:12px 0 0">— <span>ose</span> —</div></div>
+<div id="loginBox">
+<div class="field"><label>Email</label><input id="loginEmail" type="email" autocomplete="email"></div>
+<div class="field"><label>Fjalëkalimi</label><div class="pw"><input id="loginPass" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"><button type="button" onclick="togglePw('loginPass',this)">👁</button></div></div>
+<button class="btn dark" onclick="doLogin()">Hyr</button>
+<div><button type="button" class="linkBtn" onclick="doReset()">Harrova fjalëkalimin</button></div>
+<p class="err" id="loginErr"></p><p class="ok" id="loginOk"></p>
+</div>
+<div id="signupBox" class="hide">
+<div class="field"><label>Email</label><input id="suEmail" type="email" autocomplete="email"></div>
+<div class="field"><label>Fjalëkalimi (min. 6 shkronja/numra)</label><div class="pw"><input id="suPass" type="password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doSignup()"><button type="button" onclick="togglePw('suPass',this)">👁</button></div></div>
+<button class="btn dark" onclick="doSignup()">Regjistrohu</button>
+<p class="err" id="suErr"></p>
+</div>
+</div>
+
+<div id="area" class="hide">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<p class="muted" style="margin:0">I kyçur si <b id="whoAmI"></b></p><button class="btn small" onclick="auth.signOut()">Dil</button>
+</div>
+<div class="card">
+<h3 style="margin-top:0">Shpallje e re</h3>
+<form onsubmit="return saveTrip(event)">
+<div class="field"><label>Çfarë shpall?</label><select id="fKind"><option value="offer">🚐 Kam vend (udhëtoj)</option><option value="need">📦 Dua të dërgoj një pako</option></select></div>
+<div class="row2">
+<div class="field"><label>Nga (vendi, qyteti)</label><input id="fFrom" list="places" required maxlength="60" placeholder="p.sh. Gjermani, Shtutgart"></div>
+<div class="field"><label>Për (vendi, qyteti)</label><input id="fTo" list="places" required maxlength="60" placeholder="p.sh. Kosovë, Prishtinë"></div>
+</div>
+<div class="row2">
+<div class="field"><label>Data e nisjes (ose data që të duhet)</label><input id="fDate" type="date" required></div>
+<div class="field"><label>Mjeti / vendi</label><input id="fVehicle" maxlength="40" placeholder="p.sh. Furgon, 15 kg vend"></div>
+</div>
+<div class="field"><label>Çmimi (opsionale)</label><input id="fPrice" maxlength="40" placeholder="p.sh. 5 € / kg"></div>
+<div class="field"><label>Detaje (çfarë bart ose çfarë dërgon, orari)</label><textarea id="fDesc" required maxlength="1000"></textarea></div>
+<div class="row2">
+<div class="field"><label>Telefoni</label><input id="fPhone" maxlength="30" placeholder="+383 44 123 456"></div>
+<div class="field"><label>Email</label><input id="fEmail" type="email" maxlength="80"></div>
+</div>
+<p class="muted" style="margin:0 0 12px">Mos dërgo para përpara dhe mos bart gjëra të paligjshme ose që nuk i njeh. Çkat’dush vetëm i lidh njerëzit dhe nuk mban përgjegjësi për marrëveshjen.</p>
+<button class="btn dark" type="submit" id="saveBtn">Publiko</button>
+<p class="err" id="formErr"></p><p class="ok" id="formOk"></p>
+</form>
+</div>
+<div class="card"><h3 style="margin-top:0">Shpalljet e mia</h3><div id="mine" class="muted">Duke ngarkuar…</div></div>
+</div>
+</div>
+</div>
+
+<div class="card" id="list"><div class="muted">Duke ngarkuar…</div></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="i18n-pages.js"></script>
+<script src="places-common.js"></script>
+<script>
+let TRIPS=[], seg='';
+const DAY_MS=86400000;
+function tripDate(t){ const d=new Date((t.date||'')+'T12:00:00'); return isNaN(d)?null:d; }
+function isExpired(t){ const d=tripDate(t); return d ? d.getTime()+DAY_MS < Date.now() : false; }
+auth.onAuthStateChanged(u=>{
+  authCard.classList.toggle('hide', !!u);
+  area.classList.toggle('hide', !u);
+  if(u){ whoAmI.textContent=u.email; loadMine(); }
+});
+function toggleForm(){ formWrap.classList.toggle('hide'); }
+function showAuthTab(n){
+  loginBox.classList.toggle('hide', n!=='login'); signupBox.classList.toggle('hide', n!=='signup');
+  tabLoginBtn.classList.toggle('dark', n==='login'); tabSignupBtn.classList.toggle('dark', n==='signup');
+}
+function authMsg(e){
+  switch(e && e.code){
+    case 'auth/invalid-email': return tr('Email-i nuk duket i vlefshëm.');
+    case 'auth/user-not-found': case 'auth/wrong-password': case 'auth/invalid-credential': case 'auth/invalid-login-credentials': return tr('Email ose fjalëkalim i gabuar.');
+    case 'auth/too-many-requests': return tr('Shumë përpjekje. Prit pak minuta.');
+    case 'auth/network-request-failed': return tr('Probleme me internetin.');
+    case 'auth/weak-password': return tr('Fjalëkalimi është shumë i dobët (min. 6).');
+    case 'auth/email-already-in-use': return tr('Ky email ka tashmë llogari — provo "Hyr".');
+    default: return tr('Gabim: ') + ((e && e.message) || tr('provo përsëri.'));
+  }
+}
+function togglePw(id, btn){ const el = document.getElementById(id); const s = el.type==='password'; el.type = s?'text':'password'; btn.textContent = s?'🙈':'👁'; }
+function doGoogle(){
+  const g=document.getElementById('gErr'); g.textContent='';
+  const p=new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(p).catch(e=>{
+    const c=e&&e.code;
+    if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request') return;
+    if(c==='auth/popup-blocked'||c==='auth/operation-not-supported-in-this-environment'){ auth.signInWithRedirect(p); return; }
+    g.textContent=authMsg(e);
+  });
+}
+function doLogin(){ loginErr.textContent=''; loginOk.textContent=''; auth.signInWithEmailAndPassword(loginEmail.value.trim(), loginPass.value).catch(e=>{ loginErr.textContent = authMsg(e); }); }
+function doReset(){
+  loginErr.textContent=''; loginOk.textContent='';
+  const em = loginEmail.value.trim();
+  if(!em){ loginErr.textContent=tr('Shkruaj email-in më lart, pastaj kliko "Harrova fjalëkalimin".'); return; }
+  auth.sendPasswordResetEmail(em).then(()=>{ loginOk.textContent=tr('Të dërguam një email me lidhjen për fjalëkalim të ri (shiko edhe te Spam).'); })
+    .catch(e=>{ if(e && e.code==='auth/user-not-found') loginOk.textContent=tr('Nëse ky email ka llogari, do të marrë një lidhje.'); else loginErr.textContent=authMsg(e); });
+}
+function doSignup(){
+  suErr.textContent=''; const em=suEmail.value.trim(), pw=suPass.value;
+  if(!em || pw.length<6){ suErr.textContent=tr('Vendos email dhe fjalëkalim me të paktën 6 shkronja/numra.'); return; }
+  auth.createUserWithEmailAndPassword(em, pw).catch(e=>{ suErr.textContent = authMsg(e); });
+}
+
+
+
+function setSeg(s){
+  seg=s;
+  segAll.classList.toggle('dark',s===''); segOffer.classList.toggle('dark',s==='offer'); segNeed.classList.toggle('dark',s==='need');
+  renderTrips();
+}
+function fmtDate(t){ const d=tripDate(t); return d? d.toLocaleDateString(X('sq','en-GB'),{day:'numeric',month:'short',year:'numeric'}) : ''; }
+function tripHtml(t,mine){
+  const contact=[];
+  if(t.phone){ const tel=t.phone.replace(/[^+\d]/g,''); contact.push(`<a class="btn small" href="tel:${esc(tel)}">📞 ${esc(t.phone)}</a>`);
+    contact.push(`<a class="btn small" target="_blank" rel="noopener" href="https://wa.me/${esc(tel.replace('+',''))}">💬 WhatsApp</a>`); }
+  if(t.email) contact.push(`<a class="btn small" href="mailto:${esc(t.email)}">✉️ Email</a>`);
+  const offer=t.kind==='offer';
+  return `<div class="job" onclick="this.classList.toggle('open')">
+  <div class="route">${esc(t.from)} → ${esc(t.to)}</div>
+  <div class="meta">📅 ${esc(fmtDate(t))}${mine?(isExpired(t)?' • <b style="color:#c0392b">'+tr('Skaduar')+'</b>':''):''}</div>
+  <div><span class="badge ${offer?'offer':'need'}">${offer?tr('🚐 Kam vend'):tr('📦 Dua të dërgoj')}</span>${t.vehicle?`<span class="tag">${esc(t.vehicle)}</span>`:''}${t.price?`<span class="tag">💶 ${esc(t.price)}</span>`:''}</div>
+  <div class="desc">${esc(t.desc||'')}</div>
+  <div class="acts" onclick="event.stopPropagation()">${contact.join('')}${mine?`<button class="btn small danger" onclick="delTrip('${t.id}')">${tr('Fshi')}</button>`:''}</div>
+  </div>`;
+}
+function renderTrips(){
+  const f=qFrom.value.trim().toLowerCase(), to=qTo.value.trim().toLowerCase(), dt=qDate.value;
+  const r=TRIPS.filter(t=>!isExpired(t)&&(!seg||t.kind===seg)&&(!f||(t.from||'').toLowerCase().includes(f))&&(!to||(t.to||'').toLowerCase().includes(to))&&(!dt||(t.date||'')>=dt));
+  list.innerHTML=r.length?r.map(t=>tripHtml(t,false)).join(''):'<div class="muted">'+tr('Nuk ka shpallje me këto filtra. Provo t\'i ndryshosh filtrat ose shpall ti një udhëtim ose pako.')+'</div>';
+}
+async function loadTrips(){
+  try{
+    const s=await db.collection('trips').orderBy('date').limit(300).get();
+    TRIPS=s.docs.map(d=>({id:d.id,...d.data()}));
+    renderTrips();
+  }catch(e){ list.innerHTML='<div class="err">'+tr('S\'u ngarkuan shpalljet: ')+esc(e.message)+'</div>'; }
+}
+async function saveTrip(e){
+  e.preventDefault(); formErr.textContent=''; formOk.textContent='';
+  const u=auth.currentUser; if(!u){ formErr.textContent=tr('Duhet të jesh i kyçur.'); return false; }
+  const d={kind:fKind.value,from:fFrom.value.trim(),to:fTo.value.trim(),date:fDate.value,vehicle:fVehicle.value.trim(),price:fPrice.value.trim(),
+    desc:fDesc.value.trim(),phone:fPhone.value.trim(),email:fEmail.value.trim(),ownerId:u.uid,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(!d.from||!d.to||!d.date||!d.desc){ formErr.textContent=tr('Plotëso nisjen, destinacionin, datën dhe detajet.'); return false; }
+  if(!d.phone&&!d.email){ formErr.textContent=tr('Vendos të paktën telefonin ose email-in për kontakt.'); return false; }
+  saveBtn.disabled=true; saveBtn.textContent=tr('Duke ruajtur…');
+  try{
+    await db.collection('trips').add(d);
+    formOk.textContent=tr('Shpallja u publikua!');
+    fFrom.value='';fTo.value='';fDesc.value='';fVehicle.value='';fPrice.value='';
+    await loadTrips(); loadMine();
+  }catch(err){
+    formErr.textContent=(err&&err.code==='permission-denied')?tr('S\'ke leje të ruash (duhet aktivizuar rregulli për "trips" te Firebase).'):tr('Diçka shkoi keq: ')+err.message;
+  }
+  saveBtn.disabled=false; saveBtn.textContent=tr('Publiko');
+  return false;
+}
+async function loadMine(){
+  const u=auth.currentUser; if(!u) return;
+  if(!TRIPS.length){ try{ await loadTrips(); }catch(e){} }
+  const mm=TRIPS.filter(t=>t.ownerId===u.uid);
+  mine.innerHTML=mm.length?mm.map(t=>tripHtml(t,true)).join(''):'<p class="muted" style="margin:0">'+tr('S\'ke shpallur ende asgjë.')+'</p>';
+}
+async function delTrip(id){
+  if(!confirm(tr('Ta fshish këtë shpallje?'))) return;
+  try{ await db.collection('trips').doc(id).delete(); await loadTrips(); loadMine(); }catch(e){ alert(tr('Gabim: ')+e.message); }
+}
+showAuthTab('login');
+loadTrips();
+</script>
+<script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script><script defer src="/_vercel/insights/script.js"></script>
+</body></html>
