@@ -143,7 +143,7 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 </div>
 
 <div class="card">
-<h3 style="margin-top:0">Shpalljet e mia</h3>
+<h3 style="margin-top:0" id="listTitle">Shpalljet e mia</h3>
 <div id="list" class="muted">Duke ngarkuar…</div>
 </div>
 </div>
@@ -157,6 +157,9 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 <script src="category-attrs.js"></script>
 <script>
 const DAY_MS = 24*60*60*1000;
+const ADMIN_UID = 'hSr1PhpfHXYoAneX9HnqRLKL3ea2';
+let editSellerId = '';
+const isAdm = ()=>!!(auth.currentUser && auth.currentUser.uid===ADMIN_UID);
 const LISTING_DAYS = 30;
 
 auth.onAuthStateChanged(user=>{
@@ -270,6 +273,7 @@ function collectAttrs(){
 }
 
 function resetForm(){
+  editSellerId='';
   pId.value=''; pName.value=''; pIcon.value=''; pPrice.value=''; pOld.value=''; pCat.selectedIndex=0;
   pCountry.selectedIndex=0; pCity.value=''; pCondition.selectedIndex=0; pPhotoFile.value='';
   pDescription.value='';
@@ -371,7 +375,7 @@ async function saveListing(e){
     photos: photos.slice(),
     attrs: collectAttrs(),
     description: pDescription.value.trim(),
-    sellerId: user.uid,
+    sellerId: (pId.value && editSellerId) ? editSellerId : user.uid,
     sellerName: pSellerName.value.trim(),
     sellerPhone: pSellerPhone.value.trim()
   };
@@ -406,6 +410,7 @@ async function saveListing(e){
 }
 
 function editListing(id, d){
+  editSellerId = d.sellerId || '';
   pId.value = id; pName.value = d.name; pCat.value = normCat(d.cat); pIcon.value = d.icon || '';
   pCountry.value = d.country || 'Kosovë'; pCity.value = d.city || ''; pCondition.value = d.condition || 'I ri';
   pPrice.value = d.price; pOld.value = d.oldPrice && d.oldPrice!==d.price ? d.oldPrice : '';
@@ -440,7 +445,9 @@ async function loadList(){
   if(!user) return;
   list.textContent = 'Duke ngarkuar…';
   try{
-    const snap = await db.collection('products').where('sellerId','==',user.uid).get();
+    const adm = isAdm();
+    const snap = adm ? await db.collection('products').get() : await db.collection('products').where('sellerId','==',user.uid).get();
+    const hd = document.getElementById('listTitle'); if(hd) hd.textContent = adm ? 'Të gjitha shpalljet (administrator)' : 'Shpalljet e mia';
     if(snap.empty){ list.innerHTML = '<p class="muted">S\'ke postuar ende asnjë shpallje.</p>'; return; }
     const docs = snap.docs.slice().sort((a,b)=>{
       const ta = a.data().createdAt && a.data().createdAt.toMillis ? a.data().createdAt.toMillis() : 0;
@@ -455,7 +462,7 @@ async function loadList(){
       const daysLeft = expMs !== null ? Math.max(0, Math.ceil((expMs-now)/DAY_MS)) : null;
       return `<div class="item">
         <div class="ic">${d.photoUrl ? `<img class="thumb" src="${d.photoUrl}">` : (d.icon||'🛍️')}</div>
-        <div class="info"><b>${d.name}</b><small>${d.cat} • ${d.country||''} ${d.city ? '- '+d.city : ''} • ${d.condition||''}</small>
+        <div class="info"><b>${d.name}</b><small>${d.cat} • ${d.country||''} ${d.city ? '- '+d.city : ''} • ${d.condition||''}</small>${adm && d.sellerId!==user.uid ? `<small>👤 ${d.sellerName||''} ${d.sellerPhone||''}</small>` : ''}
         ${expired ? `<div class="exp">⚠️ Ka skaduar — s'shfaqet më te dyqani</div>` : (daysLeft!==null ? `<div class="exp">Skadon për ${daysLeft} ditë</div>` : '')}</div>
         <div class="price">${Number(d.price).toFixed(2)} €${d.oldPrice && d.oldPrice!==d.price ? `<span class="old">${Number(d.oldPrice).toFixed(2)} €</span>` : ''}</div>
         <div class="actions">
