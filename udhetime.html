@@ -129,12 +129,15 @@ a.btn{text-decoration:none}
 <script>
 let TRIPS=[], seg='';
 const DAY_MS=86400000;
+const ADMIN_UID='hSr1PhpfHXYoAneX9HnqRLKL3ea2';
+const isAdm=()=>!!(auth.currentUser&&auth.currentUser.uid===ADMIN_UID);
 function tripDate(t){ const d=new Date((t.date||'')+'T12:00:00'); return isNaN(d)?null:d; }
 function isExpired(t){ const d=tripDate(t); return d ? d.getTime()+DAY_MS < Date.now() : false; }
 auth.onAuthStateChanged(u=>{
   authCard.classList.toggle('hide', !!u);
   area.classList.toggle('hide', !u);
   if(u){ whoAmI.textContent=u.email; loadMine(); }
+  if(TRIPS.length) renderTrips();
 });
 function toggleForm(){ formWrap.classList.toggle('hide'); }
 function showAuthTab(n){
@@ -193,15 +196,15 @@ function tripHtml(t,mine){
   const offer=t.kind==='offer';
   return `<div class="job" onclick="this.classList.toggle('open')">
   <div class="route">${esc(t.from)} → ${esc(t.to)}</div>
-  <div class="meta">📅 ${esc(fmtDate(t))}${mine?(isExpired(t)?' • <b style="color:#c0392b">'+tr('Skaduar')+'</b>':''):''}</div>
+  <div class="meta">📅 ${esc(fmtDate(t))}${(mine||isAdm())?(isExpired(t)?' • <b style="color:#c0392b">'+tr('Skaduar')+'</b>':''):''}</div>
   <div><span class="badge ${offer?'offer':'need'}">${offer?tr('🚐 Kam vend'):tr('📦 Dua të dërgoj')}</span>${t.vehicle?`<span class="tag">${esc(t.vehicle)}</span>`:''}${t.price?`<span class="tag">💶 ${esc(t.price)}</span>`:''}</div>
   <div class="desc">${esc(t.desc||'')}</div>
-  <div class="acts" onclick="event.stopPropagation()">${contact.join('')}${mine?`<button class="btn small danger" onclick="delTrip('${t.id}')">${tr('Fshi')}</button>`:''}</div>
+  <div class="acts" onclick="event.stopPropagation()">${contact.join('')}${(mine||isAdm())?`<button class="btn small danger" onclick="delTrip('${t.id}')">${tr('Fshi')}</button>`:''}</div>
   </div>`;
 }
 function renderTrips(){
   const f=qFrom.value.trim().toLowerCase(), to=qTo.value.trim().toLowerCase(), dt=qDate.value;
-  const r=TRIPS.filter(t=>!isExpired(t)&&(!seg||t.kind===seg)&&(!f||(t.from||'').toLowerCase().includes(f))&&(!to||(t.to||'').toLowerCase().includes(to))&&(!dt||(t.date||'')>=dt));
+  const r=TRIPS.filter(t=>(!isExpired(t)||isAdm())&&(!seg||t.kind===seg)&&(!f||(t.from||'').toLowerCase().includes(f))&&(!to||(t.to||'').toLowerCase().includes(to))&&(!dt||(t.date||'')>=dt));
   list.innerHTML=r.length?r.map(t=>tripHtml(t,false)).join(''):'<div class="muted">'+tr('Nuk ka shpallje me këto filtra. Provo t\'i ndryshosh filtrat ose shpall ti një udhëtim ose pako.')+'</div>';
 }
 async function loadTrips(){

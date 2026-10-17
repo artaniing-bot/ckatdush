@@ -130,6 +130,8 @@ fKind.innerHTML=KINDS.map(c=>`<option value="${esc(c)}">${esc(tr(c))}</option>`)
 fCountry.innerHTML=COUNTRIES.map(c=>`<option value="${esc(c)}">${esc(tr(c))}</option>`).join('');
 let JOBS=[];
 const DAYS=30, DAY_MS=86400000;
+const ADMIN_UID='hSr1PhpfHXYoAneX9HnqRLKL3ea2';
+const isAdm=()=>!!(auth.currentUser&&auth.currentUser.uid===ADMIN_UID);
 function expMs(j){
   try{
     if(j.expiresAt) return (j.expiresAt.toDate?j.expiresAt.toDate():new Date(j.expiresAt)).getTime();
@@ -143,6 +145,7 @@ auth.onAuthStateChanged(u=>{
   authCard.classList.toggle('hide', !!u);
   area.classList.toggle('hide', !u);
   if(u){ whoAmI.textContent=u.email; loadMine(); }
+  if(JOBS.length) renderJobs();
 });
 function toggleForm(){ formWrap.classList.toggle('hide'); }
 function showAuthTab(n){
@@ -196,15 +199,15 @@ function jobHtml(j,mine){
   if(j.email) contact.push(`<a class="btn small" href="mailto:${esc(j.email)}?subject=${encodeURIComponent(tr('Aplikim: ')+j.title)}">${tr('✉️ Apliko me email')}</a>`);
   return `<div class="job" onclick="this.classList.toggle('open')">
   <h3>${esc(j.title)}</h3>
-  <div class="meta">${esc(j.company)} • ${esc(j.city)}, ${esc(tr(j.country))} • ${ago(j.createdAt)}${mine?(isExpired(j)?' • <b style="color:#c0392b">'+tr('Skaduar')+'</b>':' • '+X('skadon ','expires ')+new Date(expMs(j)).toLocaleDateString(X('sq','en-GB'))):''}</div>
+  <div class="meta">${esc(j.company)} • ${esc(j.city)}, ${esc(tr(j.country))} • ${ago(j.createdAt)}${(mine||isAdm())?(isExpired(j)?' • <b style="color:#c0392b">'+tr('Skaduar')+'</b>':' • '+X('skadon ','expires ')+new Date(expMs(j)).toLocaleDateString(X('sq','en-GB'))):''}</div>
   <div><span class="tag">${esc(tr(j.cat||''))}</span><span class="tag">${esc(tr(j.kind||''))}</span>${j.salary?`<span class="tag">💶 ${esc(j.salary)}</span>`:''}</div>
   <div class="desc">${esc(j.desc||'')}</div>
-  <div class="acts" onclick="event.stopPropagation()">${contact.join('')}${mine?`<button class="btn small" onclick="renewJob('${j.id}')">${X('🔄 Rinovo '+DAYS+' ditë','🔄 Renew '+DAYS+' days')}</button><button class="btn small danger" onclick="delJob('${j.id}')">${tr('Fshi')}</button>`:''}</div>
+  <div class="acts" onclick="event.stopPropagation()">${contact.join('')}${(mine||isAdm())?`<button class="btn small" onclick="renewJob('${j.id}')">${X('🔄 Rinovo '+DAYS+' ditë','🔄 Renew '+DAYS+' days')}</button><button class="btn small danger" onclick="delJob('${j.id}')">${tr('Fshi')}</button>`:''}</div>
   </div>`;
 }
 function renderJobs(){
   const c=qCountry.value, city=qCity.value.trim().toLowerCase(), cat=qCat.value, tx=qText.value.trim().toLowerCase();
-  const r=JOBS.filter(j=>!isExpired(j)&&(!c||j.country===c)&&(!city||(j.city||'').toLowerCase().includes(city))&&(!cat||j.cat===cat)&&(!tx||((j.title||'')+' '+(j.company||'')+' '+(j.desc||'')).toLowerCase().includes(tx)));
+  const r=JOBS.filter(j=>(!isExpired(j)||isAdm())&&(!c||j.country===c)&&(!city||(j.city||'').toLowerCase().includes(city))&&(!cat||j.cat===cat)&&(!tx||((j.title||'')+' '+(j.company||'')+' '+(j.desc||'')).toLowerCase().includes(tx)));
   list.innerHTML=r.length?r.map(j=>jobHtml(j,false)).join(''):'<div class="muted">'+tr('Nuk ka punë të hapura me këto filtra. Provo të ndryshosh filtrat ose shpall ti një punë.')+'</div>';
 }
 async function loadJobs(){

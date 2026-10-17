@@ -68,6 +68,7 @@ select{padding:10px 12px;border:1px solid #ddd;border-radius:20px;font-size:14px
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="i18n-pages.js"></script>
@@ -77,7 +78,11 @@ let curType = 'hotel';
 let anchor = null;          // {lat, lon, label, user}
 let map = null, markerLayer = null, meMarker = null;
 let searchToken = 0;
-let ownCache = {};          // type -> lista e biznesave të regjistruara
+let ownCache = {};
+const ADMIN_UID='hSr1PhpfHXYoAneX9HnqRLKL3ea2';
+const isAdm=()=>!!(typeof auth!=='undefined' && auth.currentUser && auth.currentUser.uid===ADMIN_UID);
+async function adminDelPlace(id){ if(!confirm('Ta fshish këtë biznes?')) return; try{ await db.collection('places').doc(id).delete(); ownCache={}; search(); }catch(e){ alert('Gabim: '+e.message); } }
+if(typeof auth!=='undefined') auth.onAuthStateChanged(()=>{ if(anchor) search(); });          // type -> lista e biznesave të regjistruara
 
 // ---------- UI bazë ----------
 function buildTypes(){
@@ -230,7 +235,7 @@ function renderResults(list, radiusKm, osmFailed, T){
     const name = p.name || (tr(T.one) + X(' (pa emër)',' (no name)'));
     const tel = (p.phone||'').split(/[;,]/)[0].replace(/[^\d+]/g,'');
     const nav = `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}`;
-    return `<div class="res" id="r${i}"><div class="ic">${T.icon}</div><div class="body"><b>${esc(name)}${p.own?'<span class="tag">'+tr('Regjistruar')+'</span>':''}</b>${p.address?`<small>${esc(p.address)}</small>`:''}${p.phone?`<small>📞 ${esc(p.phone)}</small>`:''}<div class="acts">${tel?`<a class="btn dark" href="tel:${esc(tel)}">${tr('📞 Telefono')}</a>`:''}<a class="btn" target="_blank" rel="noopener" href="${nav}">${tr('🧭 Navigo')}</a><button class="btn" type="button" onclick="focusPlace(${i})">${tr('🗺 Në hartë')}</button></div></div><div class="dist">${fmtDist(p.dist)}</div></div>`;
+    return `<div class="res" id="r${i}"><div class="ic">${T.icon}</div><div class="body"><b>${esc(name)}${p.own?'<span class="tag">'+tr('Regjistruar')+'</span>':''}</b>${p.address?`<small>${esc(p.address)}</small>`:''}${p.phone?`<small>📞 ${esc(p.phone)}</small>`:''}<div class="acts">${tel?`<a class="btn dark" href="tel:${esc(tel)}">${tr('📞 Telefono')}</a>`:''}<a class="btn" target="_blank" rel="noopener" href="${nav}">${tr('🧭 Navigo')}</a><button class="btn" type="button" onclick="focusPlace(${i})">${tr('🗺 Në hartë')}</button>${p.own&&isAdm()?`<button class="btn" type="button" style="color:#c0392b;border-color:#c0392b" onclick="adminDelPlace('${p.id}')">${tr('Fshi')}</button>`:''}</div></div><div class="dist">${fmtDist(p.dist)}</div></div>`;
   }).join('');
   drawMap(list);
 }
