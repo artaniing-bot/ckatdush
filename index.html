@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="sq"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Çkat’dush — Shpallje</title>
+<meta name="description" content="Treg shpalljesh për Kosovë, Shqipëri dhe diasporën — posto falas, kontakto direkt.">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Çkat’dush"><meta property="og:title" content="Çkat’dush — shpallje për Kosovën dhe diasporën"><meta property="og:description" content="Posto falas ose gjej shpallje: patundshmëri, automjete, shërbime, punë, udhëtime e pako."><meta property="og:image" content="https://ckatdush.net/logo.png"><meta property="og:url" content="https://ckatdush.net/">
 <link rel="stylesheet" href="theme.css">
 <script src="theme.js"></script>
 <style>
@@ -71,6 +73,8 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 @media(max-width:850px),(max-height:600px){header{position:static}}
 @media(max-width:850px){.nav{justify-content:space-between}.grid{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:repeat(2,1fr)}.nav{flex-wrap:wrap}.search{order:3;flex-basis:100%}.foot{grid-template-columns:1fr 1fr}}@media(max-width:520px){.nav{gap:8px;padding:10px 12px}.logo{width:78px;height:48px}.nav .btn{padding:9px 11px;font-size:14px}#langBtn,#themeBtn{min-width:40px}.pdAttrs{grid-template-columns:1fr}.hero{padding:25px}.hero h1{font-size:32px}.bags{display:none}.grid{gap:9px}.pic{height:150px;font-size:50px}.features{grid-template-columns:1fr}.filters{flex-direction:column}.filters input,.filters select{width:100%}.pdPic{height:220px;font-size:70px}}
 @media(max-width:340px){.nav{gap:5px;padding:8px}.nav .btn{padding:8px;font-size:12px}.logo{width:56px}#langBtn,#themeBtn{min-width:34px}}
+.diaspora{max-width:1250px;margin:22px auto 0;padding:0 18px}.diaspora h2{margin:0 0 4px}.diaspora p{margin:0 0 12px;color:#555}.diasGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.diasGrid>*{background:#fff;border:0;border-radius:14px;padding:14px;text-align:left;text-decoration:none;color:inherit;cursor:pointer;display:flex;flex-direction:column;gap:4px;font:inherit;box-shadow:0 1px 6px #0001}.diasGrid b{font-size:15px}.diasGrid span{font-size:13px;color:#666}@media(max-width:850px){.diasGrid{grid-template-columns:repeat(2,1fr)}}
+.shareBtn{display:block;text-align:center;margin-top:8px;padding:10px;border-radius:9px;background:#25d366;color:#fff;text-decoration:none;font-weight:bold}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -112,6 +116,12 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <main>
 <section class="hero"><div><h1 data-i18n="heroTitle">Çkat’dush 📋</h1><p data-i18n="heroDesc">Posto shpalljen tënde falas, ose gjej atë që dush nga shitës të tjerë — kontakto direkt, pa ndërmjetës.</p><button class="cta" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})" data-i18n="heroBtn">Shiko shpalljet</button></div><div class="bags" id="heroVisual">📋 🔍</div></section>
 <div class="features"><div class="feature">📋<b data-i18n="feat1Title">Posto falas</b><span data-i18n="feat1Sub">Shpallja jote në pak minuta</span></div><div class="feature">📞<b data-i18n="feat2Title">Kontakt direkt</b><span data-i18n="feat2Sub">Bisedo me shitësin</span></div><div class="feature">🏙️<b data-i18n="feat3Title">Sipas qytetit</b><span data-i18n="feat3Sub">Filtro afër teje</span></div><div class="feature">🔄<b data-i18n="feat4Title">Rifresko</b><span data-i18n="feat4Sub">Mbaje shpalljen aktive</span></div></div>
+<section class="diaspora" id="diaspora"><h2 data-i18n="diasTitle">🌍 Për diasporën</h2><p data-i18n="diasDesc">Je jashtë vendit? Gjej gjithçka për Kosovën nga larg — pa ndërmjetës.</p><div class="diasGrid">
+<button onclick="filter('Patundshmëri');document.getElementById('products').scrollIntoView({behavior:'smooth'})"><b data-i18n="diasHome">🏡 Shtëpi & tokë në Kosovë</b><span data-i18n="diasHomeD">Patundshmëri për blerje ose qira</span></button>
+<a href="udhetime.html"><b data-i18n="diasTrip">🚐 Udhëtime & pako</b><span data-i18n="diasTripD">Dërgo ose merr pako me shoferë të besuar</span></a>
+<a href="services.html"><b data-i18n="diasServ">🔧 Shërbime & biznese</b><span data-i18n="diasServD">Mjeshtra dhe biznese në vendlindje</span></a>
+<a href="komuniteti.html"><b data-i18n="diasComm">🤝 Komuniteti</b><span data-i18n="diasCommD">Kërko ose ofro ndihmë në vend</span></a>
+</div></section>
 <section id="products"><div class="head"><h2 data-i18n="sectionTitle">Shpalljet</h2><span id="res"></span></div><div class="grid" id="grid"></div><button id="moreBtn" class="btn" onclick="showMore()" style="display:none;margin:22px auto 0" data-i18n="moreBtn">Shfaq më shumë</button></section>
 </main>
 <footer><div class="foot"><div><img src="logo.png" style="width:145px;background:#fff;border-radius:9px"><p data-i18n="footerDesc">Çkat’dush — treg shpalljesh për Kosovë, Shqipëri, Maqedoni e Veriut dhe Mal të Zi.</p></div><div><h3 data-i18n="footSellers">Shitësit</h3><ul><li><a href="postoj.html" style="color:#bbb" data-i18n="footPost">Posto shpallje</a></li><li data-i18n="footMyAds">Shpalljet e mia</li><li><a href="shto-biznes.html" style="color:#bbb;text-decoration:none" data-i18n="footAddBiz">Shto biznesin tënd</a></li><li><a href="mailto:ckatdush@gmail.com?subject=Reklam%C3%AB%20te%20%C3%87kat%E2%80%99dush" style="color:#bbb;text-decoration:none" data-i18n="footAdvertise">Reklamo te ne</a></li></ul></div><div><h3 data-i18n="footBuyers">Blerësit</h3><ul><li data-i18n="footSearch">Kërko</li><li data-i18n="footFilterCity">Filtro sipas qytetit</li><li><a href="services.html" style="color:#bbb;text-decoration:none" data-i18n="footServices">Shërbime pranë teje</a></li><li><a href="puna.html" style="color:#bbb;text-decoration:none" data-i18n="footJobs">Punë të hapura</a></li><li><a href="udhetime.html" style="color:#bbb;text-decoration:none" data-i18n="footTrips">Udhëtime & pako</a></li><li><a href="komuniteti.html" style="color:#bbb;text-decoration:none" data-i18n="footCommunity">Komuniteti</a></li></ul></div><div><h3 data-i18n="footHelp">Ndihmë</h3><ul><li><a href="rreth-nesh.html" style="color:#bbb;text-decoration:none" data-i18n="footAbout">Rreth nesh</a></li><li data-i18n="footContact">Kontakti</li><li><a href="mailto:ckatdush@gmail.com" style="color:#bbb;text-decoration:none">ckatdush@gmail.com</a></li><li><a href="kushtet.html" style="color:#bbb;text-decoration:none" data-i18n="footTerms">Kushtet & Privatësia</a></li></ul></div></div><div style="margin-top:28px;padding-top:16px;border-top:1px solid #3a3b40;text-align:center;color:#999;font-size:13px">© <span id="yr"></span> Çkat’dush. <span data-i18n="footRights">Të gjitha të drejtat e rezervuara.</span></div></footer>
@@ -126,6 +136,7 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <div id="pdDesc" class="pdDesc"></div>
 <div id="pdContact"></div>
 <a id="pdAddBtn" class="add" href="#">Kontakto shitësin</a>
+<a id="pdShare" class="shareBtn" target="_blank" rel="noopener" href="#"></a>
 </div></div>
 
 <script src="category-attrs.js"></script>
@@ -158,6 +169,12 @@ const I18N = {
     heroTitle: "Çkat’dush 📋",
     heroDesc: "Posto shpalljen tënde falas, ose gjej atë që dush nga shitës të tjerë — kontakto direkt, pa ndërmjetës.",
     heroBtn: "Shiko shpalljet",
+    diasTitle: "🌍 Për diasporën", diasDesc: "Je jashtë vendit? Gjej gjithçka për Kosovën nga larg — pa ndërmjetës.",
+    diasHome: "🏡 Shtëpi & tokë në Kosovë", diasHomeD: "Patundshmëri për blerje ose qira",
+    diasTrip: "🚐 Udhëtime & pako", diasTripD: "Dërgo ose merr pako me shoferë të besuar",
+    diasServ: "🔧 Shërbime & biznese", diasServD: "Mjeshtra dhe biznese në vendlindje",
+    diasComm: "🤝 Komuniteti", diasCommD: "Kërko ose ofro ndihmë në vend",
+    shareWa: "Ndaje në WhatsApp",
     feat1Title: "Posto falas", feat1Sub: "Shpallja jote në pak minuta",
     feat2Title: "Kontakt direkt", feat2Sub: "Bisedo me shitësin",
     feat3Title: "Sipas qytetit", feat3Sub: "Filtro afër teje",
@@ -185,6 +202,12 @@ const I18N = {
     heroTitle: "Çkat’dush 📋",
     heroDesc: "Post your listing for free, or find what you're looking for from other sellers — contact directly, no middlemen.",
     heroBtn: "See listings",
+    diasTitle: "🌍 For the diaspora", diasDesc: "Living abroad? Find everything for Kosovo from afar — no middlemen.",
+    diasHome: "🏡 Homes & land in Kosovo", diasHomeD: "Real estate to buy or rent",
+    diasTrip: "🚐 Trips & parcels", diasTripD: "Send or receive parcels with trusted drivers",
+    diasServ: "🔧 Services & businesses", diasServD: "Tradespeople and businesses back home",
+    diasComm: "🤝 Community", diasCommD: "Ask for or offer help locally",
+    shareWa: "Share on WhatsApp",
     feat1Title: "Post for free", feat1Sub: "Your listing in minutes",
     feat2Title: "Direct contact", feat2Sub: "Chat with the seller",
     feat3Title: "By city", feat3Sub: "Filter near you",
@@ -318,6 +341,10 @@ function openProduct(id){
     pdAddBtn.textContent = t('contactUnavailable');
     pdAddBtn.removeAttribute('href');
   }
+  const shareUrl = location.origin + '/?p=' + encodeURIComponent(x.id);
+  pdShare.textContent = '📲 ' + t('shareWa');
+  pdShare.href = 'https://wa.me/?text=' + encodeURIComponent(x.name + ' — ' + x.price.toFixed(2) + ' € — Çkat’dush\n' + shareUrl);
+  try{ history.replaceState(null,'','?p='+encodeURIComponent(x.id)); }catch(e){}
   openModal('productModal');
 }
 
@@ -346,7 +373,7 @@ function attrsHtml(x){
   }).join('');
 }
 function openModal(id){ document.getElementById(id).style.display='flex'; }
-function closeModal(id){ document.getElementById(id).style.display='none'; }
+function closeModal(id){ document.getElementById(id).style.display='none'; if(id==='productModal'){ try{ history.replaceState(null,'',location.pathname); }catch(e){} } }
 
 function filter(c){
   currentCat = c;
@@ -472,10 +499,16 @@ function clearFilters(){
   applyFilters();
 }
 
-productModal.addEventListener('click', e=>{ if(e.target===productModal) productModal.style.display='none'; });
+productModal.addEventListener('click', e=>{ if(e.target===productModal) closeModal('productModal'); });
 
 applyLang();
-loadProducts();
+loadProducts().then(async ()=>{
+  const id = new URLSearchParams(location.search).get('p'); if(!id) return;
+  try{
+    if(!P.find(p=>p.id===id)){ const d = await db.collection('products').doc(id).get(); if(d.exists){ const x = mapProduct(d); if(!x.expiresAt || (x.expiresAt.toDate && x.expiresAt.toDate() > new Date())) P = (P===FALLBACK_P?[]:P).concat([x]); } }
+    openProduct(id);
+  }catch(e){}
+});
 </script><script>
 // Kategoritë rrotullohen pa pushim (djathtas→majtas); pushojnë vetëm kur prek përdoruesi dhe vazhdojnë pas 2.5 sek
 (function(){
