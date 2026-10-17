@@ -75,6 +75,7 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 @media(max-width:340px){.nav{gap:5px;padding:8px}.nav .btn{padding:8px;font-size:12px}.logo{width:56px}#langBtn,#themeBtn{min-width:34px}}
 .diaspora{max-width:1250px;margin:22px auto 0;padding:0 18px}.diaspora h2{margin:0 0 4px}.diaspora p{margin:0 0 12px;color:#555}.diasGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.diasGrid>*{background:#fff;border:0;border-radius:14px;padding:14px;text-align:left;text-decoration:none;color:inherit;cursor:pointer;display:flex;flex-direction:column;gap:4px;font:inherit;box-shadow:0 1px 6px #0001}.diasGrid b{font-size:15px}.diasGrid span{font-size:13px;color:#666}@media(max-width:850px){.diasGrid{grid-template-columns:repeat(2,1fr)}}
 html[data-theme=dark] .diasGrid>*{background:#15161a;color:#e8e8ea;box-shadow:none;border:1px solid #25262a}html[data-theme=dark] .diasGrid span,html[data-theme=dark] .diaspora p{color:#9a9ba3}
+.pdWarn{background:#fff6e0;border:1px solid #f0d58a;color:#6b4e00;border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.5;margin:10px 0}html[data-theme=dark] .pdWarn{background:#2a2310;border-color:#5a4a16;color:#f0d58a}
 .shareBtn{display:block;text-align:center;margin-top:8px;padding:10px;border-radius:9px;background:#25d366;color:#fff;text-decoration:none;font-weight:bold}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -140,6 +141,7 @@ html[data-theme=dark] .diasGrid>*{background:#15161a;color:#e8e8ea;box-shadow:no
 <div class="price" id="pdPrice" style="font-size:24px"></div>
 <div id="pdAttrs" class="pdAttrs"></div>
 <div id="pdDesc" class="pdDesc"></div>
+<div id="pdWarn" class="pdWarn" style="display:none"></div>
 <div id="pdContact"></div>
 <a id="pdAddBtn" class="add" href="#">Kontakto shitësin</a>
 <a id="pdShare" class="shareBtn" target="_blank" rel="noopener" href="#"></a>
@@ -181,6 +183,9 @@ const I18N = {
     diasServ: "🔧 Shërbime & biznese", diasServD: "Mjeshtra dhe biznese në vendlindje",
     diasComm: "🤝 Komuniteti", diasCommD: "Kërko ose ofro ndihmë në vend",
     shareWa: "Ndaje në WhatsApp",
+    warnVeh: "⚠️ Kujdes: shiko automjetin personalisht dhe kontrollo dokumentet (librezën, shasinë, historikun) para se të japësh para. Mos dërgo para paraprakisht.",
+    warnHome: "⚠️ Kujdes: kontrollo pronësinë dhe dokumentet te noteri ose kadastra para se të paguash. Mos dërgo para pa e parë pronën ose pa kontratë.",
+    warnGen: "⚠️ Kujdes: takohu në vend publik, kontrollo artikullin para pagesës dhe mos dërgo para paraprakisht.",
     feat1Title: "Posto falas", feat1Sub: "Shpallja jote në pak minuta",
     feat2Title: "Kontakt direkt", feat2Sub: "Bisedo me shitësin",
     feat3Title: "Sipas qytetit", feat3Sub: "Filtro afër teje",
@@ -214,6 +219,9 @@ const I18N = {
     diasServ: "🔧 Services & businesses", diasServD: "Tradespeople and businesses back home",
     diasComm: "🤝 Community", diasCommD: "Ask for or offer help locally",
     shareWa: "Share on WhatsApp",
+    warnVeh: "⚠️ Caution: inspect the vehicle in person and check its documents (registration, chassis number, history) before paying. Never send money in advance.",
+    warnHome: "⚠️ Caution: verify ownership and documents with a notary or the cadastre before paying. Never send money without seeing the property or a contract.",
+    warnGen: "⚠️ Caution: meet in a public place, check the item before paying and never send money in advance.",
     feat1Title: "Post for free", feat1Sub: "Your listing in minutes",
     feat2Title: "Direct contact", feat2Sub: "Chat with the seller",
     feat3Title: "By city", feat3Sub: "Filter near you",
@@ -347,6 +355,8 @@ function openProduct(id){
     pdAddBtn.textContent = t('contactUnavailable');
     pdAddBtn.removeAttribute('href');
   }
+  const wk = x.cat==='Automjete' ? 'warnVeh' : (x.cat==='Patundshmëri' ? 'warnHome' : (x.price>=300 ? 'warnGen' : ''));
+  pdWarn.style.display = wk ? 'block' : 'none'; pdWarn.textContent = wk ? t(wk) : '';
   const shareUrl = location.origin + '/?p=' + encodeURIComponent(x.id);
   pdShare.textContent = '📲 ' + t('shareWa');
   pdShare.href = 'https://wa.me/?text=' + encodeURIComponent(x.name + ' — ' + x.price.toFixed(2) + ' € — Çkat’dush\n' + shareUrl);
