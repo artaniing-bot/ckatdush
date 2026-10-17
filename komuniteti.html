@@ -124,7 +124,7 @@ a.btn{text-decoration:none}
 <script src="i18n-pages.js"></script>
 <script src="places-common.js"></script>
 <script>
-const CATS=['Transport & bartje','Strehim','Dokumente & përkthim','Ndihmë në shtëpi','Shoqërim & kujdes','Mësim & këshilla','Tjetër'];
+const CATS=['Transport & bartje','Strehim','Dokumente & përkthim','Shoqërim & kujdes','Mësim & këshilla','Tjetër'];
 const COUNTRIES=Object.keys(GEO);
 qCountry.innerHTML=`<option value="">${tr('Të gjitha shtetet')}</option>`+COUNTRIES.map(c=>`<option value="${esc(c)}">${esc(tr(c))}</option>`).join('');
 qCat.innerHTML=`<option value="">${tr('Të gjitha')}</option>`+CATS.map(c=>`<option value="${esc(c)}">${esc(tr(c))}</option>`).join('');
