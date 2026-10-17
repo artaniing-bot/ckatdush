@@ -146,7 +146,7 @@ auth.onAuthStateChanged(u=>{
   authCard.classList.toggle('hide', !!u);
   area.classList.toggle('hide', !u);
   if(u){ whoAmI.textContent=u.email; loadMine(); }
-  if(JOBS.length) renderJobs();
+  if(ITEMS.length) renderItems();
 });
 function toggleForm(){ formWrap.classList.toggle('hide'); }
 function showAuthTab(n){
