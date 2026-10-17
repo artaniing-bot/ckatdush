@@ -161,6 +161,8 @@ const ADMIN_UID = 'hSr1PhpfHXYoAneX9HnqRLKL3ea2';
 let editSellerId = '';
 const isAdm = ()=>!!(auth.currentUser && auth.currentUser.uid===ADMIN_UID);
 const LISTING_DAYS = 30;
+const DELETE_AFTER_DAYS = 180; // fshirja automatike (Firestore TTL) pas 6 muajve
+const delAt = ()=>firebase.firestore.Timestamp.fromMillis(Date.now() + DELETE_AFTER_DAYS*DAY_MS);
 
 auth.onAuthStateChanged(user=>{
   if(user){
@@ -396,6 +398,7 @@ async function saveListing(e){
     }else{
       data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
       data.expiresAt = expiresAt;
+      data.deleteAt = delAt();
       await db.collection('products').add(data);
       formOk.textContent = 'Shpallja u postua! Do të jetë e dukshme te dyqani për ' + LISTING_DAYS + ' ditë.';
     }
@@ -434,7 +437,8 @@ async function refreshListing(id){
   try{
     await db.collection('products').doc(id).update({
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      expiresAt: firebase.firestore.Timestamp.fromMillis(Date.now() + LISTING_DAYS*DAY_MS)
+      expiresAt: firebase.firestore.Timestamp.fromMillis(Date.now() + LISTING_DAYS*DAY_MS),
+      deleteAt: delAt()
     });
     loadList();
   }catch(e){ alert('Gabim: ' + e.message); }

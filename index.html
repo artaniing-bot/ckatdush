@@ -111,7 +111,7 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 <main>
 <section class="hero"><div><h1 data-i18n="heroTitle">Çkat’dush 📋</h1><p data-i18n="heroDesc">Posto shpalljen tënde falas, ose gjej atë që dush nga shitës të tjerë — kontakto direkt, pa ndërmjetës.</p><button class="cta" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})" data-i18n="heroBtn">Shiko shpalljet</button></div><div class="bags" id="heroVisual">📋 🔍</div></section>
 <div class="features"><div class="feature">📋<b data-i18n="feat1Title">Posto falas</b><span data-i18n="feat1Sub">Shpallja jote në pak minuta</span></div><div class="feature">📞<b data-i18n="feat2Title">Kontakt direkt</b><span data-i18n="feat2Sub">Bisedo me shitësin</span></div><div class="feature">🏙️<b data-i18n="feat3Title">Sipas qytetit</b><span data-i18n="feat3Sub">Filtro afër teje</span></div><div class="feature">🔄<b data-i18n="feat4Title">Rifresko</b><span data-i18n="feat4Sub">Mbaje shpalljen aktive</span></div></div>
-<section id="products"><div class="head"><h2 data-i18n="sectionTitle">Shpalljet</h2><span id="res"></span></div><div class="grid" id="grid"></div></section>
+<section id="products"><div class="head"><h2 data-i18n="sectionTitle">Shpalljet</h2><span id="res"></span></div><div class="grid" id="grid"></div><button id="moreBtn" class="btn" onclick="showMore()" style="display:none;margin:22px auto 0" data-i18n="moreBtn">Shfaq më shumë</button></section>
 </main>
 <footer><div class="foot"><div><img src="logo.png" style="width:145px;background:#fff;border-radius:9px"><p data-i18n="footerDesc">Çkat’dush — treg shpalljesh për Kosovë, Shqipëri, Maqedoni e Veriut dhe Mal të Zi.</p></div><div><h3 data-i18n="footSellers">Shitësit</h3><ul><li><a href="postoj.html" style="color:#bbb" data-i18n="footPost">Posto shpallje</a></li><li data-i18n="footMyAds">Shpalljet e mia</li><li><a href="shto-biznes.html" style="color:#bbb;text-decoration:none" data-i18n="footAddBiz">Shto biznesin tënd</a></li><li><a href="mailto:ckatdush@gmail.com?subject=Reklam%C3%AB%20te%20%C3%87kat%E2%80%99dush" style="color:#bbb;text-decoration:none" data-i18n="footAdvertise">Reklamo te ne</a></li></ul></div><div><h3 data-i18n="footBuyers">Blerësit</h3><ul><li data-i18n="footSearch">Kërko</li><li data-i18n="footFilterCity">Filtro sipas qytetit</li><li><a href="services.html" style="color:#bbb;text-decoration:none" data-i18n="footServices">Shërbime pranë teje</a></li><li><a href="puna.html" style="color:#bbb;text-decoration:none" data-i18n="footJobs">Punë të hapura</a></li><li><a href="udhetime.html" style="color:#bbb;text-decoration:none" data-i18n="footTrips">Udhëtime & pako</a></li><li><a href="komuniteti.html" style="color:#bbb;text-decoration:none" data-i18n="footCommunity">Komuniteti</a></li></ul></div><div><h3 data-i18n="footHelp">Ndihmë</h3><ul><li data-i18n="footContact">Kontakti</li><li><a href="mailto:ckatdush@gmail.com" style="color:#bbb;text-decoration:none">ckatdush@gmail.com</a></li><li><a href="kushtet.html" style="color:#bbb;text-decoration:none" data-i18n="footTerms">Kushtet & Privatësia</a></li></ul></div></div><div style="margin-top:28px;padding-top:16px;border-top:1px solid #3a3b40;text-align:center;color:#999;font-size:13px">© <span id="yr"></span> Çkat’dush. <span data-i18n="footRights">Të gjitha të drejtat e rezervuara.</span></div></footer>
 
@@ -161,7 +161,7 @@ const I18N = {
     feat2Title: "Kontakt direkt", feat2Sub: "Bisedo me shitësin",
     feat3Title: "Sipas qytetit", feat3Sub: "Filtro afër teje",
     feat4Title: "Rifresko", feat4Sub: "Mbaje shpalljen aktive",
-    sectionTitle: "Shpalljet", listingsWord: "shpallje", emptyMsg: "Nuk u gjet asnjë shpallje.",
+    sectionTitle: "Shpalljet", moreBtn: "Shfaq më shumë", listingsWord: "shpallje", emptyMsg: "Nuk u gjet asnjë shpallje.",
     badge: "SHPALLJE", contactBtn: "Kontakto shitësin", contactUnavailable: "Kontakt i padisponueshëm",
     callPrefix: "Telefono: ",
     footerDesc: "Çkat’dush — treg shpalljesh për Kosovë, Shqipëri, Maqedoni e Veriut dhe Mal të Zi.",
@@ -188,7 +188,7 @@ const I18N = {
     feat2Title: "Direct contact", feat2Sub: "Chat with the seller",
     feat3Title: "By city", feat3Sub: "Filter near you",
     feat4Title: "Refresh", feat4Sub: "Keep your listing active",
-    sectionTitle: "Listings", listingsWord: "listings", emptyMsg: "No listings found.",
+    sectionTitle: "Listings", moreBtn: "Show more", listingsWord: "listings", emptyMsg: "No listings found.",
     badge: "LISTING", contactBtn: "Contact seller", contactUnavailable: "Contact unavailable",
     callPrefix: "Call: ",
     footerDesc: "Çkat’dush — a listings marketplace for Kosovo, Albania, North Macedonia and Montenegro.",
@@ -233,30 +233,53 @@ let currentCat = 'Të gjitha';
 let currentCountry = 'Të gjitha';
 let currentQuery = '';
 
-async function loadProducts(){
+const BATCH = 48, SHOW = 24;
+let lastDoc = null, hasMore = true, loadingMore = false, loadedOnce = false;
+function mapProduct(d){
+  const x = d.data();
+  return {
+    id: d.id, name: x.name, cat: normCat(x.cat), price: Number(x.price), oldPrice: Number(x.oldPrice||x.price),
+    icon: x.icon || '🛍️', photoUrl: x.photoUrl || null,
+    photos: Array.isArray(x.photos) && x.photos.length ? x.photos : (x.photoUrl ? [x.photoUrl] : []), attrs: x.attrs || {},
+    country: x.country || 'Kosovë', city: x.city || '', condition: x.condition || '', description: x.description || '',
+    sellerName: x.sellerName || '', sellerPhone: x.sellerPhone || '',
+    expiresAt: x.expiresAt || null
+  };
+}
+async function fetchBatch(){
+  if(loadingMore || !hasMore) return;
+  loadingMore = true;
   try{
-    const snap = await db.collection('products').orderBy('createdAt','desc').get();
-    if(!snap.empty){
-      const now = new Date();
-      P = snap.docs.map(d=>{
-        const x = d.data();
-        return {
-          id: d.id, name: x.name, cat: normCat(x.cat), price: Number(x.price), oldPrice: Number(x.oldPrice||x.price),
-          icon: x.icon || '🛍️', photoUrl: x.photoUrl || null,
-          photos: Array.isArray(x.photos) && x.photos.length ? x.photos : (x.photoUrl ? [x.photoUrl] : []), attrs: x.attrs || {},
-          country: x.country || 'Kosovë', city: x.city || '', condition: x.condition || '', description: x.description || '',
-          sellerName: x.sellerName || '', sellerPhone: x.sellerPhone || '',
-          expiresAt: x.expiresAt || null
-        };
-      }).filter(x => !x.expiresAt || (x.expiresAt.toDate && x.expiresAt.toDate() > now));
-    }
+    let q = db.collection('products').orderBy('createdAt','desc');
+    if(lastDoc) q = q.startAfter(lastDoc);
+    const snap = await q.limit(BATCH).get();
+    const now = new Date();
+    if(snap.docs.length < BATCH) hasMore = false;
+    if(snap.docs.length) lastDoc = snap.docs[snap.docs.length-1];
+    const items = snap.docs.map(mapProduct).filter(x => !x.expiresAt || (x.expiresAt.toDate && x.expiresAt.toDate() > now));
+    if(items.length) P = (P===FALLBACK_P ? [] : P).concat(items);
   }catch(e){
+    hasMore = false;
     console.warn('Firebase s\'është konfiguruar ende ose s\'ka lidhje — po përdoren shpalljet e parazgjedhura.', e);
   }
+  loadingMore = false;
+}
+let shown = SHOW;
+async function loadProducts(){
+  await fetchBatch();
+  shown = SHOW;
   applyFilters();
+}
+async function showMore(){
+  shown += SHOW;
+  // nëse s'kemi mjaft të ngarkuara, merr paketën tjetër
+  let guard = 0;
+  while(hasMore && P.length < shown && guard++ < 10) await fetchBatch();
+  applyFilters(true);
 }
 
 function render(a=P){
+  const total = a.length; a = a.slice(0, shown);
   grid.innerHTML = a.length ? a.map((x)=>{
     const meta = [catLabel(x.cat), countryLabel(x.country), x.city, condLabel(x.condition)].filter(Boolean).join(' • ');
     const contact = x.sellerName ? `<div style="font-size:12px;color:#777;margin-top:4px">👤 ${x.sellerName}${x.sellerPhone ? ' • '+PHONE_ICON_BLACK+x.sellerPhone : ''}</div>` : '';
@@ -267,7 +290,9 @@ function render(a=P){
     return `<div class="card" onclick="openProduct('${x.id}')"><span class="badge">${t('badge')}</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover">` : x.icon}${(x.photos&&x.photos.length>1) ? `<span class="photoCount">📷 ${x.photos.length}</span>` : ''}</div><div class="info"><div class="name">${x.name}</div><small>${meta}</small>${contact}<div class="price">${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}</div>${actionBtn}</div></div>`;
   }).join('')
     : `<div class="empty">${t('emptyMsg')}</div>`;
-  res.textContent = a.length + ' ' + t('listingsWord');
+  res.textContent = total + (hasMore ? '+' : '') + ' ' + t('listingsWord');
+  const mb = document.getElementById('moreBtn');
+  if(mb) mb.style.display = (total > shown || hasMore) ? 'block' : 'none';
 }
 
 function openProduct(id){
@@ -439,6 +464,7 @@ function applyFilters(){
   const cond = document.getElementById('fCond').value;
   if(cond) list = list.filter(x=>x.condition===cond);
   render(list);
+  if(hasMore && !loadingMore && list.length < shown && !arguments[0]){ fetchBatch().then(()=>applyFilters()); }
 }
 function clearFilters(){
   fMin.value=''; fMax.value=''; fCity.value=''; fCond.value='';
