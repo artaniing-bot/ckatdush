@@ -42,7 +42,7 @@ html[data-theme=dark] .pdMeta{color:#9a9ba2}
 html[data-theme=dark] .pdAttrs,html[data-theme=dark] .pdAttrs div{border-color:#1c1d21}
 html[data-theme=dark] .pdAttrs span{color:#9a9ba2}
 html[data-theme=dark] .pdThumbs img.on{border-color:#e8e8ea}
-html[data-theme=dark] a.back{color:#e8e8ea;border-color:#27282d}
+html[data-theme=dark] a.back{background:#15161a;color:#e8e8ea;border-color:#27282d}
 html[data-theme=dark] .field label{color:#b5b6bc}
 html[data-theme=dark] .uploadBox{border-color:#27282d}
 html[data-theme=dark] .ph{background:#15161a;border-color:#27282d}
@@ -92,3 +92,6 @@ html[data-theme=dark] .adHere{background:linear-gradient(120deg,#22314a,#1f3a2b)
 html[data-theme=dark] .adTag{color:#8a97ad}
 html[data-theme=dark] .adDots i{background:#27282d}html[data-theme=dark] .adDots i.on{background:#8db8f0}
 html[data-theme=dark] .adItem img{background:#e8eef7}
+/* Kontrast në natë: butona rozë dhe lidhje */
+html[data-theme=dark] .badge,html[data-theme=dark] .search button{background:#a8505b;color:#fff}
+html[data-theme=dark] .foot a{color:#bbb}
