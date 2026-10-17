@@ -102,6 +102,11 @@ html[data-theme=dark] .diasGrid>*{background:#15161a;color:#e8e8ea;box-shadow:no
 <button data-k="Shqipëri" onclick="filterCountry('Shqipëri')">🇦🇱 <span data-i18n="countryAlbania">Shqipëri</span></button>
 <button data-k="Maqedoni e Veriut" onclick="filterCountry('Maqedoni e Veriut')">🇲🇰 <span data-i18n="countryMacedonia">Maqedoni e Veriut</span></button>
 <button data-k="Mali i Zi" onclick="filterCountry('Mali i Zi')">🇲🇪 <span data-i18n="countryMontenegro">Mali i Zi</span></button>
+<button data-k="Gjermani" onclick="filterCountry('Gjermani')">🇩🇪 <span data-i18n="countryGermany">Gjermani</span></button>
+<button data-k="Zvicër" onclick="filterCountry('Zvicër')">🇨🇭 <span data-i18n="countrySwitzerland">Zvicër</span></button>
+<button data-k="Austri" onclick="filterCountry('Austri')">🇦🇹 <span data-i18n="countryAustria">Austri</span></button>
+<button data-k="Itali" onclick="filterCountry('Itali')">🇮🇹 <span data-i18n="countryItaly">Itali</span></button>
+<button data-k="Vend tjetër" onclick="filterCountry('Vend tjetër')">🌐 <span data-i18n="countryOther">Vend tjetër</span></button>
 </div>
 <div class="filters">
 <div class="priceBox off" id="priceBox"><input id="fMin" type="number" data-i18n-ph="fMinPh" placeholder="Çmimi min €" min="0" oninput="applyFilters()">
@@ -163,7 +168,7 @@ const I18N = {
     catAll: "Të gjitha", catAuto: "Automjete", catTech: "Teknologji", catFashion: "Moda", catHome: "Patundshmëri", catFurn: "Mobilje",
     catBeauty: "Bukuri", catKids: "Fëmijë", catSport: "Sport", catAccessories: "Aksesorë", catServices: "Shërbime", catJobs: "Punë", catDiaspora: "Diaspora", catTrips: "Udhëtime", catCommunity: "Komuniteti", footCommunity: "Komuniteti", footTrips: "Udhëtime & pako",
     countryAll: "Të gjitha vendet", countryKosovo: "Kosovë", countryAlbania: "Shqipëri",
-    countryMacedonia: "Maqedoni e Veriut", countryMontenegro: "Mali i Zi",
+    countryMacedonia: "Maqedoni e Veriut", countryMontenegro: "Mali i Zi", countryGermany: "Gjermani", countrySwitzerland: "Zvicër", countryAustria: "Austri", countryItaly: "Itali", countryOther: "Vend tjetër",
     fMinPh: "Çmimi min €", fMaxPh: "Çmimi max €", fCityAll: "Qyteti (të gjitha)",
     fCondAll: "Gjendja (të gjitha)", fCondNew: "I ri", fCondUsed: "I përdorur",
     clearFilters: "Pastro filtrat",
@@ -196,7 +201,7 @@ const I18N = {
     catAll: "All", catAuto: "Vehicles", catTech: "Electronics", catFashion: "Fashion", catHome: "Real estate", catFurn: "Furniture",
     catBeauty: "Beauty", catKids: "Kids", catSport: "Sports", catAccessories: "Accessories", catServices: "Services", catJobs: "Jobs", catDiaspora: "Diaspora", catTrips: "Trips", catCommunity: "Community", footCommunity: "Community", footTrips: "Trips & parcels",
     countryAll: "All countries", countryKosovo: "Kosovo", countryAlbania: "Albania",
-    countryMacedonia: "North Macedonia", countryMontenegro: "Montenegro",
+    countryMacedonia: "North Macedonia", countryMontenegro: "Montenegro", countryGermany: "Germany", countrySwitzerland: "Switzerland", countryAustria: "Austria", countryItaly: "Italy", countryOther: "Other country",
     fMinPh: "Min price €", fMaxPh: "Max price €", fCityAll: "City (all)",
     fCondAll: "Condition (all)", fCondNew: "New", fCondUsed: "Used",
     clearFilters: "Clear filters",
@@ -224,7 +229,7 @@ const I18N = {
   }
 };
 const CAT_KEYS = {'Të gjitha':'catAll','Automjete':'catAuto','Teknologji':'catTech','Moda':'catFashion','Patundshmëri':'catHome','Mobilje':'catFurn','Bukuri':'catBeauty','Fëmijë':'catKids','Sport':'catSport','Aksesorë':'catAccessories'};
-const COUNTRY_KEYS = {'Të gjitha':'countryAll','Kosovë':'countryKosovo','Shqipëri':'countryAlbania','Maqedoni e Veriut':'countryMacedonia','Mali i Zi':'countryMontenegro'};
+const COUNTRY_KEYS = {'Të gjitha':'countryAll','Kosovë':'countryKosovo','Shqipëri':'countryAlbania','Maqedoni e Veriut':'countryMacedonia','Mali i Zi':'countryMontenegro','Gjermani':'countryGermany','Zvicër':'countrySwitzerland','Austri':'countryAustria','Itali':'countryItaly','Vend tjetër':'countryOther'};
 const COND_KEYS = {'I ri':'fCondNew','I përdorur':'fCondUsed'};
 function phoneIcon(color){ return `<svg viewBox="0 0 24 24" width="15" height="15" style="vertical-align:-3px;margin-right:5px;flex-shrink:0" fill="${color}"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 3.9c0-.6.4-1 1-1H7.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>`; }
 const PHONE_ICON_BLACK = phoneIcon('#111');
