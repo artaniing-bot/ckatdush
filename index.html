@@ -264,7 +264,7 @@ function render(a=P){
     const actionBtn = phone
       ? `<a href="tel:${phone}" class="add" onclick="event.stopPropagation()">${PHONE_ICON_WHITE}${t('contactBtn')}</a>`
       : `<span class="add disabled">${t('contactUnavailable')}</span>`;
-    return `<div class="card" onclick="openProduct('${x.id}')"><span class="badge">${t('badge')}</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" style="width:100%;height:100%;object-fit:cover">` : x.icon}${(x.photos&&x.photos.length>1) ? `<span class="photoCount">📷 ${x.photos.length}</span>` : ''}</div><div class="info"><div class="name">${x.name}</div><small>${meta}</small>${contact}<div class="price">${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}</div>${actionBtn}</div></div>`;
+    return `<div class="card" onclick="openProduct('${x.id}')"><span class="badge">${t('badge')}</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover">` : x.icon}${(x.photos&&x.photos.length>1) ? `<span class="photoCount">📷 ${x.photos.length}</span>` : ''}</div><div class="info"><div class="name">${x.name}</div><small>${meta}</small>${contact}<div class="price">${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}</div>${actionBtn}</div></div>`;
   }).join('')
     : `<div class="empty">${t('emptyMsg')}</div>`;
   res.textContent = a.length + ' ' + t('listingsWord');
@@ -301,7 +301,7 @@ function renderGallery(icon){
   if(icon!==undefined) galIcon = icon;
   const n = galPhotos.length;
   if(!n){ pdPic.innerHTML = galIcon; pdThumbs.innerHTML = ''; return; }
-  pdPic.innerHTML = `<img src="${escH(galPhotos[galIdx])}" alt="">` + (n>1 ? `<button class="galNav prev" onclick="galGo(-1)">‹</button><button class="galNav next" onclick="galGo(1)">›</button><span class="galCount">${galIdx+1}/${n}</span>` : '');
+  pdPic.innerHTML = `<img src="${escH(galPhotos[galIdx])}" referrerpolicy="no-referrer" alt="">` + (n>1 ? `<button class="galNav prev" onclick="galGo(-1)">‹</button><button class="galNav next" onclick="galGo(1)">›</button><span class="galCount">${galIdx+1}/${n}</span>` : '');
   pdThumbs.innerHTML = n>1 ? galPhotos.map((u,i)=>`<img src="${escH(u)}" class="${i===galIdx?'on':''}" onclick="galSet(${i})" alt="">`).join('') : '';
   const on = pdThumbs.querySelector('img.on'); if(on) on.scrollIntoView({block:'nearest',inline:'center'});
 }
@@ -534,4 +534,12 @@ loadProducts();
 })();
 </script>
 <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments);};</script><script defer src="/_vercel/insights/script.js"></script>
+<script>
+/* Foto që s'ngarkohen: provo edhe 2 herë, pastaj shfaq ikonën */
+document.addEventListener('error',function(e){var im=e.target;if(!im||im.tagName!=='IMG'||im.id==='')if(!im||im.tagName!=='IMG')return;
+ var n=+(im.dataset.retry||0);var src=im.dataset.orig||im.getAttribute('src');if(!src||src.indexOf('logo')>-1&&src.indexOf('http')<0)return;im.dataset.orig=src;
+ if(n<2){im.dataset.retry=n+1;setTimeout(function(){im.src=src+(src.indexOf('?')>-1?'&':'?')+'r='+Date.now()},700*(n+1));}
+ else{im.style.display='none';var p=im.parentElement;if(p&&p.classList&&(p.classList.contains('pic')||p.classList.contains('pdPic'))&&!p.dataset.fb){p.dataset.fb=1;p.insertAdjacentHTML('afterbegin','<span style="font-size:.5em">🖼️</span>');}}
+},true);
+</script>
 </body></html>
