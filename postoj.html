@@ -134,7 +134,7 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 <h3 style="margin:18px 0 4px;font-size:15px">Kontakti yt (do t'i shfaqet blerësit)</h3>
 <div class="row2">
 <div class="field"><label>Emri (p.sh. emri yt ose i dyqanit)</label><input id="pSellerName" required></div>
-<div class="field"><label>Telefoni</label><input id="pSellerPhone" required placeholder="04X XXX XXX"></div>
+<div class="field"><label>Telefoni</label><div style="display:flex;gap:6px"><select id="pPrefix" style="max-width:112px;flex:none"><option value="">Pa prefiks</option><option value="+383">🇽🇰 +383</option><option value="+355">🇦🇱 +355</option><option value="+389">🇲🇰 +389</option><option value="+382">🇲🇪 +382</option><option value="+49">🇩🇪 +49</option><option value="+41">🇨🇭 +41</option><option value="+43">🇦🇹 +43</option><option value="+39">🇮🇹 +39</option></select><input id="pSellerPhone" required placeholder="44 123 456" style="flex:1;min-width:0"></div><small class="muted">Zgjidh prefiksin e shtetit që të të kontaktojnë edhe nga jashtë (përfshirë WhatsApp).</small></div>
 </div>
 <button class="cta" type="submit" id="saveBtn">Posto shpalljen</button>
 <button class="cta secondary hide" type="button" id="cancelBtn" onclick="resetForm()">Anulo</button>
@@ -275,7 +275,19 @@ function collectAttrs(){
   return out;
 }
 
+const PREFIX_BY_COUNTRY = {'Kosovë':'+383','Shqipëri':'+355','Maqedoni e Veriut':'+389','Mali i Zi':'+382','Gjermani':'+49','Zvicër':'+41','Austri':'+43','Itali':'+39'};
+function fullPhone(){
+  let v = pSellerPhone.value.trim().replace(/\s+/g,' ');
+  if(!v) return '';
+  if(v.startsWith('+')) return v;
+  if(v.startsWith('00')) return '+' + v.slice(2);
+  const pre = pPrefix.value;
+  if(!pre) return v;
+  return pre + ' ' + v.replace(/^0+/,'');
+}
+pCountry.addEventListener('change', ()=>{ if(PREFIX_BY_COUNTRY[pCountry.value] && !pSellerPhone.value.trim().startsWith('+')) pPrefix.value = PREFIX_BY_COUNTRY[pCountry.value]; });
 function resetForm(){
+  pPrefix.value = PREFIX_BY_COUNTRY[pCountry.value] || '';
   editSellerId='';
   pId.value=''; pName.value=''; pIcon.value=''; pPrice.value=''; pOld.value=''; pCat.selectedIndex=0;
   pCountry.selectedIndex=0; pCity.value=''; pCondition.selectedIndex=0; pPhotoFile.value='';
@@ -380,7 +392,7 @@ async function saveListing(e){
     description: pDescription.value.trim(),
     sellerId: (pId.value && editSellerId) ? editSellerId : user.uid,
     sellerName: pSellerName.value.trim(),
-    sellerPhone: pSellerPhone.value.trim()
+    sellerPhone: fullPhone()
   };
   if(uploading){ formErr.textContent = 'Prit të mbarojë ngarkimi i fotove.'; return false; }
   if(!data.name || isNaN(data.price) || !data.city){ formErr.textContent = 'Plotëso emrin, qytetin dhe çmimin.'; return false; }
@@ -421,7 +433,7 @@ function editListing(id, d){
   photos = Array.isArray(d.photos) && d.photos.length ? d.photos.slice() : (d.photoUrl ? [d.photoUrl] : []);
   renderPhotos(); renderAttrFields(d.attrs || {});
   pDescription.value = d.description || '';
-  pSellerName.value = d.sellerName || ''; pSellerPhone.value = d.sellerPhone || '';
+  pSellerName.value = d.sellerName || ''; pSellerPhone.value = d.sellerPhone || ''; pPrefix.value = '';
   uploadStatus.textContent = 'Mund të shtosh foto të reja ose të heqësh/riorganizosh ato ekzistuese.';
   formTitle.textContent = 'Redakto shpalljen'; saveBtn.textContent = 'Ruaj ndryshimet';
   cancelBtn.classList.remove('hide');
