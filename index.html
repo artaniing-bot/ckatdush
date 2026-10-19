@@ -40,7 +40,6 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 .subrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,470px);gap:16px;align-items:start;max-width:1250px;margin:auto}
 .subrow>*{min-width:0}
 .subrow .countries,.subrow .filters{max-width:none;margin:0}
-@media(min-width:1151px){.subrow .countries{flex-wrap:wrap;overflow:visible;padding-bottom:8px}}
 .adSlot{position:relative;margin:2px 18px 12px 0;height:112px;border:1.5px solid #cfd8e3;border-radius:16px;background:#fff;overflow:hidden;display:block;text-decoration:none;color:#1b3556}
 .adItem{position:absolute;inset:0;display:flex;align-items:center;gap:14px;padding:10px 14px;opacity:0;transition:opacity .6s;text-decoration:none;color:inherit}
 .adItem.on{opacity:1}
@@ -50,6 +49,8 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 .adTag{position:absolute;top:6px;right:8px;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:#7a8aa3;z-index:2}
 .adDots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:2}.adDots i{width:6px;height:6px;border-radius:50%;background:#cfd8e3}.adDots i.on{background:#1f4e8c}
 .adHere{background:linear-gradient(120deg,#e4eefb,#dff3e4)}
+.cbreak{display:none}
+@media(min-width:1151px){.subrow .countries{flex-wrap:wrap;overflow:visible;padding-bottom:8px}.cbreak{display:block;flex-basis:100%;height:0}.adSlot{height:auto;min-height:112px}#adItems{display:grid}.adItem{position:relative;inset:auto;grid-area:1/1;padding:18px 16px 22px}.adItem span.adSub{max-height:none}}
 @media(max-width:1150px){.subrow{display:block;padding-bottom:22px}.adSlot{margin:18px 18px 0;height:200px;box-shadow:0 4px 14px #1b355618}.adItem{flex-wrap:wrap;align-content:center;gap:8px 12px;padding:22px 14px 22px}.adItem img{height:64px;width:auto;max-width:120px;min-width:64px}.adItem .adTx{flex:1 1 0;min-width:0}.adItem b{font-size:16px}.adItem span.adSub{font-size:13px;max-height:none}.adItem .adBtn{margin:4px 0 0;width:100%;text-align:center;padding:10px 14px;font-size:14px;flex-basis:100%}.adTag{top:7px}.adDots{bottom:8px}}
 .filters input,.filters select{padding:9px 12px;border:1px solid #ddd;border-radius:20px;font-size:14px;font-family:inherit;background:white}
 .filters input{width:150px}
@@ -108,6 +109,7 @@ html[data-theme=dark] .diasGrid>*{background:#15161a;color:#e8e8ea;box-shadow:no
 <button data-k="Shqipëri" onclick="filterCountry('Shqipëri')">🇦🇱 <span data-i18n="countryAlbania">Shqipëri</span></button>
 <button data-k="Maqedoni e Veriut" onclick="filterCountry('Maqedoni e Veriut')">🇲🇰 <span data-i18n="countryMacedonia">Maqedoni e Veriut</span></button>
 <button data-k="Mali i Zi" onclick="filterCountry('Mali i Zi')">🇲🇪 <span data-i18n="countryMontenegro">Mali i Zi</span></button>
+<span class="cbreak"></span>
 <button data-k="Gjermani" onclick="filterCountry('Gjermani')">🇩🇪 <span data-i18n="countryGermany">Gjermani</span></button>
 <button data-k="Zvicër" onclick="filterCountry('Zvicër')">🇨🇭 <span data-i18n="countrySwitzerland">Zvicër</span></button>
 <button data-k="Austri" onclick="filterCountry('Austri')">🇦🇹 <span data-i18n="countryAustria">Austri</span></button>
