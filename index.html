@@ -37,8 +37,10 @@ main{padding:22px 18px}.hero{background:#c6cacf;border-radius:24px;padding:42px;
 footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:25px}.foot p,.foot li{color:#bbb;font-size:14px;line-height:1.8}.foot ul{padding:0;list-style:none}
 .modal{display:none;position:fixed;inset:0;background:#0008;z-index:10;align-items:center;justify-content:center;padding:16px}.box{background:white;width:min(600px,92%);max-height:88vh;overflow:auto;border-radius:18px;padding:22px}
 .filters{display:flex;gap:10px;flex-wrap:wrap;padding:0 18px 14px;max-width:1250px;margin:auto}
-.subrow{display:grid;grid-template-columns:1fr minmax(260px,520px);gap:16px;align-items:start;max-width:1250px;margin:auto}
+.subrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,470px);gap:16px;align-items:start;max-width:1250px;margin:auto}
+.subrow>*{min-width:0}
 .subrow .countries,.subrow .filters{max-width:none;margin:0}
+@media(min-width:1151px){.subrow .countries{flex-wrap:wrap;overflow:visible;padding-bottom:8px}}
 .adSlot{position:relative;margin:2px 18px 12px 0;height:112px;border:1.5px solid #cfd8e3;border-radius:16px;background:#fff;overflow:hidden;display:block;text-decoration:none;color:#1b3556}
 .adItem{position:absolute;inset:0;display:flex;align-items:center;gap:14px;padding:10px 14px;opacity:0;transition:opacity .6s;text-decoration:none;color:inherit}
 .adItem.on{opacity:1}
