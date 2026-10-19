@@ -83,7 +83,7 @@ html[data-theme=dark] .diasGrid>*{background:#15161a;color:#e8e8ea;box-shadow:no
 .pdWarn{background:#fff6e0;border:1px solid #f0d58a;color:#6b4e00;border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.5;margin:10px 0}html[data-theme=dark] .pdWarn{background:#2a2310;border-color:#5a4a16;color:#f0d58a}
 .waBtn{display:block;text-align:center;margin-top:8px;padding:10px;border-radius:9px;background:#128c4a;color:#fff;text-decoration:none;font-weight:bold}
 .verTick{font-size:.85em}.pdVer{background:#e6f6ec;border:1px solid #9fd7b4;color:#14532d;border-radius:10px;padding:8px 12px;font-size:13px;margin:8px 0}html[data-theme=dark] .pdVer{background:#10281a;border-color:#245a3a;color:#9fe0b8}
-.reportBtn{display:block;width:100%;margin-top:8px;background:none;border:0;color:#888;font-size:13px;text-decoration:underline;cursor:pointer;font-family:inherit}.reportBox{margin-top:6px;display:flex;flex-direction:column;gap:6px}.reportBox select,.reportBox textarea{width:100%;padding:9px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:14px;background:#fff;color:#202124}html[data-theme=dark] .reportBox select,html[data-theme=dark] .reportBox textarea{background:#15161a;color:#e8e8ea;border-color:#27282d}
+.pdFoot{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:6px}.pdFoot .reportBtn{width:auto;margin-top:2px;font-size:12px}.reportBtn{display:block;width:100%;margin-top:8px;background:none;border:0;color:#888;font-size:13px;text-decoration:underline;cursor:pointer;font-family:inherit}.reportBox{margin-top:6px;display:flex;flex-direction:column;gap:6px}.reportBox select,.reportBox textarea{width:100%;padding:9px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:14px;background:#fff;color:#202124}html[data-theme=dark] .reportBox select,html[data-theme=dark] .reportBox textarea{background:#15161a;color:#e8e8ea;border-color:#27282d}
 .shareBtn{display:block;text-align:center;margin-top:8px;padding:10px;border-radius:9px;background:#25d366;color:#fff;text-decoration:none;font-weight:bold}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -146,14 +146,14 @@ html[data-theme=dark] .diasGrid>*{background:#15161a;color:#e8e8ea;box-shadow:no
 <div class="price" id="pdPrice" style="font-size:24px"></div>
 <div id="pdAttrs" class="pdAttrs"></div>
 <div id="pdDesc" class="pdDesc"></div>
-<div id="pdWarn" class="pdWarn" style="display:none"></div>
 <div id="pdContact"></div>
 <div id="pdVer" class="pdVer" style="display:none"></div>
 <a id="pdAddBtn" class="add" href="#">Kontakto shitësin</a>
 <a id="pdWa" class="waBtn" target="_blank" rel="noopener" href="#" style="display:none"></a>
-<button id="pdReport" type="button" class="reportBtn" onclick="toggleReport()"></button>
-<div id="reportBox" class="reportBox" style="display:none"><label id="rWhyLbl"></label><select id="rReason"></select><textarea id="rNote" maxlength="300" rows="2"></textarea><button type="button" class="btn" id="rSend" onclick="sendReport()"></button><p id="rMsg" class="muted" style="margin:6px 0 0"></p></div>
 <a id="pdShare" class="shareBtn" target="_blank" rel="noopener" href="#"></a>
+<div class="pdFoot"><button id="pdSafeBtn" type="button" class="reportBtn" onclick="toggleSafe()" style="display:none"></button><button id="pdReport" type="button" class="reportBtn" onclick="toggleReport()"></button></div>
+<div id="pdWarn" class="pdWarn" style="display:none"></div>
+<div id="reportBox" class="reportBox" style="display:none"><label id="rWhyLbl"></label><select id="rReason"></select><textarea id="rNote" maxlength="300" rows="2"></textarea><button type="button" class="btn" id="rSend" onclick="sendReport()"></button><p id="rMsg" class="muted" style="margin:6px 0 0"></p></div>
 </div></div>
 
 <script src="category-attrs.js"></script>
@@ -191,7 +191,7 @@ const I18N = {
     diasTrip: "🚐 Udhëtime & pako", diasTripD: "Dërgo ose merr pako me shoferë të besuar",
     diasServ: "🔧 Shërbime & biznese", diasServD: "Mjeshtra dhe biznese në vendlindje",
     diasComm: "🤝 Komuniteti", diasCommD: "Kërko ose ofro ndihmë në vend",
-    shareWa: "Ndaje në WhatsApp", waContact: "Shkruaj në WhatsApp", verified: "Shitës i verifikuar", reportBtn: "🚩 Raporto shpalljen", reportWhy: "Pse e raporton?", rScam: "Mashtrim / e dyshimtë", rWrong: "Çmim ose informacion i gabuar", rSold: "Është shitur / nuk ekziston", rProhib: "Përmbajtje e ndaluar", rOther: "Tjetër", reportNote: "Detaje (opsionale)", reportSend: "Dërgo raportin", reportThanks: "Faleminderit! Raporti u dërgua.", reportDone: "Këtë shpallje e ke raportuar tashmë.",
+    shareWa: "Ndaje në WhatsApp", waContact: "Shkruaj në WhatsApp", verified: "Shitës i verifikuar", reportBtn: "🚩 Raporto", safeBtn: "Këshilla sigurie", reportWhy: "Pse e raporton?", rScam: "Mashtrim / e dyshimtë", rWrong: "Çmim ose informacion i gabuar", rSold: "Është shitur / nuk ekziston", rProhib: "Përmbajtje e ndaluar", rOther: "Tjetër", reportNote: "Detaje (opsionale)", reportSend: "Dërgo raportin", reportThanks: "Faleminderit! Raporti u dërgua.", reportDone: "Këtë shpallje e ke raportuar tashmë.",
     warnVeh: "⚠️ Kujdes: shiko automjetin personalisht dhe kontrollo dokumentet (librezën, shasinë, historikun) para se të japësh para. Mos dërgo para paraprakisht.",
     warnHome: "⚠️ Kujdes: kontrollo pronësinë dhe dokumentet te noteri ose kadastra para se të paguash. Mos dërgo para pa e parë pronën ose pa kontratë.",
     warnGen: "⚠️ Kujdes: takohu në vend publik, kontrollo artikullin para pagesës dhe mos dërgo para paraprakisht.",
@@ -227,7 +227,7 @@ const I18N = {
     diasTrip: "🚐 Trips & parcels", diasTripD: "Send or receive parcels with trusted drivers",
     diasServ: "🔧 Services & businesses", diasServD: "Tradespeople and businesses back home",
     diasComm: "🤝 Community", diasCommD: "Ask for or offer help locally",
-    shareWa: "Share on WhatsApp", waContact: "Message on WhatsApp", verified: "Verified seller", reportBtn: "🚩 Report listing", reportWhy: "Why are you reporting?", rScam: "Scam / suspicious", rWrong: "Wrong price or information", rSold: "Sold / does not exist", rProhib: "Prohibited content", rOther: "Other", reportNote: "Details (optional)", reportSend: "Send report", reportThanks: "Thank you! Your report was sent.", reportDone: "You have already reported this listing.",
+    shareWa: "Share on WhatsApp", waContact: "Message on WhatsApp", verified: "Verified seller", reportBtn: "🚩 Report listing", safeBtn: "Safety tips", reportWhy: "Why are you reporting?", rScam: "Scam / suspicious", rWrong: "Wrong price or information", rSold: "Sold / does not exist", rProhib: "Prohibited content", rOther: "Other", reportNote: "Details (optional)", reportSend: "Send report", reportThanks: "Thank you! Your report was sent.", reportDone: "You have already reported this listing.",
     warnVeh: "⚠️ Caution: inspect the vehicle in person and check its documents (registration, chassis number, history) before paying. Never send money in advance.",
     warnHome: "⚠️ Caution: verify ownership and documents with a notary or the cadastre before paying. Never send money without seeing the property or a contract.",
     warnGen: "⚠️ Caution: meet in a public place, check the item before paying and never send money in advance.",
@@ -361,6 +361,7 @@ function waNumber(x){
 let curReportId = '', curReportName = '';
 const R_KEYS = [['scam','rScam'],['wrong','rWrong'],['sold','rSold'],['prohibited','rProhib'],['other','rOther']];
 function reportedKey(){ return 'rep_' + curReportId; }
+function toggleSafe(){ pdWarn.style.display = pdWarn.style.display==='none' ? 'block' : 'none'; }
 function toggleReport(){
   if(reportBox.style.display === 'none'){
     rReason.innerHTML = R_KEYS.map(([v,k])=>`<option value="${v}">${t(k)}</option>`).join('');
@@ -401,7 +402,8 @@ function openProduct(id){
     pdAddBtn.removeAttribute('href');
   }
   const wk = x.cat==='Automjete' ? 'warnVeh' : (x.cat==='Patundshmëri' ? 'warnHome' : (x.price>=300 ? 'warnGen' : ''));
-  pdWarn.style.display = wk ? 'block' : 'none'; pdWarn.textContent = wk ? t(wk) : '';
+  pdWarn.style.display = 'none'; pdWarn.textContent = wk ? t(wk) : '';
+  pdSafeBtn.style.display = wk ? 'inline-block' : 'none'; pdSafeBtn.textContent = '⚠️ ' + t('safeBtn');
   pdVer.style.display = isVer(x) ? 'block' : 'none'; pdVer.textContent = isVer(x) ? '✅ ' + t('verified') : '';
   curReportId = x.id; curReportName = x.name; reportBox.style.display = 'none'; rMsg.textContent = '';
   pdReport.textContent = t('reportBtn');
