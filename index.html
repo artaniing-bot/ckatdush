@@ -77,6 +77,8 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 html[data-theme=dark] .diasGrid>*{background:#15161a;color:#e8e8ea;box-shadow:none;border:1px solid #25262a}html[data-theme=dark] .diasGrid span,html[data-theme=dark] .diaspora p{color:#9a9ba3}
 .pdWarn{background:#fff6e0;border:1px solid #f0d58a;color:#6b4e00;border-radius:10px;padding:10px 12px;font-size:13px;line-height:1.5;margin:10px 0}html[data-theme=dark] .pdWarn{background:#2a2310;border-color:#5a4a16;color:#f0d58a}
 .waBtn{display:block;text-align:center;margin-top:8px;padding:10px;border-radius:9px;background:#128c4a;color:#fff;text-decoration:none;font-weight:bold}
+.verTick{font-size:.85em}.pdVer{background:#e6f6ec;border:1px solid #9fd7b4;color:#14532d;border-radius:10px;padding:8px 12px;font-size:13px;margin:8px 0}html[data-theme=dark] .pdVer{background:#10281a;border-color:#245a3a;color:#9fe0b8}
+.reportBtn{display:block;width:100%;margin-top:8px;background:none;border:0;color:#888;font-size:13px;text-decoration:underline;cursor:pointer;font-family:inherit}.reportBox{margin-top:6px;display:flex;flex-direction:column;gap:6px}.reportBox select,.reportBox textarea{width:100%;padding:9px;border:1px solid #ddd;border-radius:8px;font-family:inherit;font-size:14px;background:#fff;color:#202124}html[data-theme=dark] .reportBox select,html[data-theme=dark] .reportBox textarea{background:#15161a;color:#e8e8ea;border-color:#27282d}
 .shareBtn{display:block;text-align:center;margin-top:8px;padding:10px;border-radius:9px;background:#25d366;color:#fff;text-decoration:none;font-weight:bold}
 </style>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -92,7 +94,7 @@ html[data-theme=dark] .diasGrid>*{background:#15161a;color:#e8e8ea;box-shadow:no
 <button class="btn" id="langBtn" onclick="toggleLang()">EN</button>
 <button class="btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
 </div><div class="cats" id="cats">
-<button data-c="Të gjitha" class="active" onclick="filter('Të gjitha')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3.2" y="3.2" width="7" height="7" rx="1.2"/><rect x="13.8" y="3.2" width="7" height="7" rx="1.2"/><rect x="3.2" y="13.8" width="7" height="7" rx="1.2"/><rect x="13.8" y="13.8" width="7" height="7" rx="1.2"/></svg></span><span data-i18n="catAll">Të gjitha</span></button><button data-c="Automjete" onclick="filter('Automjete')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16.5V12l2-5.2h9l3 5.2h1.3a1.7 1.7 0 0 1 1.7 1.7v3"/><path d="M4 16.5h16.5"/><circle cx="7.3" cy="16.8" r="1.9"/><circle cx="16.7" cy="16.8" r="1.9"/></svg></span><span data-i18n="catAuto">Automjete</span></button><button data-c="Teknologji" onclick="filter('Teknologji')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><line x1="9.5" y1="19" x2="14.5" y2="19"/></svg></span><span data-i18n="catTech">Teknologji</span></button><button data-c="Moda" onclick="filter('Moda')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 3.5L12 5.2l3.5-1.7 4 2.6-2.3 3-1.7-1V20H9V8.1l-1.7 1-2.3-3z"/></svg></span><span data-i18n="catFashion">Moda</span></button><button data-c="Patundshmëri" onclick="filter('Patundshmëri')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5"/><path d="M6 10v10h12V10"/><rect x="10" y="14.5" width="4" height="5.5"/></svg></span><span data-i18n="catHome">Patundshmëri</span></button><button data-c="Mobilje" onclick="filter('Mobilje')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 11V7.5A2.5 2.5 0 0 1 10 5h4a2.5 2.5 0 0 1 2.5 2.5V11"/><path d="M4 11.5a2 2 0 0 1 4 0V14h8v-2.5a2 2 0 0 1 4 0V18H4z"/><path d="M6 18v2.5M18 18v2.5"/></svg></span><span data-i18n="catFurn">Mobilje</span></button><button data-c="Fëmijë" onclick="filter('Fëmijë')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="10.5" width="6.5" height="6.5" rx="1.2"/><rect x="14" y="10.5" width="6.5" height="6.5" rx="1.2"/><rect x="8.75" y="3.5" width="6.5" height="6.5" rx="1.2"/></svg></span><span data-i18n="catKids">Fëmijë</span></button><button data-c="Sport" onclick="filter('Sport')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3.3c-2.6 2.5-2.6 15.9 0 17.4M12 3.3c2.6 2.5 2.6 15.9 0 17.4M3.3 12h17.4"/></svg></span><span data-i18n="catSport">Sport</span></button><button data-c="Aksesorë" onclick="filter('Aksesorë')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.7" cy="13" r="3.3"/><circle cx="17.3" cy="13" r="3.3"/><path d="M10 12.3h4M3.4 10.5L2 9M20.6 10.5L22 9"/></svg></span><span data-i18n="catAccessories">Aksesorë</span></button><button onclick="location.href='services.html'"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></svg></span><span data-i18n="catServices">Shërbime</span></button><button onclick="location.href='puna.html'"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7.5" width="18" height="12.5" rx="2"/><path d="M9 7.5V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5v2M3 13h18"/></svg></span><span data-i18n="catJobs">Punë</span></button><button id="diasBtn" onclick="toggleDiaspora()"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.8 3.9 5.8 3.9 9s-1.300 6.200-3.900 9c-2.600-2.800-3.900-5.800-3.900-9S9.400 5.800 12 3z"/></svg></span><span data-i18n="catDiaspora">Diaspora</span></button><button onclick="location.href='udhetime.html'"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 16V8.5A1.5 1.5 0 0 1 4 7h9v9M13 10h4l3.5 3.5V16h-7.5"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></span><span data-i18n="catTrips">Udhëtime</span></button><button onclick="location.href='komuniteti.html'"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg></span><span data-i18n="catCommunity">Komuniteti</span></button>
+<button data-c="Të gjitha" class="active" onclick="filter('Të gjitha')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3.2" y="3.2" width="7" height="7" rx="1.2"/><rect x="13.8" y="3.2" width="7" height="7" rx="1.2"/><rect x="3.2" y="13.8" width="7" height="7" rx="1.2"/><rect x="13.8" y="13.8" width="7" height="7" rx="1.2"/></svg></span><span data-i18n="catAll">Të gjitha</span></button><button data-c="Automjete" onclick="filter('Automjete')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16.5V12l2-5.2h9l3 5.2h1.3a1.7 1.7 0 0 1 1.7 1.7v3"/><path d="M4 16.5h16.5"/><circle cx="7.3" cy="16.8" r="1.9"/><circle cx="16.7" cy="16.8" r="1.9"/></svg></span><span data-i18n="catAuto">Automjete</span></button><button data-c="Teknologji" onclick="filter('Teknologji')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.2"/><line x1="9.5" y1="19" x2="14.5" y2="19"/></svg></span><span data-i18n="catTech">Teknologji</span></button><button data-c="Moda" onclick="filter('Moda')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 3.5L12 5.2l3.5-1.7 4 2.6-2.3 3-1.7-1V20H9V8.1l-1.7 1-2.3-3z"/></svg></span><span data-i18n="catFashion">Moda</span></button><button data-c="Patundshmëri" onclick="filter('Patundshmëri')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5L12 4l8 7.5"/><path d="M6 10v10h12V10"/><rect x="10" y="14.5" width="4" height="5.5"/></svg></span><span data-i18n="catHome">Patundshmëri</span></button><button data-c="Mobilje" onclick="filter('Mobilje')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 11V7.5A2.5 2.5 0 0 1 10 5h4a2.5 2.5 0 0 1 2.5 2.5V11"/><path d="M4 11.5a2 2 0 0 1 4 0V14h8v-2.5a2 2 0 0 1 4 0V18H4z"/><path d="M6 18v2.5M18 18v2.5"/></svg></span><span data-i18n="catFurn">Mobilje</span></button><button data-c="Fëmijë" onclick="filter('Fëmijë')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="10.5" width="6.5" height="6.5" rx="1.2"/><rect x="14" y="10.5" width="6.5" height="6.5" rx="1.2"/><rect x="8.75" y="3.5" width="6.5" height="6.5" rx="1.2"/></svg></span><span data-i18n="catKids">Fëmijë</span></button><button data-c="Sport" onclick="filter('Sport')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3.3c-2.6 2.5-2.6 15.9 0 17.4M12 3.3c2.6 2.5 2.6 15.9 0 17.4M3.3 12h17.4"/></svg></span><span data-i18n="catSport">Sport</span></button><button data-c="Aksesorë" onclick="filter('Aksesorë')"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.7" cy="13" r="3.3"/><circle cx="17.3" cy="13" r="3.3"/><path d="M10 12.3h4M3.4 10.5L2 9M20.6 10.5L22 9"/></svg></span><span data-i18n="catAccessories">Aksesorë</span></button><button onclick="location.href='services.html'"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0 1 13 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></svg></span><span data-i18n="catServices">Shërbime</span></button><button onclick="location.href='puna.html'"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7.5" width="18" height="12.5" rx="2"/><path d="M9 7.5V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5v2M3 13h18"/></svg></span><span data-i18n="catJobs">Punë</span></button><button onclick="location.href='kerkoj.html'"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></span><span data-i18n="catWanted">Kërkoj</span></button><button id="diasBtn" onclick="toggleDiaspora()"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.8 3.9 5.8 3.9 9s-1.300 6.200-3.900 9c-2.600-2.800-3.900-5.800-3.900-9S9.400 5.800 12 3z"/></svg></span><span data-i18n="catDiaspora">Diaspora</span></button><button onclick="location.href='udhetime.html'"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 16V8.5A1.5 1.5 0 0 1 4 7h9v9M13 10h4l3.5 3.5V16h-7.5"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></span><span data-i18n="catTrips">Udhëtime</span></button><button onclick="location.href='komuniteti.html'"><span class="catIcon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/></svg></span><span data-i18n="catCommunity">Komuniteti</span></button>
 <div class="promoBanner" id="promoBanner">
 <span>🎉</span><span data-i18n="promoText">Posto FALAS shpalljen tënde tani!</span>
 <a href="postoj.html" class="promoBtn" data-i18n="promoBtnText">Posto tani →</a>
@@ -132,7 +134,7 @@ html[data-theme=dark] .diasGrid>*{background:#15161a;color:#e8e8ea;box-shadow:no
 </div></section>
 <section id="products"><div class="head"><h2 data-i18n="sectionTitle">Shpalljet</h2><span id="res"></span></div><div class="grid" id="grid"></div><button id="moreBtn" class="btn" onclick="showMore()" style="display:none;margin:22px auto 0" data-i18n="moreBtn">Shfaq më shumë</button></section>
 </main>
-<footer><div class="foot"><div><img src="logo.png" style="width:145px;background:#fff;border-radius:9px"><p data-i18n="footerDesc">Çkat’dush — treg shpalljesh për Kosovë, Shqipëri, Maqedoni e Veriut dhe Mal të Zi.</p></div><div><h3 data-i18n="footSellers">Shitësit</h3><ul><li><a href="postoj.html" style="color:#bbb" data-i18n="footPost">Posto shpallje</a></li><li data-i18n="footMyAds">Shpalljet e mia</li><li><a href="shto-biznes.html" style="color:#bbb;text-decoration:none" data-i18n="footAddBiz">Shto biznesin tënd</a></li><li><a href="mailto:ckatdush@gmail.com?subject=Reklam%C3%AB%20te%20%C3%87kat%E2%80%99dush" style="color:#bbb;text-decoration:none" data-i18n="footAdvertise">Reklamo te ne</a></li></ul></div><div><h3 data-i18n="footBuyers">Blerësit</h3><ul><li data-i18n="footSearch">Kërko</li><li data-i18n="footFilterCity">Filtro sipas qytetit</li><li><a href="services.html" style="color:#bbb;text-decoration:none" data-i18n="footServices">Shërbime pranë teje</a></li><li><a href="puna.html" style="color:#bbb;text-decoration:none" data-i18n="footJobs">Punë të hapura</a></li><li><a href="udhetime.html" style="color:#bbb;text-decoration:none" data-i18n="footTrips">Udhëtime & pako</a></li><li><a href="komuniteti.html" style="color:#bbb;text-decoration:none" data-i18n="footCommunity">Komuniteti</a></li></ul></div><div><h3 data-i18n="footHelp">Ndihmë</h3><ul><li><a href="rreth-nesh.html" style="color:#bbb;text-decoration:none" data-i18n="footAbout">Rreth nesh</a></li><li data-i18n="footContact">Kontakti</li><li><a href="mailto:ckatdush@gmail.com" style="color:#bbb;text-decoration:none">ckatdush@gmail.com</a></li><li><a href="kushtet.html" style="color:#bbb;text-decoration:none" data-i18n="footTerms">Kushtet & Privatësia</a></li></ul></div></div><div style="margin-top:28px;padding-top:16px;border-top:1px solid #3a3b40;text-align:center;color:#999;font-size:13px">© <span id="yr"></span> Çkat’dush. <span data-i18n="footRights">Të gjitha të drejtat e rezervuara.</span></div></footer>
+<footer><div class="foot"><div><img src="logo.png" style="width:145px;background:#fff;border-radius:9px"><p data-i18n="footerDesc">Çkat’dush — treg shpalljesh për Kosovë, Shqipëri, Maqedoni e Veriut dhe Mal të Zi.</p></div><div><h3 data-i18n="footSellers">Shitësit</h3><ul><li><a href="postoj.html" style="color:#bbb" data-i18n="footPost">Posto shpallje</a></li><li data-i18n="footMyAds">Shpalljet e mia</li><li><a href="shto-biznes.html" style="color:#bbb;text-decoration:none" data-i18n="footAddBiz">Shto biznesin tënd</a></li><li><a href="mailto:ckatdush@gmail.com?subject=Reklam%C3%AB%20te%20%C3%87kat%E2%80%99dush" style="color:#bbb;text-decoration:none" data-i18n="footAdvertise">Reklamo te ne</a></li></ul></div><div><h3 data-i18n="footBuyers">Blerësit</h3><ul><li data-i18n="footSearch">Kërko</li><li data-i18n="footFilterCity">Filtro sipas qytetit</li><li><a href="services.html" style="color:#bbb;text-decoration:none" data-i18n="footServices">Shërbime pranë teje</a></li><li><a href="puna.html" style="color:#bbb;text-decoration:none" data-i18n="footJobs">Punë të hapura</a></li><li><a href="udhetime.html" style="color:#bbb;text-decoration:none" data-i18n="footTrips">Udhëtime & pako</a></li><li><a href="kerkoj.html" style="color:#bbb;text-decoration:none" data-i18n="catWanted">Kërkoj</a></li><li><a href="komuniteti.html" style="color:#bbb;text-decoration:none" data-i18n="footCommunity">Komuniteti</a></li></ul></div><div><h3 data-i18n="footHelp">Ndihmë</h3><ul><li><a href="rreth-nesh.html" style="color:#bbb;text-decoration:none" data-i18n="footAbout">Rreth nesh</a></li><li data-i18n="footContact">Kontakti</li><li><a href="mailto:ckatdush@gmail.com" style="color:#bbb;text-decoration:none">ckatdush@gmail.com</a></li><li><a href="kushtet.html" style="color:#bbb;text-decoration:none" data-i18n="footTerms">Kushtet & Privatësia</a></li></ul></div></div><div style="margin-top:28px;padding-top:16px;border-top:1px solid #3a3b40;text-align:center;color:#999;font-size:13px">© <span id="yr"></span> Çkat’dush. <span data-i18n="footRights">Të gjitha të drejtat e rezervuara.</span></div></footer>
 
 <div class="modal" id="productModal"><div class="box">
 <div style="display:flex;justify-content:space-between"><h2 id="pdName" style="margin:0"></h2><button class="btn" onclick="closeModal('productModal')">×</button></div>
@@ -144,8 +146,11 @@ html[data-theme=dark] .diasGrid>*{background:#15161a;color:#e8e8ea;box-shadow:no
 <div id="pdDesc" class="pdDesc"></div>
 <div id="pdWarn" class="pdWarn" style="display:none"></div>
 <div id="pdContact"></div>
+<div id="pdVer" class="pdVer" style="display:none"></div>
 <a id="pdAddBtn" class="add" href="#">Kontakto shitësin</a>
 <a id="pdWa" class="waBtn" target="_blank" rel="noopener" href="#" style="display:none"></a>
+<button id="pdReport" type="button" class="reportBtn" onclick="toggleReport()"></button>
+<div id="reportBox" class="reportBox" style="display:none"><label id="rWhyLbl"></label><select id="rReason"></select><textarea id="rNote" maxlength="300" rows="2"></textarea><button type="button" class="btn" id="rSend" onclick="sendReport()"></button><p id="rMsg" class="muted" style="margin:6px 0 0"></p></div>
 <a id="pdShare" class="shareBtn" target="_blank" rel="noopener" href="#"></a>
 </div></div>
 
@@ -170,7 +175,7 @@ const I18N = {
     topBar: "🚚 Në gjithë Kosovën, Shqipërinë, Maqedoninë e Veriut dhe Malin e Zi • 📋 Posto e gjej shpallje — kontakto shitësin direkt",
     searchPlaceholder: "Çka po kërkon?", searchBtn: "Kërko", postBtn: "+ Posto shpallje",
     catAll: "Të gjitha", catAuto: "Automjete", catTech: "Teknologji", catFashion: "Moda", catHome: "Patundshmëri", catFurn: "Mobilje",
-    catBeauty: "Bukuri", catKids: "Fëmijë", catSport: "Sport", catAccessories: "Aksesorë", catServices: "Shërbime", catJobs: "Punë", catDiaspora: "Diaspora", catTrips: "Udhëtime", catCommunity: "Komuniteti", footCommunity: "Komuniteti", footTrips: "Udhëtime & pako",
+    catBeauty: "Bukuri", catKids: "Fëmijë", catSport: "Sport", catAccessories: "Aksesorë", catServices: "Shërbime", catJobs: "Punë", catDiaspora: "Diaspora", catWanted: "Kërkoj", catTrips: "Udhëtime", catCommunity: "Komuniteti", footCommunity: "Komuniteti", footTrips: "Udhëtime & pako",
     countryAll: "Të gjitha vendet", countryKosovo: "Kosovë", countryAlbania: "Shqipëri",
     countryMacedonia: "Maqedoni e Veriut", countryMontenegro: "Mali i Zi", countryGermany: "Gjermani", countrySwitzerland: "Zvicër", countryAustria: "Austri", countryItaly: "Itali", countryOther: "Vend tjetër",
     fMinPh: "Çmimi min €", fMaxPh: "Çmimi max €", fCityAll: "Qyteti (të gjitha)",
@@ -184,7 +189,7 @@ const I18N = {
     diasTrip: "🚐 Udhëtime & pako", diasTripD: "Dërgo ose merr pako me shoferë të besuar",
     diasServ: "🔧 Shërbime & biznese", diasServD: "Mjeshtra dhe biznese në vendlindje",
     diasComm: "🤝 Komuniteti", diasCommD: "Kërko ose ofro ndihmë në vend",
-    shareWa: "Ndaje në WhatsApp", waContact: "Shkruaj në WhatsApp",
+    shareWa: "Ndaje në WhatsApp", waContact: "Shkruaj në WhatsApp", verified: "Shitës i verifikuar", reportBtn: "🚩 Raporto shpalljen", reportWhy: "Pse e raporton?", rScam: "Mashtrim / e dyshimtë", rWrong: "Çmim ose informacion i gabuar", rSold: "Është shitur / nuk ekziston", rProhib: "Përmbajtje e ndaluar", rOther: "Tjetër", reportNote: "Detaje (opsionale)", reportSend: "Dërgo raportin", reportThanks: "Faleminderit! Raporti u dërgua.", reportDone: "Këtë shpallje e ke raportuar tashmë.",
     warnVeh: "⚠️ Kujdes: shiko automjetin personalisht dhe kontrollo dokumentet (librezën, shasinë, historikun) para se të japësh para. Mos dërgo para paraprakisht.",
     warnHome: "⚠️ Kujdes: kontrollo pronësinë dhe dokumentet te noteri ose kadastra para se të paguash. Mos dërgo para pa e parë pronën ose pa kontratë.",
     warnGen: "⚠️ Kujdes: takohu në vend publik, kontrollo artikullin para pagesës dhe mos dërgo para paraprakisht.",
@@ -206,7 +211,7 @@ const I18N = {
     topBar: "🚚 All across Kosovo, Albania, North Macedonia & Montenegro • 📋 Post or find listings — contact the seller directly",
     searchPlaceholder: "What are you looking for?", searchBtn: "Search", postBtn: "+ Post a listing",
     catAll: "All", catAuto: "Vehicles", catTech: "Electronics", catFashion: "Fashion", catHome: "Real estate", catFurn: "Furniture",
-    catBeauty: "Beauty", catKids: "Kids", catSport: "Sports", catAccessories: "Accessories", catServices: "Services", catJobs: "Jobs", catDiaspora: "Diaspora", catTrips: "Trips", catCommunity: "Community", footCommunity: "Community", footTrips: "Trips & parcels",
+    catBeauty: "Beauty", catKids: "Kids", catSport: "Sports", catAccessories: "Accessories", catServices: "Services", catJobs: "Jobs", catDiaspora: "Diaspora", catWanted: "Wanted", catTrips: "Trips", catCommunity: "Community", footCommunity: "Community", footTrips: "Trips & parcels",
     countryAll: "All countries", countryKosovo: "Kosovo", countryAlbania: "Albania",
     countryMacedonia: "North Macedonia", countryMontenegro: "Montenegro", countryGermany: "Germany", countrySwitzerland: "Switzerland", countryAustria: "Austria", countryItaly: "Italy", countryOther: "Other country",
     fMinPh: "Min price €", fMaxPh: "Max price €", fCityAll: "City (all)",
@@ -220,7 +225,7 @@ const I18N = {
     diasTrip: "🚐 Trips & parcels", diasTripD: "Send or receive parcels with trusted drivers",
     diasServ: "🔧 Services & businesses", diasServD: "Tradespeople and businesses back home",
     diasComm: "🤝 Community", diasCommD: "Ask for or offer help locally",
-    shareWa: "Share on WhatsApp", waContact: "Message on WhatsApp",
+    shareWa: "Share on WhatsApp", waContact: "Message on WhatsApp", verified: "Verified seller", reportBtn: "🚩 Report listing", reportWhy: "Why are you reporting?", rScam: "Scam / suspicious", rWrong: "Wrong price or information", rSold: "Sold / does not exist", rProhib: "Prohibited content", rOther: "Other", reportNote: "Details (optional)", reportSend: "Send report", reportThanks: "Thank you! Your report was sent.", reportDone: "You have already reported this listing.",
     warnVeh: "⚠️ Caution: inspect the vehicle in person and check its documents (registration, chassis number, history) before paying. Never send money in advance.",
     warnHome: "⚠️ Caution: verify ownership and documents with a notary or the cadastre before paying. Never send money without seeing the property or a contract.",
     warnGen: "⚠️ Caution: meet in a public place, check the item before paying and never send money in advance.",
@@ -274,6 +279,11 @@ let currentCountry = 'Të gjitha';
 let currentQuery = '';
 
 const BATCH = 48, SHOW = 24;
+let VERIFIED = new Set();
+async function loadVerified(){
+  try{ const s = await db.collection('verified').limit(500).get(); VERIFIED = new Set(s.docs.map(d=>d.id)); render(currentList || P); }catch(e){}
+}
+const isVer = x => !!(x.sellerId && VERIFIED.has(x.sellerId));
 let lastDoc = null, hasMore = true, loadingMore = false, loadedOnce = false;
 function mapProduct(d){
   const x = d.data();
@@ -282,7 +292,7 @@ function mapProduct(d){
     icon: x.icon || '🛍️', photoUrl: x.photoUrl || null,
     photos: Array.isArray(x.photos) && x.photos.length ? x.photos : (x.photoUrl ? [x.photoUrl] : []), attrs: x.attrs || {},
     country: x.country || 'Kosovë', city: x.city || '', condition: x.condition || '', description: x.description || '',
-    sellerName: x.sellerName || '', sellerPhone: x.sellerPhone || '',
+    sellerName: x.sellerName || '', sellerPhone: x.sellerPhone || '', sellerId: x.sellerId || '',
     expiresAt: x.expiresAt || null
   };
 }
@@ -318,7 +328,9 @@ async function showMore(){
   applyFilters(true);
 }
 
+let currentList = null;
 function render(a=P){
+  currentList = a;
   const total = a.length; a = a.slice(0, shown);
   grid.innerHTML = a.length ? a.map((x)=>{
     const meta = [catLabel(x.cat), countryLabel(x.country), x.city, condLabel(x.condition)].filter(Boolean).join(' • ');
@@ -327,7 +339,7 @@ function render(a=P){
     const actionBtn = phone
       ? `<a href="tel:${phone}" class="add" onclick="event.stopPropagation()">${PHONE_ICON_WHITE}${t('contactBtn')}</a>`
       : `<span class="add disabled">${t('contactUnavailable')}</span>`;
-    return `<div class="card" onclick="openProduct('${x.id}')"><span class="badge">${t('badge')}</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover">` : x.icon}${(x.photos&&x.photos.length>1) ? `<span class="photoCount">📷 ${x.photos.length}</span>` : ''}</div><div class="info"><div class="name">${x.name}</div><small>${meta}</small>${contact}<div class="price">${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}</div>${actionBtn}</div></div>`;
+    return `<div class="card" onclick="openProduct('${x.id}')"><span class="badge">${t('badge')}</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover">` : x.icon}${(x.photos&&x.photos.length>1) ? `<span class="photoCount">📷 ${x.photos.length}</span>` : ''}</div><div class="info"><div class="name">${x.name}${isVer(x)?` <span class="verTick" title="${t('verified')}">✅</span>`:''}</div><small>${meta}</small>${contact}<div class="price">${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}</div>${actionBtn}</div></div>`;
   }).join('')
     : `<div class="empty">${t('emptyMsg')}</div>`;
   res.textContent = total + (hasMore ? '+' : '') + ' ' + t('listingsWord');
@@ -343,6 +355,26 @@ function waNumber(x){
   if(raw.startsWith('00')) return d.slice(2);
   if(raw.startsWith('0') && CC[x.country]) return CC[x.country] + d.slice(1);
   return '';
+}
+let curReportId = '', curReportName = '';
+const R_KEYS = [['scam','rScam'],['wrong','rWrong'],['sold','rSold'],['prohibited','rProhib'],['other','rOther']];
+function reportedKey(){ return 'rep_' + curReportId; }
+function toggleReport(){
+  if(reportBox.style.display === 'none'){
+    rReason.innerHTML = R_KEYS.map(([v,k])=>`<option value="${v}">${t(k)}</option>`).join('');
+    rWhyLbl.textContent = t('reportWhy'); rNote.placeholder = t('reportNote'); rSend.textContent = t('reportSend');
+    let done = false; try{ done = !!localStorage.getItem(reportedKey()); }catch(e){}
+    rMsg.textContent = done ? t('reportDone') : ''; rSend.disabled = done;
+    reportBox.style.display = 'flex';
+  } else reportBox.style.display = 'none';
+}
+async function sendReport(){
+  rSend.disabled = true;
+  try{
+    await db.collection('reports').add({ productId: curReportId, productName: String(curReportName||'').slice(0,120), reason: rReason.value, note: rNote.value.trim().slice(0,300), at: firebase.firestore.FieldValue.serverTimestamp() });
+    try{ localStorage.setItem(reportedKey(), '1'); }catch(e){}
+    rMsg.textContent = t('reportThanks'); rNote.value = '';
+  }catch(e){ rMsg.textContent = 'Error: ' + (e && e.message ? e.message : ''); rSend.disabled = false; }
 }
 function openProduct(id){
   const x = P.find(p=>p.id===id);
@@ -368,6 +400,9 @@ function openProduct(id){
   }
   const wk = x.cat==='Automjete' ? 'warnVeh' : (x.cat==='Patundshmëri' ? 'warnHome' : (x.price>=300 ? 'warnGen' : ''));
   pdWarn.style.display = wk ? 'block' : 'none'; pdWarn.textContent = wk ? t(wk) : '';
+  pdVer.style.display = isVer(x) ? 'block' : 'none'; pdVer.textContent = isVer(x) ? '✅ ' + t('verified') : '';
+  curReportId = x.id; curReportName = x.name; reportBox.style.display = 'none'; rMsg.textContent = '';
+  pdReport.textContent = t('reportBtn');
   const wn = waNumber(x);
   pdWa.style.display = wn ? 'block' : 'none';
   if(wn){ pdWa.textContent = '💬 ' + t('waContact'); pdWa.href = 'https://wa.me/' + wn + '?text=' + encodeURIComponent((currentLang==='en'?'Hello, I am interested in: ':'Përshëndetje, më intereson: ') + x.name); }
@@ -539,6 +574,7 @@ function clearFilters(){
 productModal.addEventListener('click', e=>{ if(e.target===productModal) closeModal('productModal'); });
 
 applyLang();
+loadVerified();
 loadProducts().then(async ()=>{
   const id = new URLSearchParams(location.search).get('p'); if(!id) return;
   try{

@@ -146,6 +146,7 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 </div>
 
 <div class="card">
+<div id="reportsBox"></div>
 <h3 style="margin-top:0" id="listTitle">Shpalljet e mia</h3>
 <div id="list" class="muted">Duke ngarkuar…</div>
 </div>
@@ -464,12 +465,39 @@ async function refreshListing(id){
   }catch(e){ alert('Gabim: ' + e.message); }
 }
 
+let VERSET = new Set();
+const esc2 = v => String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const R_LBL = {scam:'Mashtrim / e dyshimtë',wrong:'Informacion i gabuar',sold:'Shitur / nuk ekziston',prohibited:'Përmbajtje e ndaluar',other:'Tjetër'};
+async function loadAdminExtras(){
+  try{ const v = await db.collection('verified').get(); VERSET = new Set(v.docs.map(d=>d.id)); }catch(e){ VERSET = new Set(); }
+  try{
+    const r = await db.collection('reports').orderBy('at','desc').limit(100).get();
+    reportsBox.innerHTML = r.empty ? '' : `<div class="card"><h3 style="margin-top:0">🚩 Raportime (${r.size})</h3>` + r.docs.map(d=>{
+      const x = d.data(); const t = x.at && x.at.toDate ? x.at.toDate().toLocaleDateString('sq') : '';
+      return `<div class="item"><div class="info"><b>${esc2(x.productName||'(pa titull)')}</b><small>${esc2(R_LBL[x.reason]||x.reason)} • ${t}</small>${x.note?`<small>${esc2(x.note)}</small>`:''}</div><div class="actions"><a class="edit" href="index.html?p=${encodeURIComponent(x.productId)}" target="_blank" style="text-decoration:none">Hap</a><button class="del" onclick="delReportedListing('${esc2(x.productId)}','${d.id}')">Fshi shpalljen</button><button class="edit" onclick="dismissReport('${d.id}')">Hiq raportin</button></div></div>`;
+    }).join('') + '</div>';
+  }catch(e){ reportsBox.innerHTML = '<p class="muted">Raportimet nuk u ngarkuan (kontrollo rregullat për "reports" te Firebase).</p>'; }
+}
+async function toggleVerified(uid){
+  try{
+    if(VERSET.has(uid)) await db.collection('verified').doc(uid).delete();
+    else await db.collection('verified').doc(uid).set({ at: firebase.firestore.FieldValue.serverTimestamp() });
+    loadList();
+  }catch(e){ alert('Gabim: ' + e.message + ' (kontrollo rregullat për "verified" te Firebase)'); }
+}
+async function dismissReport(id){ try{ await db.collection('reports').doc(id).delete(); loadList(); }catch(e){ alert('Gabim: '+e.message); } }
+async function delReportedListing(pid, rid){
+  if(!confirm('Ta fshish këtë shpallje?')) return;
+  try{ await db.collection('products').doc(pid).delete(); await db.collection('reports').doc(rid).delete(); }catch(e){ alert('Gabim: '+e.message); return; }
+  loadList();
+}
 async function loadList(){
   const user = auth.currentUser;
   if(!user) return;
   list.textContent = 'Duke ngarkuar…';
   try{
     const adm = isAdm();
+    if(adm) await loadAdminExtras(); else { VERSET = new Set(); reportsBox.innerHTML=''; }
     const snap = adm ? await db.collection('products').get() : await db.collection('products').where('sellerId','==',user.uid).get();
     const hd = document.getElementById('listTitle'); if(hd) hd.textContent = adm ? 'Të gjitha shpalljet (administrator)' : 'Shpalljet e mia';
     if(snap.empty){ list.innerHTML = '<p class="muted">S\'ke postuar ende asnjë shpallje.</p>'; return; }
@@ -486,13 +514,14 @@ async function loadList(){
       const daysLeft = expMs !== null ? Math.max(0, Math.ceil((expMs-now)/DAY_MS)) : null;
       return `<div class="item">
         <div class="ic">${d.photoUrl ? `<img class="thumb" src="${d.photoUrl}">` : (d.icon||'🛍️')}</div>
-        <div class="info"><b>${d.name}</b><small>${d.cat} • ${d.country||''} ${d.city ? '- '+d.city : ''} • ${d.condition||''}</small>${adm && d.sellerId!==user.uid ? `<small>👤 ${d.sellerName||''} ${d.sellerPhone||''}</small>` : ''}
+        <div class="info"><b>${d.name}${d.sellerId && VERSET.has(d.sellerId) ? ' ✅' : ''}</b><small>${d.cat} • ${d.country||''} ${d.city ? '- '+d.city : ''} • ${d.condition||''}</small>${adm && d.sellerId!==user.uid ? `<small>👤 ${d.sellerName||''} ${d.sellerPhone||''}</small>` : ''}
         ${expired ? `<div class="exp">⚠️ Ka skaduar — s'shfaqet më te dyqani</div>` : (daysLeft!==null ? `<div class="exp">Skadon për ${daysLeft} ditë</div>` : '')}</div>
         <div class="price">${Number(d.price).toFixed(2)} €${d.oldPrice && d.oldPrice!==d.price ? `<span class="old">${Number(d.oldPrice).toFixed(2)} €</span>` : ''}</div>
         <div class="actions">
         <button class="cta small secondary" onclick="refreshListing('${doc.id}')">🔄 Rifresko</button>
         <button class="edit" onclick='editListing("${doc.id}", ${JSON.stringify(d).replace(/'/g,"&apos;")})'>Redakto</button>
         <button class="del" onclick="deleteListing('${doc.id}')">Fshi</button>
+        ${adm && d.sellerId ? `<button class="edit" onclick="toggleVerified('${d.sellerId}')">${VERSET.has(d.sellerId) ? 'Hiq ✅' : '✅ Verifiko shitësin'}</button>` : ''}
         </div>
       </div>`;
     }).join('');
