@@ -113,7 +113,7 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 <div class="row2">
 <div class="field"><label>Shteti</label>
 <select id="pCountry" required>
-<option value="Kosovë">Kosovë</option><option value="Shqipëri">Shqipëri</option><option value="Maqedoni e Veriut">Maqedoni e Veriut</option><option value="Mali i Zi">Mali i Zi</option><option value="Gjermani">Gjermani</option><option value="Zvicër">Zvicër</option><option value="Austri">Austri</option><option value="Itali">Itali</option><option value="Vend tjetër">Vend tjetër</option>
+<option value="Kosovë">Kosovë</option><option value="Shqipëri">Shqipëri</option><option value="Maqedoni e Veriut">Maqedoni e Veriut</option><option value="Mali i Zi">Mali i Zi</option><option value="Gjermani">Gjermani</option><option value="Zvicër">Zvicër</option><option value="Austri">Austri</option><option value="Itali">Itali</option><option value="Francë">Francë</option><option value="Vend tjetër">Vend tjetër</option>
 </select></div>
 <div class="field"><label>Qyteti</label><input id="pCity" placeholder="p.sh. Prishtinë" required></div>
 </div>
@@ -278,7 +278,7 @@ function collectAttrs(){
   return out;
 }
 
-const PFX = {'Kosovë':'+383','Shqipëri':'+355','Maqedoni e Veriut':'+389','Mali i Zi':'+382','Gjermani':'+49','Zvicër':'+41','Austri':'+43','Itali':'+39'};
+const PFX = {'Kosovë':'+383','Shqipëri':'+355','Maqedoni e Veriut':'+389','Mali i Zi':'+382','Gjermani':'+49','Zvicër':'+41','Austri':'+43','Itali':'+39','Francë':'+33'};
 function fullPhone(){
   const v = pSellerPhone.value.trim().replace(/\s+/g,' ');
   if(!v) return '';

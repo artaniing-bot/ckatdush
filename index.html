@@ -112,6 +112,7 @@ html[data-theme=dark] .diasGrid>*{background:#15161a;color:#e8e8ea;box-shadow:no
 <button data-k="Zvicër" onclick="filterCountry('Zvicër')">🇨🇭 <span data-i18n="countrySwitzerland">Zvicër</span></button>
 <button data-k="Austri" onclick="filterCountry('Austri')">🇦🇹 <span data-i18n="countryAustria">Austri</span></button>
 <button data-k="Itali" onclick="filterCountry('Itali')">🇮🇹 <span data-i18n="countryItaly">Itali</span></button>
+<button data-k="Francë" onclick="filterCountry('Francë')">🇫🇷 <span data-i18n="countryFrance">Francë</span></button>
 <button data-k="Vend tjetër" onclick="filterCountry('Vend tjetër')">🌐 <span data-i18n="countryOther">Vend tjetër</span></button>
 </div>
 <div class="filters">
@@ -176,7 +177,7 @@ const I18N = {
     catAll: "Të gjitha", catAuto: "Automjete", catTech: "Teknologji", catFashion: "Moda", catHome: "Patundshmëri", catFurn: "Mobilje",
     catBeauty: "Bukuri", catKids: "Fëmijë", catSport: "Sport", catAccessories: "Aksesorë", catServices: "Shërbime", catJobs: "Punë", catDiaspora: "Diaspora", catWanted: "Kërkoj", catTrips: "Udhëtime", catCommunity: "Komuniteti", footCommunity: "Komuniteti", footTrips: "Udhëtime & pako",
     countryAll: "Të gjitha vendet", countryKosovo: "Kosovë", countryAlbania: "Shqipëri",
-    countryMacedonia: "Maqedoni e Veriut", countryMontenegro: "Mali i Zi", countryGermany: "Gjermani", countrySwitzerland: "Zvicër", countryAustria: "Austri", countryItaly: "Itali", countryOther: "Vend tjetër",
+    countryMacedonia: "Maqedoni e Veriut", countryMontenegro: "Mali i Zi", countryGermany: "Gjermani", countrySwitzerland: "Zvicër", countryAustria: "Austri", countryItaly: "Itali", countryFrance: "Francë", countryOther: "Vend tjetër",
     fMinPh: "Çmimi min €", fMaxPh: "Çmimi max €", fCityAll: "Qyteti (të gjitha)",
     fCondAll: "Gjendja (të gjitha)", fCondNew: "I ri", fCondUsed: "I përdorur",
     clearFilters: "Pastro filtrat",
@@ -212,7 +213,7 @@ const I18N = {
     catAll: "All", catAuto: "Vehicles", catTech: "Electronics", catFashion: "Fashion", catHome: "Real estate", catFurn: "Furniture",
     catBeauty: "Beauty", catKids: "Kids", catSport: "Sports", catAccessories: "Accessories", catServices: "Services", catJobs: "Jobs", catDiaspora: "Diaspora", catWanted: "Wanted", catTrips: "Trips", catCommunity: "Community", footCommunity: "Community", footTrips: "Trips & parcels",
     countryAll: "All countries", countryKosovo: "Kosovo", countryAlbania: "Albania",
-    countryMacedonia: "North Macedonia", countryMontenegro: "Montenegro", countryGermany: "Germany", countrySwitzerland: "Switzerland", countryAustria: "Austria", countryItaly: "Italy", countryOther: "Other country",
+    countryMacedonia: "North Macedonia", countryMontenegro: "Montenegro", countryGermany: "Germany", countrySwitzerland: "Switzerland", countryAustria: "Austria", countryItaly: "Italy", countryFrance: "France", countryOther: "Other country",
     fMinPh: "Min price €", fMaxPh: "Max price €", fCityAll: "City (all)",
     fCondAll: "Condition (all)", fCondNew: "New", fCondUsed: "Used",
     clearFilters: "Clear filters",
@@ -243,7 +244,7 @@ const I18N = {
   }
 };
 const CAT_KEYS = {'Të gjitha':'catAll','Automjete':'catAuto','Teknologji':'catTech','Moda':'catFashion','Patundshmëri':'catHome','Mobilje':'catFurn','Bukuri':'catBeauty','Fëmijë':'catKids','Sport':'catSport','Aksesorë':'catAccessories'};
-const COUNTRY_KEYS = {'Të gjitha':'countryAll','Kosovë':'countryKosovo','Shqipëri':'countryAlbania','Maqedoni e Veriut':'countryMacedonia','Mali i Zi':'countryMontenegro','Gjermani':'countryGermany','Zvicër':'countrySwitzerland','Austri':'countryAustria','Itali':'countryItaly','Vend tjetër':'countryOther'};
+const COUNTRY_KEYS = {'Të gjitha':'countryAll','Kosovë':'countryKosovo','Shqipëri':'countryAlbania','Maqedoni e Veriut':'countryMacedonia','Mali i Zi':'countryMontenegro','Gjermani':'countryGermany','Zvicër':'countrySwitzerland','Austri':'countryAustria','Itali':'countryItaly','Francë':'countryFrance','Vend tjetër':'countryOther'};
 const COND_KEYS = {'I ri':'fCondNew','I përdorur':'fCondUsed'};
 function phoneIcon(color){ return `<svg viewBox="0 0 24 24" width="15" height="15" style="vertical-align:-3px;margin-right:5px;flex-shrink:0" fill="${color}"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 3.9c0-.6.4-1 1-1H7.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>`; }
 const PHONE_ICON_BLACK = phoneIcon('#111');
@@ -346,7 +347,7 @@ function render(a=P){
   if(mb) mb.style.display = (total > shown || hasMore) ? 'block' : 'none';
 }
 
-const CC = {'Kosovë':'383','Shqipëri':'355','Maqedoni e Veriut':'389','Mali i Zi':'382','Gjermani':'49','Zvicër':'41','Austri':'43','Itali':'39'};
+const CC = {'Kosovë':'383','Shqipëri':'355','Maqedoni e Veriut':'389','Mali i Zi':'382','Gjermani':'49','Zvicër':'41','Austri':'43','Itali':'39','Francë':'33'};
 function waNumber(x){
   const raw = (x.sellerPhone||'').trim(); const d = raw.replace(/\D/g,'');
   if(!d) return '';
