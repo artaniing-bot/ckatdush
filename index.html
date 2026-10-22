@@ -41,19 +41,19 @@ footer{background:#202124;color:white;margin-top:45px;padding:40px 18px}.foot{di
 .subrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(330px,470px);gap:16px;align-items:start;max-width:1250px;margin:auto}
 .subrow>*{min-width:0}
 .subrow .countries,.subrow .filters{max-width:none;margin:0}
-.adSlot{position:relative;margin:2px 18px 12px 0;height:112px;border:1.5px solid #cfd8e3;border-radius:16px;background:#fff;overflow:hidden;display:block;text-decoration:none;color:#1b3556}
-.adItem{position:absolute;inset:0;display:flex;align-items:center;gap:14px;padding:10px 14px;opacity:0;transition:opacity .6s;text-decoration:none;color:inherit}
-.adItem.on{opacity:1}
-.adItem img{height:72px;width:auto;max-width:150px;min-width:72px;object-fit:contain;border-radius:12px;flex-shrink:0;background:#fff;padding:6px;border:1px solid #e1e8f0}
-.adItem .adTx{min-width:0}.adItem b{display:block;font-size:15px;line-height:1.25;margin-bottom:3px}.adItem span.adSub{display:block;font-size:12.5px;color:#4a5b73;line-height:1.35;max-height:2.7em;overflow:hidden}
-.adItem .adBtn{margin-left:auto;background:#1f4e8c;color:#fff;border-radius:14px;padding:7px 14px;font-weight:bold;font-size:12px;white-space:nowrap;flex-shrink:0}
-.adTag{position:absolute;top:6px;right:8px;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:#7a8aa3;z-index:2}
-.adDots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:2}.adDots i{width:6px;height:6px;border-radius:50%;background:#cfd8e3}.adDots i.on{background:#1f4e8c}
-.adHere{background:linear-gradient(120deg,#e4eefb,#dff3e4)}
+.spSlot{position:relative;margin:2px 18px 12px 0;height:112px;border:1.5px solid #cfd8e3;border-radius:16px;background:#fff;overflow:hidden;display:block;text-decoration:none;color:#1b3556}
+.spItem{position:absolute;inset:0;display:flex;align-items:center;gap:14px;padding:10px 14px;opacity:0;transition:opacity .6s;text-decoration:none;color:inherit}
+.spItem.on{opacity:1}
+.spItem img{height:72px;width:auto;max-width:150px;min-width:72px;object-fit:contain;border-radius:12px;flex-shrink:0;background:#fff;padding:6px;border:1px solid #e1e8f0}
+.spItem .spTx{min-width:0}.spItem b{display:block;font-size:15px;line-height:1.25;margin-bottom:3px}.spItem span.spSub{display:block;font-size:12.5px;color:#4a5b73;line-height:1.35;max-height:2.7em;overflow:hidden}
+.spItem .spBtn{margin-left:auto;background:#1f4e8c;color:#fff;border-radius:14px;padding:7px 14px;font-weight:bold;font-size:12px;white-space:nowrap;flex-shrink:0}
+.spTag{position:absolute;top:6px;right:8px;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:#7a8aa3;z-index:2}
+.spDots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:2}.spDots i{width:6px;height:6px;border-radius:50%;background:#cfd8e3}.spDots i.on{background:#1f4e8c}
+.spHere{background:linear-gradient(120deg,#e4eefb,#dff3e4)}
 .cbreak{display:none}
-@media(min-width:1151px){.subrow .countries{flex-wrap:wrap;overflow:visible;padding-bottom:8px}.cbreak{display:block;flex-basis:100%;height:0}.adSlot{height:auto;min-height:112px}#adItems{display:grid}.adItem{position:relative;inset:auto;grid-area:1/1;padding:18px 16px 22px}.adItem span.adSub{max-height:none}}
+@media(min-width:1151px){.subrow .countries{flex-wrap:wrap;overflow:visible;padding-bottom:8px}.cbreak{display:block;flex-basis:100%;height:0}.spSlot{height:auto;min-height:112px}#spItems{display:grid}.spItem{position:relative;inset:auto;grid-area:1/1;padding:18px 16px 22px}.spItem span.spSub{max-height:none}}
 @media(min-width:1151px){.cats{flex-wrap:nowrap;justify-content:space-between;overflow:auto;gap:5px}.cats button{padding:7px 6px;font-size:11.5px;min-width:0;flex:1 1 auto}.cats button .catIcon{width:36px;height:36px}.cats button .catIcon svg{width:22px;height:22px}}
-@media(max-width:1150px){.subrow{display:block;padding-bottom:22px}.adSlot{margin:18px 18px 0;height:200px;box-shadow:0 4px 14px #1b355618}.adItem{flex-wrap:wrap;align-content:center;gap:8px 12px;padding:22px 14px 22px}.adItem img{height:64px;width:auto;max-width:120px;min-width:64px}.adItem .adTx{flex:1 1 0;min-width:0}.adItem b{font-size:16px}.adItem span.adSub{font-size:13px;max-height:none}.adItem .adBtn{margin:4px 0 0;width:100%;text-align:center;padding:10px 14px;font-size:14px;flex-basis:100%}.adTag{top:7px}.adDots{bottom:8px}}
+@media(max-width:1150px){.subrow{display:block;padding-bottom:22px}.spSlot{margin:18px 18px 0;height:200px;box-shadow:0 4px 14px #1b355618}.spItem{flex-wrap:wrap;align-content:center;gap:8px 12px;padding:22px 14px 22px}.spItem img{height:64px;width:auto;max-width:120px;min-width:64px}.spItem .spTx{flex:1 1 0;min-width:0}.spItem b{font-size:16px}.spItem span.spSub{font-size:13px;max-height:none}.spItem .spBtn{margin:4px 0 0;width:100%;text-align:center;padding:10px 14px;font-size:14px;flex-basis:100%}.spTag{top:7px}.spDots{bottom:8px}}
 .filters input,.filters select{padding:9px 12px;border:1px solid #ddd;border-radius:20px;font-size:14px;font-family:inherit;background:white}
 .filters input{width:150px}
 .priceBox{display:contents}.priceBox.off{display:none}
@@ -123,7 +123,7 @@ html[data-theme=dark] .diasGrid>*{background:#15161a;color:#e8e8ea;box-shadow:no
 <button class="btn" onclick="clearFilters()" data-i18n="clearFilters">Pastro filtrat</button>
 </div>
 </div>
-<div class="adSlot" id="adSlot" aria-label="Reklamë"><span class="adTag" data-i18n="adLabel">Reklamë</span><div id="adItems"></div><div class="adDots" id="adDots"></div></div>
+<div class="spSlot" id="spSlot" aria-label="Reklamë"><span class="spTag" data-i18n="adLabel">Reklamë</span><div id="spItems"></div><div class="spDots" id="spDots"></div></div>
 </div>
 </header>
 <main>
@@ -622,7 +622,7 @@ loadProducts().then(async ()=>{
 // Hapësira e reklamave: lexon koleksionin 'ads' nga Firestore (active=true, jo të skaduara); nëse s'ka, shfaq "Reklamo këtu"
 (function(){
   const CONTACT='ckatdush@gmail.com';
-  const slot=document.getElementById('adSlot'), box=document.getElementById('adItems'), dots=document.getElementById('adDots');
+  const slot=document.getElementById('spSlot'), box=document.getElementById('spItems'), dots=document.getElementById('spDots');
   if(!slot||!box) return;
   const esc=x=>String(x==null?'':x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const safeUrl=u=>/^https?:\/\//i.test(u||'')?u:'';
@@ -636,7 +636,7 @@ loadProducts().then(async ()=>{
     if(nodes.length>1) timer=setInterval(()=>show((idx+1)%nodes.length),6000);
   }
   function placeholder(){
-    box.innerHTML=`<a class="adItem adHere on" href="mailto:${CONTACT}?subject=${encodeURIComponent('Reklamë në Çkat’dush')}"><div class="adTx"><b data-i18n="adHereT">📢 Reklamo këtu</b><span class="adSub" data-i18n="adHereS"></span></div><span class="adBtn" data-i18n="adHereB">Kontakto</span></a>`;
+    box.innerHTML=`<a class="spItem spHere on" href="mailto:${CONTACT}?subject=${encodeURIComponent('Reklamë në Çkat’dush')}"><div class="spTx"><b data-i18n="adHereT">📢 Reklamo këtu</b><span class="spSub" data-i18n="adHereS"></span></div><span class="spBtn" data-i18n="adHereB">Kontakto</span></a>`;
     dots.innerHTML=''; nodes=[]; if(typeof applyLang==='function') applyLang();
   }
   function render(ads){
@@ -644,7 +644,7 @@ loadProducts().then(async ()=>{
     box.innerHTML=ads.map(a=>{
       const url=safeUrl(a.link), img=safeUrl(a.imageUrl);
       const tag=url?'a':'div', href=url?` href="${esc(url)}" target="_blank" rel="sponsored noopener"`:'';
-      return `<${tag} class="adItem"${href}>${img?`<img src="${esc(img)}" alt="" loading="lazy">`:''}<div class="adTx"><b>${esc(a.title||a.company||'')}</b><span class="adSub">${esc(a.text||'')}</span></div>${url?`<span class="adBtn">${esc(a.cta||'Shiko më shumë')}</span>`:''}</${tag}>`;
+      return `<${tag} class="spItem"${href}>${img?`<img src="${esc(img)}" alt="" loading="lazy">`:''}<div class="spTx"><b>${esc(a.title||a.company||'')}</b><span class="spSub">${esc(a.text||'')}</span></div>${url?`<span class="spBtn">${esc(a.cta||'Shiko më shumë')}</span>`:''}</${tag}>`;
     }).join('');
     nodes=[...box.children];
     dots.innerHTML=ads.length>1?ads.map(()=>'<i></i>').join(''):'';
