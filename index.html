@@ -188,7 +188,7 @@ const I18N = {
     diasTrip: "🚐 Udhëtime & pako", diasTripD: "Dërgo ose merr pako me shoferë të besuar",
     diasServ: "🔧 Shërbime & biznese", diasServD: "Mjeshtra dhe biznese në vendlindje",
     diasComm: "🤝 Komuniteti", diasCommD: "Kërko ose ofro ndihmë në vend",
-    shareWa: "Ndaje në WhatsApp", waContact: "Shkruaj në WhatsApp", verified: "Shitës i verifikuar", reportBtn: "🚩 Raporto", footSafety: "Siguria & raportimi", reportWhy: "Pse e raporton?", rScam: "Mashtrim / e dyshimtë", rWrong: "Çmim ose informacion i gabuar", rSold: "Është shitur / nuk ekziston", rProhib: "Përmbajtje e ndaluar", rOther: "Tjetër", reportNote: "Detaje (opsionale)", reportSend: "Dërgo raportin", reportThanks: "Faleminderit! Raporti u dërgua.", reportDone: "Këtë shpallje e ke raportuar tashmë.",
+    shareWa: "Ndaje në WhatsApp", waContact: "Shkruaj në WhatsApp", verified: "Shitës i verifikuar", reportBtn: "🚩 Raporto", footSafety: "Siguria & raportimi", negotiable: "Me marrëveshje", reportWhy: "Pse e raporton?", rScam: "Mashtrim / e dyshimtë", rWrong: "Çmim ose informacion i gabuar", rSold: "Është shitur / nuk ekziston", rProhib: "Përmbajtje e ndaluar", rOther: "Tjetër", reportNote: "Detaje (opsionale)", reportSend: "Dërgo raportin", reportThanks: "Faleminderit! Raporti u dërgua.", reportDone: "Këtë shpallje e ke raportuar tashmë.",
     warnVeh: "⚠️ Kujdes: shiko automjetin personalisht dhe kontrollo dokumentet (librezën, shasinë, historikun) para se të japësh para. Mos dërgo para paraprakisht.",
     warnHome: "⚠️ Kujdes: kontrollo pronësinë dhe dokumentet te noteri ose kadastra para se të paguash. Mos dërgo para pa e parë pronën ose pa kontratë.",
     warnGen: "⚠️ Kujdes: takohu në vend publik, kontrollo artikullin para pagesës dhe mos dërgo para paraprakisht.",
@@ -224,7 +224,7 @@ const I18N = {
     diasTrip: "🚐 Trips & parcels", diasTripD: "Send or receive parcels with trusted drivers",
     diasServ: "🔧 Services & businesses", diasServD: "Tradespeople and businesses back home",
     diasComm: "🤝 Community", diasCommD: "Ask for or offer help locally",
-    shareWa: "Share on WhatsApp", waContact: "Message on WhatsApp", verified: "Verified seller", reportBtn: "🚩 Report listing", footSafety: "Safety & reporting", reportWhy: "Why are you reporting?", rScam: "Scam / suspicious", rWrong: "Wrong price or information", rSold: "Sold / does not exist", rProhib: "Prohibited content", rOther: "Other", reportNote: "Details (optional)", reportSend: "Send report", reportThanks: "Thank you! Your report was sent.", reportDone: "You have already reported this listing.",
+    shareWa: "Share on WhatsApp", waContact: "Message on WhatsApp", verified: "Verified seller", reportBtn: "🚩 Report listing", footSafety: "Safety & reporting", negotiable: "By agreement", reportWhy: "Why are you reporting?", rScam: "Scam / suspicious", rWrong: "Wrong price or information", rSold: "Sold / does not exist", rProhib: "Prohibited content", rOther: "Other", reportNote: "Details (optional)", reportSend: "Send report", reportThanks: "Thank you! Your report was sent.", reportDone: "You have already reported this listing.",
     warnVeh: "⚠️ Caution: inspect the vehicle in person and check its documents (registration, chassis number, history) before paying. Never send money in advance.",
     warnHome: "⚠️ Caution: verify ownership and documents with a notary or the cadastre before paying. Never send money without seeing the property or a contract.",
     warnGen: "⚠️ Caution: meet in a public place, check the item before paying and never send money in advance.",
@@ -254,6 +254,7 @@ try{ currentLang = localStorage.getItem('lang') || 'sq'; }catch(e){}
 
 function t(key){ return (I18N[currentLang] && I18N[currentLang][key]) || I18N.sq[key] || key; }
 function catLabel(c){ return CAT_KEYS[c] ? t(CAT_KEYS[c]) : (c||''); }
+function priceHtml(x){ return x.neg ? t('negotiable') : `${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}`; }
 function countryLabel(c){ return COUNTRY_KEYS[c] ? t(COUNTRY_KEYS[c]) : (c||''); }
 function condLabel(c){ return COND_KEYS[c] ? t(COND_KEYS[c]) : (c||''); }
 
@@ -287,7 +288,7 @@ let lastDoc = null, hasMore = true, loadingMore = false, loadedOnce = false;
 function mapProduct(d){
   const x = d.data();
   return {
-    id: d.id, name: x.name, cat: normCat(x.cat), price: Number(x.price), oldPrice: Number(x.oldPrice||x.price),
+    id: d.id, name: x.name, cat: normCat(x.cat), price: Number(x.price)||0, neg: !!x.negotiable || !(Number(x.price)>0), oldPrice: Number(x.oldPrice||x.price),
     icon: x.icon || '🛍️', photoUrl: x.photoUrl || null,
     photos: Array.isArray(x.photos) && x.photos.length ? x.photos : (x.photoUrl ? [x.photoUrl] : []), attrs: x.attrs || {},
     country: x.country || 'Kosovë', city: x.city || '', condition: x.condition || '', description: x.description || '',
@@ -338,7 +339,7 @@ function render(a=P){
     const actionBtn = phone
       ? `<a href="tel:${phone}" class="add" onclick="event.stopPropagation()">${PHONE_ICON_WHITE}${t('contactBtn')}</a>`
       : `<span class="add disabled">${t('contactUnavailable')}</span>`;
-    return `<div class="card" onclick="openProduct('${x.id}')"><span class="badge">${t('badge')}</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover">` : x.icon}${(x.photos&&x.photos.length>1) ? `<span class="photoCount">📷 ${x.photos.length}</span>` : ''}</div><div class="info"><div class="name">${x.name}${isVer(x)?` <span class="verTick" title="${t('verified')}">✅</span>`:''}</div><small>${meta}</small>${contact}<div class="price">${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}</div>${actionBtn}</div></div>`;
+    return `<div class="card" onclick="openProduct('${x.id}')"><span class="badge">${t('badge')}</span><div class="pic">${x.photoUrl ? `<img src="${x.photoUrl}" loading="lazy" decoding="async" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover">` : x.icon}${(x.photos&&x.photos.length>1) ? `<span class="photoCount">📷 ${x.photos.length}</span>` : ''}</div><div class="info"><div class="name">${x.name}${isVer(x)?` <span class="verTick" title="${t('verified')}">✅</span>`:''}</div><small>${meta}</small>${contact}<div class="price">${priceHtml(x)}</div>${actionBtn}</div></div>`;
   }).join('')
     : `<div class="empty">${t('emptyMsg')}</div>`;
   res.textContent = total + (hasMore ? '+' : '') + ' ' + t('listingsWord');
@@ -383,7 +384,7 @@ function openProduct(id){
   galIdx = 0; renderGallery(x.icon);
   pdAttrs.innerHTML = attrsHtml(x);
   pdMeta.textContent = [catLabel(x.cat), countryLabel(x.country), x.city, condLabel(x.condition)].filter(Boolean).join(' • ');
-  pdPrice.innerHTML = `${x.price.toFixed(2)} € ${x.oldPrice && x.oldPrice!==x.price ? `<span class="old">${x.oldPrice.toFixed(2)} €</span>` : ''}`;
+  pdPrice.innerHTML = priceHtml(x);
   pdDesc.textContent = x.description || '';
   pdDesc.style.display = x.description ? 'block' : 'none';
   pdContact.innerHTML = x.sellerName ? `<div class="pdContact">👤 <b>${x.sellerName}</b>${x.sellerPhone ? `<br>${PHONE_ICON_BLACK}${x.sellerPhone}` : ''}</div>` : '';
@@ -404,7 +405,7 @@ function openProduct(id){
   if(wn){ pdWa.textContent = '💬 ' + t('waContact'); pdWa.href = 'https://wa.me/' + wn + '?text=' + encodeURIComponent((currentLang==='en'?'Hello, I am interested in: ':'Përshëndetje, më intereson: ') + x.name); }
   const shareUrl = location.origin + '/?p=' + encodeURIComponent(x.id);
   pdShare.textContent = '📲 ' + t('shareWa');
-  pdShare.href = 'https://wa.me/?text=' + encodeURIComponent(x.name + ' — ' + x.price.toFixed(2) + ' € — Çkat’dush\n' + shareUrl);
+  pdShare.href = 'https://wa.me/?text=' + encodeURIComponent(x.name + ' — ' + (x.neg ? t('negotiable') : x.price.toFixed(2) + ' €') + ' — Çkat’dush\n' + shareUrl);
   try{ history.replaceState(null,'','?p='+encodeURIComponent(x.id)); }catch(e){}
   openModal('productModal');
 }
@@ -553,8 +554,8 @@ function applyFilters(){
   if(currentQuery) list = list.filter(x=>(x.name+' '+x.cat).toLowerCase().includes(currentQuery));
   const min = parseFloat(document.getElementById('fMin').value);
   const max = parseFloat(document.getElementById('fMax').value);
-  if(!isNaN(min)) list = list.filter(x=>x.price>=min);
-  if(!isNaN(max)) list = list.filter(x=>x.price<=max);
+  if(!isNaN(min)) list = list.filter(x=>!x.neg && x.price>=min);
+  if(!isNaN(max)) list = list.filter(x=>!x.neg && x.price<=max);
   const city = document.getElementById('fCity').value.trim().toLowerCase();
   if(city) list = list.filter(x=>(x.city||'').toLowerCase().includes(city));
   const cond = document.getElementById('fCond').value;

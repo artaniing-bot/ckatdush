@@ -129,7 +129,7 @@ a.back{color:#202124;text-decoration:none;font-size:14px;border:1px solid #ddd;b
 </div>
 </div>
 <div class="row2">
-<div class="field"><label>Çmimi (€)</label><input id="pPrice" type="number" step="0.01" min="0" required></div>
+<div class="field"><label>Çmimi (€)</label><input id="pPrice" type="number" step="0.01" min="0"><label style="display:flex;gap:8px;align-items:center;margin-top:8px;font-weight:normal;cursor:pointer"><input type="checkbox" id="pNeg" onchange="togglePriceNeg()" style="width:auto;margin:0"> Me marrëveshje (pa çmim)</label></div>
 <div class="field"><label>Çmimi i vjetër (opsionale, për zbritje)</label><input id="pOld" type="number" step="0.01" min="0"></div>
 </div>
 <div class="field"><label>Përshkrimi (opsionale — gjendja, defektet, pajisjet shtesë, arsyeja e shitjes etj.)</label><textarea id="pDescription" style="min-height:130px" placeholder="Shkruaj këtu çdo detaj tjetër që blerësi duhet ta dijë..."></textarea></div>
@@ -269,6 +269,8 @@ function renderAttrFields(values){
   }).join('');
 }
 
+function isNeg(){ return pNeg.checked || pPrice.value.trim()===''; }
+function togglePriceNeg(){ pPrice.disabled = pNeg.checked; pOld.disabled = pNeg.checked; if(pNeg.checked){ pPrice.value=''; pOld.value=''; } }
 function collectAttrs(){
   const out = {};
   attrFields.querySelectorAll('[data-attr]').forEach(el=>{
@@ -297,7 +299,7 @@ function splitPhone(full){
 pCountry.addEventListener('change', ()=>{ if(PFX[pCountry.value] && !pSellerPhone.value.trim().startsWith('+')) pPrefix.value = PFX[pCountry.value]; });
 function resetForm(){
   editSellerId=''; pPrefix.value = PFX[pCountry.value] || '';
-  pId.value=''; pName.value=''; pIcon.value=''; pPrice.value=''; pOld.value=''; pCat.selectedIndex=0;
+  pId.value=''; pName.value=''; pIcon.value=''; pPrice.value=''; pOld.value=''; pNeg.checked=false; togglePriceNeg(); pCat.selectedIndex=0;
   pCountry.selectedIndex=0; pCity.value=''; pCondition.selectedIndex=0; pPhotoFile.value='';
   pDescription.value='';
   pSellerName.value=''; pSellerPhone.value=''; pPrefix.value = PFX['Kosovë'];
@@ -392,8 +394,9 @@ async function saveListing(e){
     country: pCountry.value,
     city: pCity.value.trim(),
     condition: pCondition.value,
-    price: parseFloat(pPrice.value),
-    oldPrice: pOld.value ? parseFloat(pOld.value) : parseFloat(pPrice.value),
+    price: isNeg() ? 0 : parseFloat(pPrice.value),
+    oldPrice: isNeg() ? 0 : (pOld.value ? parseFloat(pOld.value) : parseFloat(pPrice.value)),
+    negotiable: isNeg(),
     photoUrl: photos[0] || null,
     photos: photos.slice(),
     attrs: collectAttrs(),
@@ -403,7 +406,7 @@ async function saveListing(e){
     sellerPhone: fullPhone()
   };
   if(uploading){ formErr.textContent = 'Prit të mbarojë ngarkimi i fotove.'; return false; }
-  if(!data.name || isNaN(data.price) || !data.city){ formErr.textContent = 'Plotëso emrin, qytetin dhe çmimin.'; return false; }
+  if(!data.name || isNaN(data.price) || !data.city){ formErr.textContent = 'Plotëso emrin dhe qytetin (çmimi është opsional).'; return false; }
   if(!data.sellerName || !data.sellerPhone){ formErr.textContent = 'Plotëso emrin dhe telefonin e kontaktit.'; return false; }
 
   saveBtn.disabled = true;
@@ -437,7 +440,7 @@ function editListing(id, d){
   editSellerId = d.sellerId || '';
   pId.value = id; pName.value = d.name; pCat.value = normCat(d.cat); pIcon.value = d.icon || '';
   pCountry.value = d.country || 'Kosovë'; pCity.value = d.city || ''; pCondition.value = d.condition || 'I ri';
-  pPrice.value = d.price; pOld.value = d.oldPrice && d.oldPrice!==d.price ? d.oldPrice : '';
+  pNeg.checked = !!d.negotiable || !(Number(d.price)>0); pPrice.value = pNeg.checked ? '' : d.price; pOld.value = !pNeg.checked && d.oldPrice && d.oldPrice!==d.price ? d.oldPrice : ''; togglePriceNeg();
   photos = Array.isArray(d.photos) && d.photos.length ? d.photos.slice() : (d.photoUrl ? [d.photoUrl] : []);
   renderPhotos(); renderAttrFields(d.attrs || {});
   pDescription.value = d.description || '';
@@ -516,7 +519,7 @@ async function loadList(){
         <div class="ic">${d.photoUrl ? `<img class="thumb" src="${d.photoUrl}">` : (d.icon||'🛍️')}</div>
         <div class="info"><b>${d.name}${d.sellerId && VERSET.has(d.sellerId) ? ' ✅' : ''}</b><small>${d.cat} • ${d.country||''} ${d.city ? '- '+d.city : ''} • ${d.condition||''}</small>${adm && d.sellerId!==user.uid ? `<small>👤 ${d.sellerName||''} ${d.sellerPhone||''}</small>` : ''}
         ${expired ? `<div class="exp">⚠️ Ka skaduar — s'shfaqet më te dyqani</div>` : (daysLeft!==null ? `<div class="exp">Skadon për ${daysLeft} ditë</div>` : '')}</div>
-        <div class="price">${Number(d.price).toFixed(2)} €${d.oldPrice && d.oldPrice!==d.price ? `<span class="old">${Number(d.oldPrice).toFixed(2)} €</span>` : ''}</div>
+        <div class="price">${(d.negotiable || !(Number(d.price)>0)) ? 'Me marrëveshje' : Number(d.price).toFixed(2) + ' €' + (d.oldPrice && d.oldPrice!==d.price ? `<span class="old">${Number(d.oldPrice).toFixed(2)} €</span>` : '')}</div>
         <div class="actions">
         <button class="cta small secondary" onclick="refreshListing('${doc.id}')">🔄 Rifresko</button>
         <button class="edit" onclick='editListing("${doc.id}", ${JSON.stringify(d).replace(/'/g,"&apos;")})'>Redakto</button>
