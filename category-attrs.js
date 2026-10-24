@@ -12,7 +12,7 @@ const CAT_ATTRS = {
     {k:'color', sq:'Ngjyra', en:'Color', type:'text'},
     {k:'doors', sq:'Dyer', en:'Doors', type:'select', opts:[['2/3','2/3'],['4/5','4/5']]},
     {k:'tuv', sq:'Regjistrimi i vlefshëm deri', en:'Registered until', type:'text', ph:'p.sh. 03/2027'},
-    {k:'accident', sq:'Pa aksident', en:'Accident-free', type:'select', opts:[['Po','Yes'],['Jo','No']]}
+    {k:'accident', sq:'Aksidenti', en:'Accident history', type:'select', opts:[['I paaksidentuar','Accident-free'],['I aksidentuar','Accident-damaged']]}
   ],
   'Teknologji': [
     {k:'brand', sq:'Marka', en:'Brand', type:'text'},
@@ -72,6 +72,9 @@ const CAT_ATTRS = {
   ]
 };
 const MAX_PHOTOS = 20;
+
+// Vlerat e vjetra të fushës 'accident' (Po/Jo = pa aksident po/jo)
+function normAttr(k,v){ if(k==='accident'){ if(v==='Po') return 'I paaksidentuar'; if(v==='Jo') return 'I aksidentuar'; } return v; }
 
 // Kategoria e vjetër 'Shtëpi' u riemërtua 'Patundshmëri'
 function normCat(c){ return c === 'Shtëpi' ? 'Patundshmëri' : (c === 'Bukuri' ? 'Moda' : c); }

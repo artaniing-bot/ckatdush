@@ -429,7 +429,7 @@ document.addEventListener('keydown', e=>{ if(productModal.style.display!=='flex'
 function attrsHtml(x){
   const defs = CAT_ATTRS[x.cat] || [], a = x.attrs || {};
   return defs.filter(f=>a[f.k]!=null && a[f.k]!=='').map(f=>{
-    let v = a[f.k];
+    let v = normAttr(f.k, a[f.k]);
     if(f.type==='select' && currentLang==='en'){ const o = f.opts.find(o=>o[0]===v); if(o) v = o[1]; }
     return `<div><span>${escH(currentLang==='en'?f.en:f.sq)}</span><b>${escH(v)}</b></div>`;
   }).join('');

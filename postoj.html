@@ -258,7 +258,7 @@ function renderAttrFields(values){
   attrBox.classList.toggle('hide', !defs.length);
   attrTitle.textContent = 'Detajet — ' + pCat.value;
   attrFields.innerHTML = defs.map(f=>{
-    const v = values[f.k] != null ? values[f.k] : '';
+    const v = values[f.k] != null ? normAttr(f.k, values[f.k]) : '';
     let input;
     if(f.type==='select'){
       input = `<select data-attr="${f.k}"><option value="">—</option>` + f.opts.map(o=>`<option value="${esc(o[0])}"${o[0]===v?' selected':''}>${esc(o[0])}</option>`).join('') + `</select>`;
